@@ -1,7 +1,27 @@
-#include "strategies.h";
-
-StepNode* pushStep(StepNode* head, Step newStep) {
-  StepNode* newNode = malloc(sizeof(StepNode));
+#include "strategies.h"
+StepNode* initStepList() {
+   StepNode* newNode = calloc(1, sizeof(StepNode));
+   if(newNode == NULL) {
+    perror("Failed to allocate memory for new Step");
+    exit(EXIT_FAILURE);
+  }
+  Step emptyStep = {
+    .colIndex = -1,
+    .rowIndex = -1,
+    .value = -1
+  };
+  newNode->next = NULL;
+  newNode->prev = NULL;
+  newNode->step = emptyStep;
+  return newNode;
+}
+StepNode* appendStep(StepNode* head, Step newStep) {
+  if(head == NULL) {
+    head = initStepList();
+    head->step = newStep;
+    return head;
+  }
+  StepNode* newNode = calloc(1, sizeof(StepNode));
   if(newNode == NULL) {
     perror("Failed to allocate memory for new Step");
     exit(EXIT_FAILURE);
@@ -14,7 +34,7 @@ StepNode* pushStep(StepNode* head, Step newStep) {
   current->next = newNode;
   newNode->step = newStep;
   newNode->prev = current;
-  newNode->next == NULL;
+  newNode->next = NULL;
   return newNode;
 }
 

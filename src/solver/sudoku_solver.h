@@ -1,40 +1,55 @@
 #ifndef SRC_SOLVER_SUKOKU_SOLVER_H
 #define SRC_SOLVER_SUKOKU_SOLVER_H
 
-#include <stdlib.h>;
-#include <stdbool.h>;
+#include <stdlib.h>
+#include <stdbool.h>
 #include "puzzle.h"
+#include "strategies.h"
 
 
 #define BLOCK_WIDTH 3
 #define PUZZLE_WIDTH 9
 
-bool solvePuzzle(Puzzle* puzzle, StepNode* steps);
+bool solvePuzzle(Puzzle* puzzle, StepNode* head);
 
 void fillPuzzleCandidates(Puzzle* Puzzle);
-bool isPuzzleSolved(Cells* cells);
-bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, Cells* cells);
+bool isPuzzleSolved(int* cells);
 
-bool findSingle(Puzzle* puzzle, Step* step);
+StepNode* findSingle(Puzzle* puzzle, StepNode* head);
 int findHiddenSingle(int rowIndex, int colIndex, Puzzle* puzzle);
-bool isFullHouse(int rowIndex, int colIndex, Cells* cells);
+StepNode* findLockedCandidates(Puzzle* puzzle, StepNode* head);
+StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head);
+StepNode* findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head);
 
+StepNode* removePointingRow(int rowIndex, int skipBlockCol, int valueToRemove, Puzzle* puzzle, StepNode* head);
+StepNode* removePointingCol(int colIndex, int skipBlockRow, int valueToRemove, Puzzle* puzzle, StepNode* head);
 
-void getBlock(int blockX, int blockY, Cells* cells, int* block);
-void getRow(int rowIndex, Cells* cells, int* row);
-void getCol(int colIndex, Cells* cells, int* col);
-void getCandidateBlock(int blockX, int blockY, CellCandidates* candidates, CellCandidates* block);
-void getCandidateRow(int rowIndex, CellCandidates* candidates, CellCandidates* row);
-void getCandidateCol(int colIndex, CellCandidates* candidates, CellCandidates* col);
+bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells);
+void getBlock(int blockX, int blockY, int* cells, int* block);
+void getRow(int rowIndex, int* cells, int* row);
+void getCol(int colIndex, int* cells, int* col);
 int getCellPosInBlock(int rowIndex, int colIndex);
+void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* block);
+void getCandidateRow(int rowIndex, uint16_t* candidates, uint16_t* row);
+void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col);
 
-static inline bool hasCandidate(CellCandidates mask, int num) {
+bool isFullHouse(int rowIndex, int colIndex, int* cells);
+int getCandidatesInCell(uint16_t cellCandidates, int* candidateArray);
+
+StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNode* head);
+StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNode* head);
+StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRow, int skipCol, Puzzle* puzzle, StepNode* head);
+
+
+
+
+static inline bool hasCandidate(uint16_t mask, int num) {
   return (mask >> (num - 1)) & 1;
 }
-static inline void addCandidate(CellCandidates* mask, int num) {
+static inline void addCandidate(uint16_t* mask, int num) {
   *mask |= (1 << (num - 1));
 }
-static inline bool removeCandidate(CellCandidates* mask, int num) {
+static inline bool removeCandidate(uint16_t* mask, int num) {
   bool removed = hasCandidate(*mask, num);
   *mask &= ~(1 << (num - 1));
   return removed;

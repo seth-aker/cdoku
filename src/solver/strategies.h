@@ -1,9 +1,10 @@
-#ifndef SRC_MODELS_STRATEGIES_H
-#define SRC_MODELS_STRATEGIES_H
+#ifndef SRC_SOLVER_STRATEGIES_H
+#define SRC_SOLVER_STRATEGIES_H
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 typedef enum {
+  NONE,
   FULL_HOUSE,
   NAKED_SINGLE,
   HIDDEN_SINGLE,
@@ -28,11 +29,12 @@ typedef struct Step {
 
 typedef struct StepNode {
   Step step;
-  struct Step* next;
-  struct Step* prev;
+  struct StepNode* next;
+  struct StepNode* prev;
 } StepNode;
 
+StepNode* initStepList();
 // Iterates to the end of the list and appends it with a new StepNode with value Step;
-StepNode* pushStep(StepNode* head, Step new);
+StepNode* appendStep(StepNode* head, Step newStep);
 void freeStepList(StepNode* head);
-#endif // STRATEGIES_H
+#endif // SRC_SOLVER_STRATEGIES_H

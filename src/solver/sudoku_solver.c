@@ -1,12 +1,12 @@
-#include "sudoku_solver.h";
+#include "sudoku_solver.h"
 
-bool solvePuzzle(Puzzle* puzzle, StepNode* steps) {
-  if(steps == NULL) {
+bool solvePuzzle(Puzzle* puzzle, StepNode* head) {
+  if(head == NULL) {
     return false;
   }
-  StepNode* current = steps;
+  StepNode* current = head;
   fillPuzzleCandidates(puzzle);
-  while(!isPuzzleSolved(&puzzle->cells)) {
+  while(!isPuzzleSolved(puzzle->cells)) {
     // look for a single and if one exists adds it and updates current.
     // Find single returns the updated node if a single was found OR the same node that was passed.
     StepNode* newStep = findSingle(puzzle, current);
@@ -25,19 +25,22 @@ bool solvePuzzle(Puzzle* puzzle, StepNode* steps) {
       // Puzzle has been modified and we need to check if it can be solved/go through the loop again.
       continue;
     }
+    return false;
   }
   return true;
 }
 
-bool isPuzzleSolved(Cells* cells) {
+bool isPuzzleSolved(int* cells) {
   for(int rowIndex = 0; rowIndex < PUZZLE_WIDTH; ++rowIndex) {
     for(int colIndex = 0; colIndex < PUZZLE_WIDTH; ++colIndex) {
-      int cellValue = cells[(rowIndex * PUZZLE_WIDTH) + colIndex];
+      int cellIndex = (rowIndex * PUZZLE_WIDTH) + colIndex;
+      int cellValue = cells[cellIndex];
       if(cellValue == 0 || !numWorksInCell(rowIndex, colIndex, cellValue, cells)) {
         return false;
       }
     }
   }
+  return true;
 }
 
 void fillPuzzleCandidates(Puzzle* puzzle) {
@@ -49,7 +52,7 @@ void fillPuzzleCandidates(Puzzle* puzzle) {
         if(cellVal != 0 || !numWorksInCell(row, col, potentialCandidate, puzzle->cells)) {
           continue;
         } else {
-          addCandidate(puzzle->candidates[cellIndex], potentialCandidate);
+          addCandidate(&puzzle->candidates[cellIndex], potentialCandidate);
         }
       }
     }
@@ -78,7 +81,7 @@ StepNode* findSingle(Puzzle* puzzle, StepNode* head) {
         newStep.colIndex = colIndex;
         newStep.candidateRemoved = false;
         newStep.value = getValueFromMask(puzzle->candidates[cellIndex]);
-        StepNode* last = pushStep(head, newStep);
+        StepNode* last = appendStep(head, newStep);
         return last;
       }
       int hiddenSingle = findHiddenSingle(rowIndex, colIndex, puzzle);
@@ -88,7 +91,7 @@ StepNode* findSingle(Puzzle* puzzle, StepNode* head) {
         newStep.candidateRemoved = false;
         newStep.strategyUsed = HIDDEN_SINGLE;
         newStep.value = hiddenSingle;
-        StepNode* last = pushStep(head, newStep);
+        StepNode* last = appendStep(head, newStep);
         return last;
       }
     }
@@ -153,7 +156,7 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
 
   for(int blockX = 0; blockX < BLOCK_WIDTH; ++blockX) {
     for(int blockY = 0; blockY < BLOCK_WIDTH; ++blockY) {
-      getCandidateBlock(blockX, blockY, puzzle->candidates, &candidateBlock);
+      getCandidateBlock(blockX, blockY, puzzle->candidates, candidateBlock);
       uint16_t row1 = candidateBlock[0] | candidateBlock[1] | candidateBlock[2];
       uint16_t row2 = candidateBlock[3] | candidateBlock[4] | candidateBlock[5];
       uint16_t row3 = candidateBlock[6] | candidateBlock[7] | candidateBlock[8];
@@ -165,7 +168,7 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
 
       if(uRow1) {
         int candidatesToRemove[9] = {0};
-        int candidateCount = getCandidatesInCell(uRow1, &candidatesToRemove);
+        int candidateCount = getCandidatesInCell(uRow1, candidatesToRemove);
         for(int i = 0; i < candidateCount; ++i) {
           StepNode* lastChange = removePointingRow(blockY * BLOCK_WIDTH, blockX * BLOCK_WIDTH, candidatesToRemove[i], puzzle, head);
           if(lastChange != head) {
@@ -175,7 +178,7 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
       }
       if(uRow2) {
         int candidatesToRemove[9] = {0};
-        int candidateCount = getCandidatesInCell(uRow2, &candidatesToRemove);
+        int candidateCount = getCandidatesInCell(uRow2, candidatesToRemove);
         for(int i = 0; i < candidateCount; ++i) {
           StepNode* lastChange = removePointingRow(blockY * BLOCK_WIDTH + 1, blockX * BLOCK_WIDTH, candidatesToRemove[i], puzzle, head);
           if(lastChange != head) {
@@ -185,7 +188,7 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
       }
       if(uRow3) {
         int candidatesToRemove[9] = {0};
-        int candidateCount = getCandidatesInCell(uRow3, &candidatesToRemove);
+        int candidateCount = getCandidatesInCell(uRow3, candidatesToRemove);
         for(int i = 0; i < candidateCount; ++i) {
           StepNode* lastChange = removePointingRow(blockY * BLOCK_WIDTH + 2, blockX * BLOCK_WIDTH, candidatesToRemove[i], puzzle, head);
           if(lastChange != head) {
@@ -204,7 +207,7 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
 
       if(uCol1) {
         int candidatesToRemove[9] = {0};
-        int candidateCount = getCandidatesInCell(uCol1, &candidatesToRemove);
+        int candidateCount = getCandidatesInCell(uCol1, candidatesToRemove);
         for(int i = 0; i < candidateCount; ++i) {
           StepNode* lastChange = removePointingCol(blockX * BLOCK_WIDTH, blockY * BLOCK_WIDTH, candidatesToRemove[i], puzzle, head);
           if(lastChange == head) {
@@ -214,7 +217,7 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
       }
       if(uCol2) {
         int candidatesToRemove[9] = {0};
-        int candidateCount = getCandidatesInCell(uCol2, &candidatesToRemove);
+        int candidateCount = getCandidatesInCell(uCol2, candidatesToRemove);
         for(int i = 0; i < candidateCount; ++i) {
           StepNode* lastChange = removePointingCol(blockX * BLOCK_WIDTH + 1, blockY * BLOCK_WIDTH, candidatesToRemove[i], puzzle, head);
           if(lastChange != head) {
@@ -224,7 +227,7 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
       }
       if(uCol3) {
         int candidatesToRemove[9] = {0};
-        int candidateCount = getCandidatesInCell(uCol3, &candidatesToRemove);
+        int candidateCount = getCandidatesInCell(uCol3, candidatesToRemove);
         for(int i = 0; i < candidateCount; ++i) {
           StepNode* lastChange = removePointingCol(blockX * BLOCK_WIDTH + 2, blockY * BLOCK_WIDTH, candidatesToRemove[i], puzzle, head);
           if(lastChange != head) {
@@ -236,10 +239,10 @@ StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head) {
   }
   return head;
 }
-bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
+StepNode* findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
   uint16_t candidateRow[9];
   for(int rowIndex = 0; rowIndex < PUZZLE_WIDTH; ++rowIndex) {
-    getCandidateRow(rowIndex, puzzle->candidates, &candidateRow);
+    getCandidateRow(rowIndex, puzzle->candidates, candidateRow);
     uint16_t rowSeg1 = candidateRow[0] | candidateRow[1] | candidateRow[2];
     uint16_t rowSeg2 = candidateRow[3] | candidateRow[4] | candidateRow[5];
     uint16_t rowSeg3 = candidateRow[6] | candidateRow[7] | candidateRow[8];
@@ -252,7 +255,7 @@ bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
 
     if(uRowSeg1) {
       int candidatesToRemove[9] = {0};
-      int candidateCount = getCandidatesInCell(uRowSeg1, &candidatesToRemove);
+      int candidateCount = getCandidatesInCell(uRowSeg1, candidatesToRemove);
       for(int i = 0; i < candidateCount; ++i) {
         StepNode* lastStep = removeCandidateFromBlock(0, (rowIndex / BLOCK_WIDTH), candidatesToRemove[i], i % BLOCK_WIDTH, -1, puzzle, head);
         if(lastStep != head) {
@@ -262,7 +265,7 @@ bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
     }
     if(uRowSeg2) {
       int candidatesToRemove[9] = {0};
-      int candidateCount = getCandidatesInCell(uRowSeg2, &candidatesToRemove);
+      int candidateCount = getCandidatesInCell(uRowSeg2, candidatesToRemove);
       for(int i = 0; i < candidateCount; ++i) {
         StepNode* lastStep = removeCandidateFromBlock(1, (rowIndex / BLOCK_WIDTH), candidatesToRemove[i], i % BLOCK_WIDTH, -1, puzzle, head);
         if(lastStep != head) {
@@ -272,7 +275,7 @@ bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
     }
     if(uRowSeg3) {
       int candidatesToRemove[9] = {0};
-      int candidateCount = getCandidatesInCell(uRowSeg3, &candidatesToRemove);
+      int candidateCount = getCandidatesInCell(uRowSeg3, candidatesToRemove);
       for(int i = 0; i < candidateCount; ++i) {
         StepNode* lastStep = removeCandidateFromBlock(2, (rowIndex / BLOCK_WIDTH), candidatesToRemove[i], i % BLOCK_WIDTH, -1, puzzle, head);
         if(lastStep != head) {
@@ -283,7 +286,7 @@ bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
   }
   uint16_t candidateCol[9] = {0};
   for(int colIndex = 0; colIndex < PUZZLE_WIDTH; ++colIndex) {
-    getCandidateCol(colIndex, puzzle->candidates, &candidateCol);
+    getCandidateCol(colIndex, puzzle->candidates, candidateCol);
     uint16_t colSeg1 = candidateCol[0] | candidateCol[1] | candidateCol[2];
     uint16_t colSeg2 = candidateCol[3] | candidateCol[4] | candidateCol[5];
     uint16_t colSeg3 = candidateCol[6] | candidateCol[7] | candidateCol[8];
@@ -294,7 +297,7 @@ bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
 
     if(uColSeg1) {
       int candidatesToRemove[9] = {0};
-      int candidateCount = getCandidatesInCell(uColSeg1, &candidatesToRemove);
+      int candidateCount = getCandidatesInCell(uColSeg1, candidatesToRemove);
       for(int i = 0; i < candidateCount; ++i) {
         StepNode* lastStep = removeCandidateFromBlock(colIndex / BLOCK_WIDTH, 0, candidatesToRemove[i], -1, colIndex % BLOCK_WIDTH, puzzle, head);
         if(lastStep != head) {
@@ -304,7 +307,7 @@ bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
     }
     if(uColSeg2) {
       int candidatesToRemove[9] = {0};
-      int candidateCount = getCandidatesInCell(uColSeg2, &candidatesToRemove);
+      int candidateCount = getCandidatesInCell(uColSeg2, candidatesToRemove);
       for(int i = 0; i < candidateCount; ++i) {
         StepNode* lastStep = removeCandidateFromBlock(colIndex / BLOCK_WIDTH, 0, candidatesToRemove[i], -1, colIndex % BLOCK_WIDTH, puzzle, head);
         if(lastStep != head) {
@@ -314,7 +317,7 @@ bool findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
     }
     if(uColSeg3) {
       int candidatesToRemove[9] = {0};
-      int candidateCount = getCandidatesInCell(uColSeg3, &candidatesToRemove);
+      int candidateCount = getCandidatesInCell(uColSeg3, candidatesToRemove);
       for(int i = 0; i < candidateCount; ++i) {
         StepNode* lastStep = removeCandidateFromBlock(colIndex / BLOCK_WIDTH, 0, candidatesToRemove[i], -1, colIndex % BLOCK_WIDTH, puzzle, head);
         if(lastStep != head) {
@@ -331,7 +334,7 @@ StepNode* removePointingRow(int rowIndex, int skipBlockCol, int valueToRemove, P
   StepNode* lastStep = head;
   for(int colIndex = 0; colIndex < PUZZLE_WIDTH; ++colIndex) {
     if(colIndex >= skipBlockCol && colIndex < skipBlockCol + BLOCK_WIDTH) continue;
-    bool removed = removeCandidate(puzzle->candidates[rowStart + colIndex], valueToRemove);
+    bool removed = removeCandidate(&puzzle->candidates[rowStart + colIndex], valueToRemove);
     if(removed) {
       Step newStep;
       newStep.colIndex = colIndex;
@@ -339,7 +342,7 @@ StepNode* removePointingRow(int rowIndex, int skipBlockCol, int valueToRemove, P
       newStep.candidateRemoved = true;
       newStep.strategyUsed = LOCKED_CANDIDATE_POINTING;
       newStep.value = valueToRemove;
-      lastStep = pushStep(lastStep, newStep);
+      lastStep = appendStep(lastStep, newStep);
     }
   }
   return lastStep;
@@ -348,7 +351,7 @@ StepNode* removePointingCol(int colIndex, int skipBlockRow, int valueToRemove, P
   StepNode* lastStep = head;
   for(int rowIndex = 0; rowIndex < PUZZLE_WIDTH; ++rowIndex) {
     if(rowIndex >= skipBlockRow && rowIndex < skipBlockRow + BLOCK_WIDTH) continue;
-    bool removed = removeCandidate(puzzle->candidates[rowIndex * PUZZLE_WIDTH + colIndex], valueToRemove);
+    bool removed = removeCandidate(&puzzle->candidates[rowIndex * PUZZLE_WIDTH + colIndex], valueToRemove);
     if(removed) {
       Step newStep;
       newStep.candidateRemoved = true;
@@ -356,14 +359,14 @@ StepNode* removePointingCol(int colIndex, int skipBlockRow, int valueToRemove, P
       newStep.colIndex = colIndex;
       newStep.strategyUsed = LOCKED_CANDIDATE_POINTING;
       newStep.value = valueToRemove;
-      lastStep = pushStep(lastStep, newStep);
+      lastStep = appendStep(lastStep, newStep);
     }
   }
   return lastStep;
 }
 
 
-bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, Cells* cells) {
+bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells) {
   int block[9] = {0};
   int row[9] = {0};
   int col[9] = {0};
@@ -388,7 +391,7 @@ bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, Cells* cells) 
   return true;
 }
 
-void getBlock(int blockX, int blockY, Cells* cells, int* block) {
+void getBlock(int blockX, int blockY, int* cells, int* block) {
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     int rowModifier = (i / BLOCK_WIDTH) * PUZZLE_WIDTH;
     int colModifier = i % BLOCK_WIDTH;
@@ -396,18 +399,18 @@ void getBlock(int blockX, int blockY, Cells* cells, int* block) {
     int blockYOffset = blockY * BLOCK_WIDTH * PUZZLE_WIDTH;
     int cellIndex = rowModifier + colModifier + blockXOffset + blockYOffset;
     
-    block[i] = cells[i];
+    block[i] = cells[cellIndex];
   }
 }
 
-void getRow(int rowIndex, Cells* cells, int* row) {
+void getRow(int rowIndex, int* cells, int* row) {
   int offset = rowIndex * PUZZLE_WIDTH;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     row[i] = cells[i + offset];
   }
 }
 
-void getCol(int colIndex, Cells* cells, int* col) {
+void getCol(int colIndex, int* cells, int* col) {
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     col[i] = cells[i * PUZZLE_WIDTH + colIndex];
   }
@@ -422,7 +425,7 @@ int getCellPosInBlock(int rowIndex, int colIndex) {
   return (normalizedY * BLOCK_WIDTH) + normalizedX;
 }
 
-void getCandidateBlock(int blockX, int blockY, CellCandidates* candidates, CellCandidates* block) {
+void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* block) {
   int blockXOffset = blockX * BLOCK_WIDTH;
   int blockYOffset = blockY * BLOCK_WIDTH * PUZZLE_WIDTH;
   int startIndex = blockXOffset + blockYOffset;
@@ -435,20 +438,20 @@ void getCandidateBlock(int blockX, int blockY, CellCandidates* candidates, CellC
   }
 }
 
-void getCandidateRow(int rowIndex, CellCandidates* candidates, CellCandidates* row) {
+void getCandidateRow(int rowIndex, uint16_t* candidates, uint16_t* row) {
   int offset = rowIndex * PUZZLE_WIDTH;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     row[i] = candidates[i + offset];
   }
 }
-void getCandidateCol(int colIndex, CellCandidates* candidates, CellCandidates* col) {
+void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col) {
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     int offset = i * PUZZLE_WIDTH + colIndex;
     col[i] = candidates[offset];
   }
 }
 
-bool isFullHouse(int rowIndex, int colIndex, Cells* cells) {
+bool isFullHouse(int rowIndex, int colIndex, int* cells) {
   int row[9] = {0};
   getRow(rowIndex, cells, row);
   if(countUnit(row) == 8) {
@@ -493,9 +496,9 @@ StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNo
       newStep.candidateRemoved = true;
       newStep.colIndex = cellIndex % PUZZLE_WIDTH;
       newStep.rowIndex = rowIndex;
-      newStep.strategyUsed = NULL;
+      newStep.strategyUsed = NONE;
       newStep.value = value;
-      lastStep = pushStep(lastStep, newStep);
+      lastStep = appendStep(lastStep, newStep);
     }
   }
   return lastStep;
@@ -511,9 +514,9 @@ StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNo
       newStep.candidateRemoved = true;
       newStep.colIndex = colIndex;
       newStep.rowIndex = i;
-      newStep.strategyUsed = NULL;
+      newStep.strategyUsed = NONE;
       newStep.value = value;
-      lastStep = pushStep(lastStep, newStep);
+      lastStep = appendStep(lastStep, newStep);
     }
   }
   return lastStep;
@@ -536,9 +539,9 @@ StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRo
       newStep.candidateRemoved = true;
       newStep.colIndex = (blockYOffset + colModifier) % PUZZLE_WIDTH;
       newStep.rowIndex = (blockXOffset + rowModifier);
-      newStep.strategyUsed = NULL;
+      newStep.strategyUsed = NONE;
       newStep.value = value;
-      lastStep = pushStep(lastStep, newStep);
+      lastStep = appendStep(lastStep, newStep);
     }
   }
   return lastStep;
