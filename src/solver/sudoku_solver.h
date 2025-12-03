@@ -5,11 +5,18 @@
 #include <stdbool.h>
 #include "puzzle.h"
 #include "strategies.h"
-
+#include "utils.h"
 
 #define BLOCK_WIDTH 3
 #define PUZZLE_WIDTH 9
 
+typedef struct {
+  int* values;
+  uint16_t* candidates;
+  int* indicies;
+  int* foundIndicies;
+  int foundCount;
+} NakedComboSearchContext;
 bool solvePuzzle(Puzzle* puzzle, StepNode* head);
 
 void fillPuzzleCandidates(Puzzle* Puzzle);
@@ -41,8 +48,6 @@ StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNo
 StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRow, int skipCol, Puzzle* puzzle, StepNode* head);
 
 
-
-
 static inline bool hasCandidate(uint16_t mask, int num) {
   return (mask >> (num - 1)) & 1;
 }
@@ -58,7 +63,7 @@ static inline int getValueFromMask(uint16_t mask) {
   if(mask == 0) return 0;
   return __builtin_ctz(mask) + 1;
 }
-static inline int countUnit(int* unit) {
+static inline int countFilledCells(int* unit) {
   int count = 0;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     if(unit[i] != 0) {
@@ -67,4 +72,12 @@ static inline int countUnit(int* unit) {
   }
   return count;
 }
+static inline int calcNumOfPossibleCellCombos(int totalCells, int comboSize) {
+  // Equation totalCells! / ((totaLCells - comboSize)! * comboSize!)
+  if(totalCells < comboSize) return -1;
+
+  int cellCombos = factorial(totalCells) / ((factorial(totalCells - comboSize)) * factorial(comboSize));
+  return cellCombos;
+}
+
 #endif // SUKOKU_SOLVER
