@@ -13,10 +13,18 @@
 typedef struct {
   int* values;
   uint16_t* candidates;
-  int* indicies;
+  int* subsetIndicies;
   int* foundIndicies;
-  int foundCount;
+  uint16_t subsetCandidates;
 } NakedComboSearchContext;
+
+typedef struct {
+  uint16_t* allCandidateUnion;
+  int* emptyCellIndicies;
+  int* cells;
+  
+} HiddenComboSearchContext;
+
 bool solvePuzzle(Puzzle* puzzle, StepNode* head);
 
 void fillPuzzleCandidates(Puzzle* Puzzle);
@@ -28,6 +36,9 @@ StepNode* findLockedCandidates(Puzzle* puzzle, StepNode* head);
 StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head);
 StepNode* findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head);
 
+StepNode* findSubsets(Puzzle* puzzle, StepNode* head);
+StepNode* findNakedSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, StepNode* head);
+
 StepNode* removePointingRow(int rowIndex, int skipBlockCol, int valueToRemove, Puzzle* puzzle, StepNode* head);
 StepNode* removePointingCol(int colIndex, int skipBlockRow, int valueToRemove, Puzzle* puzzle, StepNode* head);
 
@@ -36,6 +47,8 @@ void getBlock(int blockX, int blockY, int* cells, int* block);
 void getRow(int rowIndex, int* cells, int* row);
 void getCol(int colIndex, int* cells, int* col);
 int getCellPosInBlock(int rowIndex, int colIndex);
+
+int getCellIndexFromHousePos(House* house, int cellIndex);
 void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* block);
 void getCandidateRow(int rowIndex, uint16_t* candidates, uint16_t* row);
 void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col);
@@ -47,7 +60,8 @@ StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNo
 StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNode* head);
 StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRow, int skipCol, Puzzle* puzzle, StepNode* head);
 
-
+StepNode* removeNakedSubsetFromHouse(Puzzle* puzzle, NakedComboSearchContext* context, House* house, int subsetSize, StepNode* head);
+bool findNakedCombo(NakedComboSearchContext* context, int startIndex, int subsetSize, int depth);
 static inline bool hasCandidate(uint16_t mask, int num) {
   return (mask >> (num - 1)) & 1;
 }
@@ -71,13 +85,6 @@ static inline int countFilledCells(int* unit) {
     }
   }
   return count;
-}
-static inline int calcNumOfPossibleCellCombos(int totalCells, int comboSize) {
-  // Equation totalCells! / ((totaLCells - comboSize)! * comboSize!)
-  if(totalCells < comboSize) return -1;
-
-  int cellCombos = factorial(totalCells) / ((factorial(totalCells - comboSize)) * factorial(comboSize));
-  return cellCombos;
 }
 
 #endif // SUKOKU_SOLVER

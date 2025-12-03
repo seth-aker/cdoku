@@ -25,6 +25,11 @@ bool solvePuzzle(Puzzle* puzzle, StepNode* head) {
       // Puzzle has been modified and we need to check if it can be solved/go through the loop again.
       continue;
     }
+
+    newStep = findSubsets(puzzle, current);
+    if(current != newStep) {
+      continue;
+    }
     return false;
   }
   return true;
@@ -330,43 +335,181 @@ StepNode* findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head) {
 }
 
 StepNode* findSubsets(Puzzle* puzzle, StepNode* head) {
+  StepNode* current = head;
+  for(int subsetSize = 2; subsetSize <= 4; ++subsetSize) {
+    for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+      House house;
+      house.index = i;
+      // ROW
+      getCandidateRow(i, puzzle->candidates, house.candidates);
+      getRow(i, puzzle->cells, house.cells);
+      house.type = ROW;
+      
+      current = findNakedSubsetOfSize(puzzle, &house, subsetSize, current);
+      if(current != head) {
+        return current;
+      }
+      
+      // COL
+      getCandidateCol(i, puzzle->candidates, house.candidates);
+      getCol(i, puzzle->cells, house.cells);
+      house.type = COL;
+      
+      current = findNakedSubsetOfSize(puzzle, &house, subsetSize, current);
+      if(current != head) {
+        return current;
+      }
+      
+      // BLOCK
+      int blockX = i / BLOCK_WIDTH;
+      int blockY = i % BLOCK_WIDTH;
+      getCandidateBlock(blockX, blockY, puzzle->candidates, house.candidates);
+      getBlock(blockX, blockY, puzzle->cells, house.cells);
+      house.type = BLOCK;
+      
+      current = findNakedSubsetOfSize(puzzle, &house, subsetSize, current);
+      if(current != head) {
+        return current;
+      }
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    for(int subsetSize = 2; subsetSize <= 4; ++subsetSize) {
+      House house;
+      house.index = i;
 
+      getCandidateRow(i, puzzle->candidates, house.candidates);
+      getRow(i, puzzle->cells, house.cells);
+      house.type = ROW;
+
+      current = findHiddenSubsetOfSize(puzzle, &house, subsetSize, current);
+      if(current != head) {
+        return current;
+      }
+    }
+  }
+  return current;
 }
 
-StepNode* findNakedSubsetOfSize(Puzzle* puzzle, int size, StepNode* head) {
-
-}
-
-StepNode* findNakedSubsetInHouse(int* houseValues, int* houseCandidates, int subsetSize, StepNode* head) {
+StepNode* findNakedSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, StepNode* head) {
   
   NakedComboSearchContext context;
-  context.candidates = houseCandidates;
-  context.values = houseValues;
-  context.foundCount = 0;
-  context.foundIndicies[subsetSize];
-  context.indicies[4]; // max size of subsetSize;
+  int foundBuffer[subsetSize];
+  int subsetBuffer[subsetSize];
+  context.candidates = house->candidates;
+  context.values = house->cells;
+  context.subsetCandidates = 0;
+  context.foundIndicies = foundBuffer;
+  context.subsetIndicies = subsetBuffer;
 
+  if(findNakedCombo(&context, 0, subsetSize, 0)) {
+    StepNode* newStep = removeNakedSubsetFromHouse(puzzle, &context, house, subsetSize, head);
+    if(newStep == head) {
+      return head;
+    }
+    return newStep;
+  }
+  return head;
+}
 
-// TODO: modify this to account for the unique combos right now it is not doing that.
-  // uint16_t candidateUnions[numOfCombos];
-  // for(int i = 0; i < numOfCombos; ++i) {
-  //   for(int j = 0; j < emptyCellCount; ++j) {
-  //     candidateUnions[i] |= houseCandidates[emptyCellsIndicies[j]];
-  //   }
-  //   int candidates[9];
-  //   if(getCandidatesInCell(candidateUnions[i], candidates) == subsetSize) {
-  //     for(int houseIndex = 0; houseIndex < PUZZLE_WIDTH; ++houseIndex) {
-  //       if(includes(emptyCellsIndicies, emptyCellCount, houseIndex)) {
-  //         continue;
-  //       }
-  //       for(int unionIndex = 0; unionIndex < numOfCombos; ++unionIndex) {
-          
-  //       }
-  //     }
-  //   }
-  // }
+StepNode* removeNakedSubsetFromHouse(Puzzle* puzzle, NakedComboSearchContext* context, House* house, int subsetSize, StepNode* head) {
+  StepNode* current = head;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    bool isSubset = false;
+    for(int k = 0; k < subsetSize; ++k) {
+      if(i == context->foundIndicies[k]) {
+        isSubset = true;
+      }
+    }
+    if(!isSubset && (house->candidates[i] & context->subsetCandidates)) {
+      int candidates[subsetSize];
+      for(int i = getCandidatesInCell(context->subsetCandidates, candidates); i < subsetSize; ++i) {
+        int cellLocation = getCellIndexFromHousePos(house, i);
+        bool candidateRemoved = removeCandidate(&puzzle->candidates[cellLocation], candidates[i]);
 
-  
+        if(candidateRemoved) {
+          Step newStep;
+          newStep.candidateRemoved = true;
+          switch(subsetSize) {
+            case 2:
+            newStep.strategyUsed = NAKED_PAIRS;
+            break;
+            case 3:
+            newStep.strategyUsed = NAKED_TRIPLES;
+            break;
+            case 4: 
+            newStep.strategyUsed = NAKED_QUADS;
+          }
+          newStep.value = candidates[i];
+          switch (house->type) {
+            case ROW:
+            newStep.rowIndex = house->index;
+            newStep.colIndex = i;
+            break;
+            case COL: 
+            newStep.rowIndex = i;
+            newStep.colIndex = house->index;
+            break;
+            default: // BLOCK
+            newStep.rowIndex = ((house->index / PUZZLE_WIDTH) * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+            newStep.colIndex = (house->index % PUZZLE_WIDTH * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+            break;
+          }
+          current = appendStep(current, newStep);
+        }
+      }
+    }
+  }
+  return current;
+}
+
+bool findNakedCombo(NakedComboSearchContext* context, int startIndex, int subsetSize, int depth) {
+  if(depth == subsetSize) {
+    uint16_t unionMask = 0;
+    for(int i = 0; i < subsetSize; ++i) {
+      int cellIndex = context->subsetIndicies[i];
+      unionMask |= context->candidates[cellIndex];
+    }
+    if(__builtin_popcount(unionMask) == subsetSize) {
+      for(int i = 0; i < subsetSize; ++i) {
+        context->foundIndicies[i] = context->subsetIndicies[i];
+      }
+      context->subsetCandidates = unionMask;
+      return true;
+    }
+    return false;
+  }
+  for(int i = startIndex; i < PUZZLE_WIDTH; ++i) {
+    if(context->values[i] > 0) continue;
+
+    if(__builtin_popcount(context->candidates[i]) > subsetSize) continue;
+
+    context->subsetIndicies[depth] = i;
+    bool combinationFound = findNakedCombo(context, startIndex + 1, subsetSize, depth + 1);
+    if(combinationFound) {
+      return true;
+    }
+  }
+  return false;
+}
+
+StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, StepNode* head) {
+  HiddenComboSearchContext context; 
+  context.cells = house->cells;
+  int emptyCellCount = PUZZLE_WIDTH - countFilledCells(house->cells);
+  for(int i = 0; i < emptyCellCount; ++i) {
+    
+  }
+}
+bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subsetSize, int depth) {
+  if(depth == subsetSize) {
+
+  }
+  for(int i = startIndex; i < PUZZLE_WIDTH; ++i) {
+    if(context->cells[i] > 0) continue;
+    
+
+  }
 }
 
 StepNode* removePointingRow(int rowIndex, int skipBlockCol, int valueToRemove, Puzzle* puzzle, StepNode* head) {
@@ -463,6 +606,28 @@ int getCellPosInBlock(int rowIndex, int colIndex) {
   int normalizedY = rowIndex - (blockY * BLOCK_WIDTH);
 
   return (normalizedY * BLOCK_WIDTH) + normalizedX;
+}
+
+int getCellIndexFromHousePos(House* house, int cellIndex) {
+  switch (house->type) {
+  case BLOCK:
+    int blockXOffset = house->index % BLOCK_WIDTH;
+    int blockYOffset = (house->index / BLOCK_WIDTH) * PUZZLE_WIDTH * 3; // 3 Rows of 9 cells
+    int blockStart = blockXOffset + blockYOffset;
+
+    int rowNum = cellIndex / BLOCK_WIDTH;
+    int colNum = cellIndex % BLOCK_WIDTH;
+
+    return blockStart + rowNum + (colNum * PUZZLE_WIDTH);
+    break;
+  case COL:
+    return house->index + (cellIndex * PUZZLE_WIDTH);
+    break;
+  
+  default: // ROW
+    return cellIndex + (house->index * PUZZLE_WIDTH);
+    break;
+  }
 }
 
 void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* block) {
@@ -586,31 +751,4 @@ StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRo
   }
   return lastStep;
 }
-void checkCombination(NakedComboSearchContext* context, int startIndex, int subsetSize, int depth) {
-  if(depth == subsetSize) {
-    uint16_t unionMask = 0;
-    for(int i = 0; i < subsetSize; ++i) {
-      int cellIndex = context->indicies[i];
-      unionMask |= context->candidates[cellIndex];
-    }
-    if(__builtin_popcount(unionMask) == subsetSize) {
-      for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-        for(int j = 0; j < subsetSize; ++j) {
-          if(context->indicies[j] == i) {
-            context->foundIndicies[context->foundCount] = i;
-            context->foundCount++;
-          }
-        }
-      }
-    }
-    return;
-  }
-  for(int i = startIndex; i < PUZZLE_WIDTH; ++i) {
-    if(context->values[i] > 0) continue;
 
-    if(__builtin_popcount(context->candidates[i]) > subsetSize) continue;
-
-    context->indicies[depth] = i;
-    checkCombination(context, startIndex + 1, subsetSize, depth + 1);
-  }
-}
