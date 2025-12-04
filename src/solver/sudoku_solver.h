@@ -19,11 +19,14 @@ typedef struct {
 } NakedComboSearchContext;
 
 typedef struct {
-  int* emptyCellIndicies;
-  int emptyCellCount;
-  int* cells;
+  int* emptyCellIndicies; 
+  int emptyCellCount; 
+  int* cells; 
   uint16_t* candidates;
-  int* subsetIndicies;
+  uint16_t* candidateSubset;
+  int* allCandidateArray;
+  int allCandidateCount;
+  int* hiddenComboCellIndices;
 } HiddenComboSearchContext;
 
 bool solvePuzzle(Puzzle* puzzle, StepNode* head);
@@ -74,7 +77,7 @@ static inline bool removeCandidate(uint16_t* mask, int num) {
   *mask &= ~(1 << (num - 1));
   return removed;
 }
-static inline int getValueFromMask(uint16_t mask) {
+static inline int getFirstValueFromMask(uint16_t mask) {
   if(mask == 0) return 0;
   return __builtin_ctz(mask) + 1;
 }

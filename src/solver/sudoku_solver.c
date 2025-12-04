@@ -84,8 +84,8 @@ StepNode* findSingle(Puzzle* puzzle, StepNode* head) {
         }
         newStep.rowIndex = rowIndex;
         newStep.colIndex = colIndex;
-        newStep.candidateRemoved = false;
-        newStep.value = getValueFromMask(puzzle->candidates[cellIndex]);
+        newStep.candidatesRemoved = false;
+        newStep.value = getFirstValueFromMask(puzzle->candidates[cellIndex]);
         StepNode* last = appendStep(head, newStep);
         return last;
       }
@@ -93,7 +93,7 @@ StepNode* findSingle(Puzzle* puzzle, StepNode* head) {
       if(hiddenSingle) {
         newStep.rowIndex = rowIndex;
         newStep.colIndex = colIndex;
-        newStep.candidateRemoved = false;
+        newStep.candidatesRemoved = false;
         newStep.strategyUsed = HIDDEN_SINGLE;
         newStep.value = hiddenSingle;
         StepNode* last = appendStep(head, newStep);
@@ -118,7 +118,7 @@ int findHiddenSingle(int rowIndex, int colIndex, Puzzle* puzzle) {
     others |= puzzle->candidates[rowStart + i];
   }
   uint16_t unique = cell & ~others;
-  if(unique) return getValueFromMask(unique);
+  if(unique) return getFirstValueFromMask(unique);
 
   others = 0;
 
@@ -128,7 +128,7 @@ int findHiddenSingle(int rowIndex, int colIndex, Puzzle* puzzle) {
     others |= puzzle->candidates[i * PUZZLE_WIDTH + colIndex];
   }
   unique = cell & ~others;
-  if(unique) return getValueFromMask(unique);
+  if(unique) return getFirstValueFromMask(unique);
 
   others = 0;
   //Check the block
@@ -140,7 +140,7 @@ int findHiddenSingle(int rowIndex, int colIndex, Puzzle* puzzle) {
     others |= block[i];
   }
   unique = cell & ~others;
-  if(unique) return getValueFromMask(unique);
+  if(unique) return getFirstValueFromMask(unique);
   return 0;
 }
 
@@ -404,10 +404,9 @@ StepNode* findNakedSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, St
 
   if(findNakedCombo(&context, 0, subsetSize, 0)) {
     StepNode* newStep = removeNakedSubsetFromHouse(puzzle, &context, house, subsetSize, head);
-    if(newStep == head) {
-      return head;
+    if(newStep != head) {
+      return newStep;
     }
-    return newStep;
   }
   return head;
 }
@@ -423,13 +422,17 @@ StepNode* removeNakedSubsetFromHouse(Puzzle* puzzle, NakedComboSearchContext* co
     }
     if(!isSubset && (house->candidates[i] & context->subsetCandidates)) {
       int candidates[subsetSize];
-      for(int i = getCandidatesInCell(context->subsetCandidates, candidates); i < subsetSize; ++i) {
+      int candidateCount = getCandidatesInCell(context->subsetCandidates, candidates);
+      for(int i = 0; i < PUZZLE_WIDTH; ++i) {
         int cellLocation = getCellIndexFromHousePos(house, i);
-        bool candidateRemoved = removeCandidate(&puzzle->candidates[cellLocation], candidates[i]);
-
-        if(candidateRemoved) {
+        // Check if candidates will be removed and store them here.
+        uint16_t candidatesRemoved = puzzle->candidates[cellLocation] & context->subsetCandidates;
+        // accutally remove them.
+        puzzle->candidates[cellLocation] &= ~context->subsetCandidates;
+        // if no candidates were removed this will be 0
+        if(candidatesRemoved) {
           Step newStep;
-          newStep.candidateRemoved = true;
+          newStep.candidatesRemoved = candidatesRemoved;
           switch(subsetSize) {
             case 2:
             newStep.strategyUsed = NAKED_PAIRS;
@@ -498,28 +501,90 @@ StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, S
   context.cells = house->cells;
   context.candidates = house->candidates;
   context.emptyCellCount = 0;
+  uint16_t allCandidateUnion = 0;
   int emptyCellBuffer[9];
   
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     if(house->cells[i] == 0) {
       emptyCellBuffer[context.emptyCellCount] = i;
       context.emptyCellCount++;
+      allCandidateUnion |= house->candidates[i];
     }
   }
   context.emptyCellIndicies = emptyCellBuffer;
+  int candidateBuffer[9];
+  context.allCandidateCount = getCandidatesInCell(allCandidateUnion, candidateBuffer);
+  context.allCandidateArray = candidateBuffer;
+  uint16_t candidateSubsetBuffer[4] = {0}; // MAX DEPTH
+  context.candidateSubset = candidateSubsetBuffer;
+
+  if(findHiddenCombo(&context, 0, 2, 0)) {
+    StepNode* newStep = removeHiddenSubsetFromHouse(puzzle, house, &context, subsetSize, head);
+    if(newStep != head) {
+      return newStep;
+    }
+  }
+  return head;
+
+}
+StepNode* removeHiddenSubsetFromHouse(Puzzle* puzzle, House* house, HiddenComboSearchContext* context, int subsetSize, StepNode* head) {
+  StepNode* current = head;
+  uint16_t comboUnion = 0;
+    for(int i = 0; i < subsetSize; ++i) {
+      comboUnion |= context->candidateSubset[i];
+    }
+
+    for(int i = 0; i < subsetSize; ++i) {
+      int cellIndex = context->hiddenComboCellIndices[i];
+      int cellLocation = getCellIndexFromHousePos(house, cellIndex);
+      uint16_t candidatesRemoved = puzzle->candidates[cellLocation] & ~comboUnion;
+      puzzle->candidates[cellLocation] &= ~comboUnion;
+      if(candidatesRemoved) {
+        Step newStep;
+        newStep.candidatesRemoved = candidatesRemoved;
+        newStep.value = 0;
+        switch(subsetSize) {
+            case 2:
+            newStep.strategyUsed = HIDDEN_PAIRS;
+            break;
+            case 3:
+            newStep.strategyUsed = HIDDEN_TRIPLES;
+            break;
+            case 4: 
+            newStep.strategyUsed = HIDDEN_QUADS;
+          }
+          
+          switch (house->type) {
+            case ROW:
+            newStep.rowIndex = house->index;
+            newStep.colIndex = cellIndex;
+            break;
+            case COL: 
+            newStep.rowIndex = cellIndex;
+            newStep.colIndex = house->index;
+            break;
+            default: // BLOCK
+            newStep.rowIndex = ((house->index / PUZZLE_WIDTH) * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+            newStep.colIndex = (house->index % PUZZLE_WIDTH * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+            break;
+          }
+      }
+    }
 
 }
 bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subsetSize, int depth) {
+  // Check candidate subset once recursion depth is the target subsetSize. 
   if(depth == subsetSize) {
+    // Get the union of the particular subset of candidates.
     uint16_t potentialComboUnion = 0;
-    for(int i = 0; i < context->emptyCellCount; ++i) {
-      int cellIndex = context->emptyCellIndicies[i];
-      potentialComboUnion |= context->candidates[i];
+    for(int i = 0; i < subsetSize; ++i) {
+      potentialComboUnion |= context->candidateSubset[i];
     }
+
     int cellsWithCandidates[9];
     int cellsWithCandidatesCount = 0;
-    for(int i = 0; i < subsetSize; ++i) {
-      int cellIndex = context->subsetIndicies[i];
+    for(int i = 0; i < context->emptyCellCount; ++i) {
+      int cellIndex = context->emptyCellIndicies[i];
       uint16_t candidates = context->candidates[cellIndex];
       uint16_t hasCandidate = candidates & potentialComboUnion;
       if(hasCandidate) {
@@ -527,64 +592,77 @@ bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subs
         cellsWithCandidatesCount++;
       }
     }
-    if(cellsWithCandidatesCount == subsetSize) {
+    if(cellsWithCandidatesCount != subsetSize) {
       return false;
     }
+    bool appearsElsewhere = false;
     for(int i = 0; i < context->emptyCellCount; ++i) {
-      int emptyCellIndex = context->subsetIndicies[i];
-      bool inSubset = false;
+      int emptyCellIndex = context->emptyCellIndicies[i];
+      bool atPotentialComboIdx = false;
       for(int k = 0; k < cellsWithCandidatesCount; ++k) {
         if(cellsWithCandidates[k] == emptyCellIndex) {
-          inSubset = true;
+          atPotentialComboIdx = true;
           break;
         }
       }
-      if(inSubset) {
+      if(atPotentialComboIdx) {
         continue;
       }
-      
-
-
+      appearsElsewhere = context->candidates[emptyCellIndex] & potentialComboUnion;
+      if(appearsElsewhere) {
+        return false;
+      }
     }
-    
+    // if we have searched all empty cells and only subsetSize number of cells with the candidateCombo have those candidates, we found a hidden subset.
+    context->hiddenComboCellIndices = cellsWithCandidates;
+    return true;
   }
-  for(int i = startIndex; i < PUZZLE_WIDTH; ++i) {
-    if(context->cells[i] > 0) continue;
+  for(int i = startIndex; i < context->allCandidateCount; ++i) {
+    addCandidate(&context->candidateSubset[depth], context->allCandidateArray[i]);   
     
+    bool combinationFound = findHiddenCombo(context, startIndex + 1, subsetSize, depth + 1);
 
+    if(combinationFound) {
+      return true;
+    }
   }
+  return false;
 }
 
-StepNode* removePointingRow(int rowIndex, int skipBlockCol, int valueToRemove, Puzzle* puzzle, StepNode* head) {
+StepNode* removePointingRow(int rowIndex, int skipBlockCol, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head) {
   int rowStart = rowIndex * PUZZLE_WIDTH;
   StepNode* lastStep = head;
   for(int colIndex = 0; colIndex < PUZZLE_WIDTH; ++colIndex) {
     if(colIndex >= skipBlockCol && colIndex < skipBlockCol + BLOCK_WIDTH) continue;
-    bool removed = removeCandidate(&puzzle->candidates[rowStart + colIndex], valueToRemove);
+    // check what candidates will be removed
+    uint16_t removed = puzzle->candidates[rowStart + colIndex] & valuesToRemove;
+    // remove them;
+    puzzle->candidates[rowStart + colIndex] &= ~valuesToRemove;
     if(removed) {
       Step newStep;
       newStep.colIndex = colIndex;
       newStep.rowIndex = rowIndex;
-      newStep.candidateRemoved = true;
+      newStep.candidatesRemoved = removed;
       newStep.strategyUsed = LOCKED_CANDIDATE_POINTING;
-      newStep.value = valueToRemove;
+      newStep.value = 0;
       lastStep = appendStep(lastStep, newStep);
     }
   }
   return lastStep;
 }
-StepNode* removePointingCol(int colIndex, int skipBlockRow, int valueToRemove, Puzzle* puzzle, StepNode* head) {
+StepNode* removePointingCol(int colIndex, int skipBlockRow, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head) {
   StepNode* lastStep = head;
   for(int rowIndex = 0; rowIndex < PUZZLE_WIDTH; ++rowIndex) {
     if(rowIndex >= skipBlockRow && rowIndex < skipBlockRow + BLOCK_WIDTH) continue;
-    bool removed = removeCandidate(&puzzle->candidates[rowIndex * PUZZLE_WIDTH + colIndex], valueToRemove);
+    uint16_t removed = puzzle->candidates[rowIndex * PUZZLE_WIDTH + colIndex] & valuesToRemove;
+    puzzle->candidates[rowIndex * PUZZLE_WIDTH + colIndex] &= ~valuesToRemove;
     if(removed) {
       Step newStep;
-      newStep.candidateRemoved = true;
+      newStep.candidatesRemoved = removed;
       newStep.rowIndex = rowIndex;
       newStep.colIndex = colIndex;
       newStep.strategyUsed = LOCKED_CANDIDATE_POINTING;
-      newStep.value = valueToRemove;
+      newStep.value = 0;
       lastStep = appendStep(lastStep, newStep);
     }
   }
@@ -741,11 +819,11 @@ StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNo
     bool removed = removeCandidate(&puzzle->candidates[cellIndex], value);
     if(removed) {
       Step newStep;
-      newStep.candidateRemoved = true;
+      newStep.candidatesRemoved = (1 << (value - 1));
       newStep.colIndex = cellIndex % PUZZLE_WIDTH;
       newStep.rowIndex = rowIndex;
       newStep.strategyUsed = NONE;
-      newStep.value = value;
+      newStep.value = 0;
       lastStep = appendStep(lastStep, newStep);
     }
   }
@@ -759,11 +837,11 @@ StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNo
     bool removed = removeCandidate(&puzzle->candidates[cellIndex], value);
     if(removed) {
       Step newStep;
-      newStep.candidateRemoved = true;
+      newStep.candidatesRemoved = 1 << (value - 1);
       newStep.colIndex = colIndex;
       newStep.rowIndex = i;
       newStep.strategyUsed = NONE;
-      newStep.value = value;
+      newStep.value = 0;
       lastStep = appendStep(lastStep, newStep);
     }
   }
@@ -784,7 +862,7 @@ StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRo
     bool removed = removeCandidate(&puzzle->candidates[cellIndex], value);
     if(removed) {
       Step newStep;
-      newStep.candidateRemoved = true;
+      newStep.candidatesRemoved = 1 << (value - 1);
       newStep.colIndex = (blockYOffset + colModifier) % PUZZLE_WIDTH;
       newStep.rowIndex = (blockXOffset + rowModifier);
       newStep.strategyUsed = NONE;
