@@ -19,10 +19,11 @@ typedef struct {
 } NakedComboSearchContext;
 
 typedef struct {
-  uint16_t* allCandidateUnion;
   int* emptyCellIndicies;
+  int emptyCellCount;
   int* cells;
-  
+  uint16_t* candidates;
+  int* subsetIndicies;
 } HiddenComboSearchContext;
 
 bool solvePuzzle(Puzzle* puzzle, StepNode* head);

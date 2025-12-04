@@ -496,14 +496,57 @@ bool findNakedCombo(NakedComboSearchContext* context, int startIndex, int subset
 StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, StepNode* head) {
   HiddenComboSearchContext context; 
   context.cells = house->cells;
-  int emptyCellCount = PUZZLE_WIDTH - countFilledCells(house->cells);
-  for(int i = 0; i < emptyCellCount; ++i) {
-    
+  context.candidates = house->candidates;
+  context.emptyCellCount = 0;
+  int emptyCellBuffer[9];
+  
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(house->cells[i] == 0) {
+      emptyCellBuffer[context.emptyCellCount] = i;
+      context.emptyCellCount++;
+    }
   }
+  context.emptyCellIndicies = emptyCellBuffer;
+
 }
 bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subsetSize, int depth) {
   if(depth == subsetSize) {
+    uint16_t potentialComboUnion = 0;
+    for(int i = 0; i < context->emptyCellCount; ++i) {
+      int cellIndex = context->emptyCellIndicies[i];
+      potentialComboUnion |= context->candidates[i];
+    }
+    int cellsWithCandidates[9];
+    int cellsWithCandidatesCount = 0;
+    for(int i = 0; i < subsetSize; ++i) {
+      int cellIndex = context->subsetIndicies[i];
+      uint16_t candidates = context->candidates[cellIndex];
+      uint16_t hasCandidate = candidates & potentialComboUnion;
+      if(hasCandidate) {
+        cellsWithCandidates[cellsWithCandidatesCount] = cellIndex;
+        cellsWithCandidatesCount++;
+      }
+    }
+    if(cellsWithCandidatesCount == subsetSize) {
+      return false;
+    }
+    for(int i = 0; i < context->emptyCellCount; ++i) {
+      int emptyCellIndex = context->subsetIndicies[i];
+      bool inSubset = false;
+      for(int k = 0; k < cellsWithCandidatesCount; ++k) {
+        if(cellsWithCandidates[k] == emptyCellIndex) {
+          inSubset = true;
+          break;
+        }
+      }
+      if(inSubset) {
+        continue;
+      }
+      
 
+
+    }
+    
   }
   for(int i = startIndex; i < PUZZLE_WIDTH; ++i) {
     if(context->cells[i] > 0) continue;
