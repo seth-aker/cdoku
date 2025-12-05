@@ -386,6 +386,24 @@ StepNode* findSubsets(Puzzle* puzzle, StepNode* head) {
       if(current != head) {
         return current;
       }
+
+      getCandidateCol(i, puzzle->candidates, house.candidates);
+      getCol(i, puzzle->cells, house.cells);
+      house.type = COL;
+      current = findHiddenSubsetOfSize(puzzle, &house, subsetSize, current);
+      if(current != head) {
+        return current;
+      }
+
+      int blockX = i / BLOCK_WIDTH;
+      int blockY = i % BLOCK_WIDTH;
+      getCandidateBlock( blockX, blockY, puzzle->candidates, house.candidates);
+      getBlock(blockX, blockY, puzzle->cells, house.cells);
+      house.type = BLOCK;
+      current = findHiddenSubsetOfSize(puzzle, &house, subsetSize, current);
+      if(current != head) {
+        return current;
+      }
     }
   }
   return current;
@@ -530,46 +548,48 @@ StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, S
 StepNode* removeHiddenSubsetFromHouse(Puzzle* puzzle, House* house, HiddenComboSearchContext* context, int subsetSize, StepNode* head) {
   StepNode* current = head;
   uint16_t comboUnion = 0;
-    for(int i = 0; i < subsetSize; ++i) {
-      comboUnion |= context->candidateSubset[i];
-    }
+  for(int i = 0; i < subsetSize; ++i) {
+    comboUnion |= context->candidateSubset[i];
+  }
 
-    for(int i = 0; i < subsetSize; ++i) {
-      int cellIndex = context->hiddenComboCellIndices[i];
-      int cellLocation = getCellIndexFromHousePos(house, cellIndex);
-      uint16_t candidatesRemoved = puzzle->candidates[cellLocation] & ~comboUnion;
-      puzzle->candidates[cellLocation] &= ~comboUnion;
-      if(candidatesRemoved) {
-        Step newStep;
-        newStep.candidatesRemoved = candidatesRemoved;
-        newStep.value = 0;
-        switch(subsetSize) {
-            case 2:
-            newStep.strategyUsed = HIDDEN_PAIRS;
-            break;
-            case 3:
-            newStep.strategyUsed = HIDDEN_TRIPLES;
-            break;
-            case 4: 
-            newStep.strategyUsed = HIDDEN_QUADS;
-          }
-          
-          switch (house->type) {
-            case ROW:
-            newStep.rowIndex = house->index;
-            newStep.colIndex = cellIndex;
-            break;
-            case COL: 
-            newStep.rowIndex = cellIndex;
-            newStep.colIndex = house->index;
-            break;
-            default: // BLOCK
-            newStep.rowIndex = ((house->index / PUZZLE_WIDTH) * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
-            newStep.colIndex = (house->index % PUZZLE_WIDTH * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
-            break;
-          }
+  for(int i = 0; i < subsetSize; ++i) {
+    int cellIndex = context->hiddenComboCellIndices[i];
+    int cellLocation = getCellIndexFromHousePos(house, cellIndex);
+    uint16_t candidatesRemoved = puzzle->candidates[cellLocation] & ~comboUnion;
+    puzzle->candidates[cellLocation] &= ~comboUnion;
+    if(candidatesRemoved) {
+      Step newStep;
+      newStep.candidatesRemoved = candidatesRemoved;
+      newStep.value = 0;
+      switch(subsetSize) {
+        case 2:
+        newStep.strategyUsed = HIDDEN_PAIRS;
+        break;
+        case 3:
+        newStep.strategyUsed = HIDDEN_TRIPLES;
+        break;
+        case 4: 
+        newStep.strategyUsed = HIDDEN_QUADS;
       }
+      
+      switch (house->type) {
+        case ROW:
+        newStep.rowIndex = house->index;
+        newStep.colIndex = cellIndex;
+        break;
+        case COL: 
+        newStep.rowIndex = cellIndex;
+        newStep.colIndex = house->index;
+        break;
+        default: // BLOCK
+        newStep.rowIndex = ((house->index / PUZZLE_WIDTH) * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+        newStep.colIndex = (house->index % PUZZLE_WIDTH * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+        break;
+      }
+      current = appendStep(current, newStep);
     }
+  }
+  return current;
 
 }
 bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subsetSize, int depth) {

@@ -42,9 +42,15 @@ StepNode* findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head);
 
 StepNode* findSubsets(Puzzle* puzzle, StepNode* head);
 StepNode* findNakedSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, StepNode* head);
+StepNode* removeNakedSubsetFromHouse(Puzzle* puzzle, NakedComboSearchContext* context, House* house, int subsetSize, StepNode* head);
+bool findNakedCombo(NakedComboSearchContext* context, int startIndex, int subsetSize, int depth);
 
-StepNode* removePointingRow(int rowIndex, int skipBlockCol, int valueToRemove, Puzzle* puzzle, StepNode* head);
-StepNode* removePointingCol(int colIndex, int skipBlockRow, int valueToRemove, Puzzle* puzzle, StepNode* head);
+StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, StepNode* head);
+StepNode* removeHiddenSubsetFromHouse(Puzzle* puzzle, House* house, HiddenComboSearchContext* context, int subsetSize, StepNode* head);
+bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subsetSize, int depth);
+
+StepNode* removePointingRow(int rowIndex, int skipBlockCol, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
+StepNode* removePointingCol(int colIndex, int skipBlockRow, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
 
 bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells);
 void getBlock(int blockX, int blockY, int* cells, int* block);
@@ -64,8 +70,6 @@ StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNo
 StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNode* head);
 StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRow, int skipCol, Puzzle* puzzle, StepNode* head);
 
-StepNode* removeNakedSubsetFromHouse(Puzzle* puzzle, NakedComboSearchContext* context, House* house, int subsetSize, StepNode* head);
-bool findNakedCombo(NakedComboSearchContext* context, int startIndex, int subsetSize, int depth);
 static inline bool hasCandidate(uint16_t mask, int num) {
   return (mask >> (num - 1)) & 1;
 }
