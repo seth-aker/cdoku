@@ -3,6 +3,8 @@
 
 #include "solver/strategies.h"
 #include "solver/sudoku_solver.h"
+#include "solver/step.h"
+
 void printRow(int rowNum, int* cells) ;
 void printCells(int* cells);
 

@@ -1,49 +1,45 @@
-#include "strategies.h"
-StepNode* initStepList() {
-   StepNode* newNode = calloc(1, sizeof(StepNode));
-   if(newNode == NULL) {
-    perror("Failed to allocate memory for new Step");
-    exit(EXIT_FAILURE);
-  }
-  Step emptyStep = {
-    .colIndex = -1,
-    .rowIndex = -1,
-    .value = -1
-  };
-  newNode->next = NULL;
-  newNode->prev = NULL;
-  newNode->step = emptyStep;
-  return newNode;
-}
-StepNode* appendStep(StepNode* head, Step newStep) {
-  if(head == NULL) {
-    head = initStepList();
-    head->step = newStep;
-    return head;
-  }
-  StepNode* newNode = calloc(1, sizeof(StepNode));
-  if(newNode == NULL) {
-    perror("Failed to allocate memory for new Step");
-    exit(EXIT_FAILURE);
-  }
-  StepNode* current = head;
-  while (current->next != NULL) {
-    current = current->next;
-  }
-  
-  current->next = newNode;
-  newNode->step = newStep;
-  newNode->prev = current;
-  newNode->next = NULL;
-  return newNode;
-}
-
-void freeStepList(StepNode* head) {
-  StepNode* current = head;
-  StepNode* next;
-  while(current != NULL) {
-    next = current->next;
-    free(current);
-    current = next;
+#include "strategies.h";
+#include <string.h>
+void getStrategyName(Strategy strategy, char* string) {
+  switch (strategy) {
+  case FULL_HOUSE:
+    strcpy(string, "Full House");
+    break;
+  case NAKED_SINGLE:
+    strcpy(string, "Naked Single");
+    break;
+  case HIDDEN_SINGLE:
+    strcpy(string, "Hidden Single");
+    break;
+  case LOCKED_CANDIDATE_POINTING:
+    strcpy(string, "Locked Candidate Pointing");
+    break;
+  case LOCKED_CANDIDATE_CLAIMING:
+    strcpy(string, "Locked Candidate Claiming");
+    break;
+  case HIDDEN_PAIRS:
+    strcpy(string, "Hidden Pair");
+    break;
+  case NAKED_PAIRS:
+    strcpy(string, "Naked Pair");
+    break;
+  case HIDDEN_TRIPLES:
+    strcpy(string, "Hidden Triple");
+    break;
+  case NAKED_TRIPLES:
+    strcpy(string, "Naked Triple");
+    break;
+  case HIDDEN_QUADS:
+    strcpy(string, "Hidden Quad");
+    break;
+  case NAKED_QUADS:
+    strcpy(string, "Naked Quad");
+    break;
+  case GUESS:
+    strcpy(string, "Guess");
+    break;
+  default:
+    strcpy(string, "None");
+    break;
   }
 }

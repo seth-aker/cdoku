@@ -20,6 +20,23 @@ void printCells(int* cells) {
     }
   }
 }
-void printStep(Step step) {
-  
+void printStep(Step step, int stepNumber) {
+  printf("\n");
+  printf("Step: %d\n", stepNumber);
+  printf("(ROW, COLUMN): (%d, %d)\n", step.rowIndex, step.colIndex);
+  if(step.value) {
+    printf("VALUE: %d\n", step.value);
+  }
+  if(step.candidatesRemoved) {
+    int candidates[9];
+    printf("Candidates Removed: ");
+    int count = getCandidatesInCell(step.candidatesRemoved, candidates);
+    for(int i = 0; i < count; ++i) {
+      printf("%d, ", candidates[i]);
+    }
+    printf("\n");
+  }
+  char strategyName[27];
+  getStrategyName(step.strategyUsed, &strategyName);
+  printf("STRATEGY USED: %s", strategyName);
 }
