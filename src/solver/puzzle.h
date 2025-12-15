@@ -2,7 +2,9 @@
 #define SRC_SOLVER_PUZZLE_H
 
 #include <stdint.h>
-#include "strategies.h"
+
+#define BLOCK_WIDTH 3
+#define PUZZLE_WIDTH 9
 
 typedef enum {
   BEGINNER,
@@ -17,9 +19,6 @@ typedef struct {
   DifficultyRating rating;
 } PuzzleDifficulty;
 
-
-#define FULL_SET 0X1FF;
-#define EMPTY_SET 0x0;
 
 
 typedef struct {

@@ -2,13 +2,10 @@
 #define SRC_SOLVER_SUKOKU_SOLVER_H
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include "puzzle.h"
-#include "strategies.h"
-#include "utils.h"
-
-#define BLOCK_WIDTH 3
-#define PUZZLE_WIDTH 9
+#include "step.h"
 
 typedef struct {
   int* values;

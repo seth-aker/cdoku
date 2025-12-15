@@ -1,5 +1,6 @@
-#include "strategies.h";
-#include <string.h>
+#include "strategies.h"
+#include "string.h"
+// The string passed to this function must be a minimum of 27 characters long.
 void getStrategyName(Strategy strategy, char* string) {
   switch (strategy) {
   case FULL_HOUSE:

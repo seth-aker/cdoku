@@ -1,4 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "step.h"
+#include "utils.h"
+#include "logger.h"
 StepNode* initStepList() {
    StepNode* newNode = calloc(1, sizeof(StepNode));
    if(newNode == NULL) {
@@ -30,12 +34,27 @@ StepNode* appendStep(StepNode* head, Step newStep) {
   while (current->next != NULL) {
     current = current->next;
   }
-  
+  if(debugModeOn) {
+    printStep(newStep, countSteps(head));
+  }
   current->next = newNode;
   newNode->step = newStep;
   newNode->prev = current;
   newNode->next = NULL;
   return newNode;
+}
+
+int countSteps(StepNode* head) {
+  StepNode* current = head;
+  int count = 0;
+  while(current->prev != NULL) {
+    current = current->prev;
+  }
+  while(current->next != NULL) {
+    count++;
+    current = current->next;
+  }
+  return ++count;
 }
 
 void getStepSummary(StepSummary* summary, StepNode* head) {

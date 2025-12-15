@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "solver/sudoku_solver.h"
-#include "solver/step.h"
-#include "solver/puzzle.h"
-
+#include "step.h"
+#include "puzzle.h"
+#include "logger.h"
+#include "sudoku_solver.h"
 int main() {
   printf("Starting solver\n");
   StepNode* stepList = initStepList();
@@ -22,13 +22,18 @@ int main() {
     .id = 1
   };
   bool isSolved = solvePuzzle(&puzzle, stepList);
+  StepSummary summary = { 0 };
   if(isSolved) {
     printf("Puzzle solved!\n");
     printCells(puzzle.cells);
+    summary.solved = true;
   } else {
     printf("Puzzle failed to solve\n");
     printCells(puzzle.cells);
+    summary.solved = false;
   }
+  getStepSummary(&summary, stepList);
+  printSummary(&summary);
   freeStepList(stepList);
   return 0;
 }

@@ -1,8 +1,10 @@
 #ifndef SRC_SOLVER_STEP_H
 #define SRC_SOLVER_STEP_H
+
 #include <stdint.h>
-#include <stdlib.h>
+#include <stdbool.h>
 #include "strategies.h"
+
 typedef struct Step {
   int rowIndex;
   int colIndex;
@@ -32,12 +34,13 @@ typedef struct StepSummary {
   int hiddenQuadsCount;
   int nakedQuadsCount;
   int guessCount;
-  
 } StepSummary;
 
 StepNode* initStepList();
 // Iterates to the end of the list and appends it with a new StepNode with value Step;
 StepNode* appendStep(StepNode* head, Step newStep);
+
+int countSteps(StepNode* head);
 
 // Populates StepSummary
 void getStepSummary(StepSummary* summary, StepNode* head);
