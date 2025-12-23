@@ -36,6 +36,9 @@ void getStrategyName(Strategy strategy, char* string) {
   case NAKED_QUADS:
     strcpy(string, "Naked Quad");
     break;
+  case X_WING:
+    strcpy(string, "X-Wing");
+    break;
   case GUESS:
     strcpy(string, "Guess");
     break;

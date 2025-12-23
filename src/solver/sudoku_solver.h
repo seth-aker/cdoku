@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "puzzle.h"
 #include "step.h"
+#include "basic_fish_solver.h"
 
 typedef struct {
   int* values;
@@ -27,8 +28,8 @@ typedef struct {
 } HiddenComboSearchContext;
 
 bool solvePuzzle(Puzzle* puzzle, StepNode* head);
+bool solveRecursive(Puzzle* puzzle, StepNode* head);
 
-void fillPuzzleCandidates(Puzzle* Puzzle);
 bool isPuzzleSolved(int* cells);
 
 StepNode* findSingle(Puzzle* puzzle, StepNode* head);
@@ -49,47 +50,12 @@ bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subs
 StepNode* removePointingRow(int rowIndex, int skipBlockCol, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
 StepNode* removePointingCol(int colIndex, int skipBlockRow, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
 
-bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells);
-void getBlock(int blockX, int blockY, int* cells, int* block);
-void getRow(int rowIndex, int* cells, int* row);
-void getCol(int colIndex, int* cells, int* col);
-int getCellPosInBlock(int rowIndex, int colIndex);
-
-int getCellIndexFromHousePos(House* house, int cellIndex);
-void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* block);
-void getCandidateRow(int rowIndex, uint16_t* candidates, uint16_t* row);
-void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col);
-
 bool isFullHouse(int rowIndex, int colIndex, int* cells);
-int getCandidatesInCell(uint16_t cellCandidates, int* candidateArray);
 
 StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNode* head);
 StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNode* head);
-StepNode* removeCandidateFromBlock(int blockX, int blockY, int value, int skipRow, int skipCol, Puzzle* puzzle, StepNode* head);
+StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head);
 
-static inline bool hasCandidate(uint16_t mask, int num) {
-  return (mask >> (num - 1)) & 1;
-}
-static inline void addCandidate(uint16_t* mask, int num) {
-  *mask |= (1 << (num - 1));
-}
-static inline bool removeCandidate(uint16_t* mask, int num) {
-  bool removed = hasCandidate(*mask, num);
-  *mask &= ~(1 << (num - 1));
-  return removed;
-}
-static inline int getFirstValueFromMask(uint16_t mask) {
-  if(mask == 0) return 0;
-  return __builtin_ctz(mask) + 1;
-}
-static inline int countFilledCells(int* unit) {
-  int count = 0;
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if(unit[i] != 0) {
-      ++count;
-    }
-  }
-  return count;
-}
+bool makeGuess(Puzzle* puzzle, StepNode* heassd);
 
-#endif // SUKOKU_SOLVER
+#endif // SUKOKU_SOLVERz

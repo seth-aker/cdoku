@@ -14,6 +14,7 @@ typedef enum {
   NAKED_TRIPLES,
   HIDDEN_QUADS,
   NAKED_QUADS,
+  X_WING,
   GUESS
 } Strategy;
 
