@@ -32,8 +32,11 @@ bool solveRecursive(Puzzle* puzzle, StepNode* head);
 
 bool isPuzzleSolved(int* cells);
 
-StepNode* findSingle(Puzzle* puzzle, StepNode* head);
-int findHiddenSingle(int rowIndex, int colIndex, Puzzle* puzzle);
+StepNode* findSingles(Puzzle* puzzle, StepNode* head);
+StepNode* findFullHouses(Puzzle* puzzle, StepNode* head);
+StepNode* findNakedSingles(Puzzle* puzzle, StepNode* head);
+StepNode* findHiddenSingles(Puzzle* puzzle, StepNode* head);
+
 StepNode* findLockedCandidates(Puzzle* puzzle, StepNode* head);
 StepNode* findLockedCandidatePointing(Puzzle* puzzle, StepNode* head);
 StepNode* findLockedCandidateClaiming(Puzzle* puzzle, StepNode* head);
@@ -50,12 +53,12 @@ bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subs
 StepNode* removePointingRow(int rowIndex, int skipBlockCol, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
 StepNode* removePointingCol(int colIndex, int skipBlockRow, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
 
-bool isFullHouse(int rowIndex, int colIndex, int* cells);
+bool isFullHouse(int cellIndex, int* cells);
 
 StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNode* head);
 StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNode* head);
 StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head);
-
-bool makeGuess(Puzzle* puzzle, StepNode* heassd);
+StepNode* applyFoundValue(Puzzle* puzzle, int value, int cellIndex, Strategy stratUsed, StepNode* head);
+bool makeGuess(Puzzle* puzzle, StepNode* head);
 
 #endif // SUKOKU_SOLVERz

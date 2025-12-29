@@ -13,19 +13,8 @@ bool solveRecursive(Puzzle* puzzle, StepNode* head) {
   while(!isPuzzleSolved(puzzle->cells)) {
     // look for a single and if one exists adds it and updates current.
     // Find single returns the updated node if a single was found OR the same node that was passed.
-    StepNode* newStep = findSingle(puzzle, current);
+    StepNode* newStep = findSingles(puzzle, current);
     if(current != newStep) {
-      current = newStep;
-      int cellIndex = current->step.rowIndex * PUZZLE_WIDTH + current->step.colIndex;
-      puzzle->cells[cellIndex] = current->step.value;
-      puzzle->candidates[cellIndex] = 0;
-      BlockCoord coords = {
-        .blockX = newStep->step.colIndex / BLOCK_WIDTH,
-        .blockY = newStep->step.rowIndex / BLOCK_WIDTH
-      };
-      current = removeCandidateFromRow(newStep->step.rowIndex, newStep->step.value, puzzle, current);
-      current = removeCandidateFromCol(newStep->step.colIndex, newStep->step.value, puzzle, current);
-      current = removeCandidateFromBlock(coords, newStep->step.value, -1, -1, NONE, puzzle, current);
       continue;
     }
     newStep = findLockedCandidates(puzzle, current);
@@ -63,82 +52,108 @@ bool isPuzzleSolved(int* cells) {
 }
 
 
-StepNode* findSingle(Puzzle* puzzle, StepNode* head) {
-  Step newStep;
-  for(int rowIndex = 0; rowIndex < PUZZLE_WIDTH; ++rowIndex) {
-    for(int colIndex = 0; colIndex < PUZZLE_WIDTH; ++colIndex) {
-      int cellIndex = rowIndex * PUZZLE_WIDTH + colIndex;
-      if(puzzle->cells[cellIndex] != 0) {
-        continue;
-      }
-      int count = __builtin_popcount(puzzle->candidates[cellIndex]);
-      if(count == 1) {
-        // TODO: Optimize this to short circut
-        if(isFullHouse(rowIndex, colIndex, puzzle->cells)) {
-          newStep.strategyUsed = FULL_HOUSE;
-        } else {
-          newStep.strategyUsed = NAKED_SINGLE;
-        }
-        newStep.rowIndex = rowIndex;
-        newStep.colIndex = colIndex;
-        newStep.candidatesRemoved = false;
-        newStep.value = getFirstValueFromMask(puzzle->candidates[cellIndex]);
-        StepNode* last = appendStep(head, newStep);
-        return last;
-      }
-      int hiddenSingle = findHiddenSingle(rowIndex, colIndex, puzzle);
-      if(hiddenSingle) {
-        newStep.rowIndex = rowIndex;
-        newStep.colIndex = colIndex;
-        newStep.candidatesRemoved = false;
-        newStep.strategyUsed = HIDDEN_SINGLE;
-        newStep.value = hiddenSingle;
-        StepNode* last = appendStep(head, newStep);
-        return last;
-      }
+StepNode* findSingles(Puzzle* puzzle, StepNode* head) {
+  StepNode* current = head;
+  current = findFullHouses(puzzle, current);
+  if(current != head) {
+    return current;
+  }
+  current = findNakedSingles(puzzle, current);
+  if(current != head) {
+    return current;
+  }
+  current = findHiddenSingles(puzzle, current);
+  return current;
+}
+StepNode* findNakedSingles(Puzzle* puzzle, StepNode* head) {
+  StepNode* current = head;
+  for(int cellIndex = 0; cellIndex < TOTAL_CELLS; ++cellIndex) {
+    if(puzzle->cells[cellIndex] != 0) {
+      continue;
+    }
+    int count = __builtin_popcount(puzzle->candidates[cellIndex]);
+    if(count == 1) {
+      int value = getFirstValueFromMask(puzzle->candidates[cellIndex]);
+      current = applyFoundValue(puzzle, value, cellIndex, 
+        isFullHouse(cellIndex, puzzle->cells) ? FULL_HOUSE : NAKED_SINGLE,
+        current
+      );
+      return current;
     }
   }
-  return head;
+  return current;
 }
-int findHiddenSingle(int rowIndex, int colIndex, Puzzle* puzzle) {
-  int rowStart = rowIndex * PUZZLE_WIDTH;
-  int cellIndex = rowStart + colIndex;
-  if(puzzle->cells[cellIndex] != 0) {
-    return -1;
+StepNode* findFullHouses(Puzzle* puzzle, StepNode* head) {
+  StepNode* current = head;
+  for(int cellIndex = 0; cellIndex < TOTAL_CELLS; ++cellIndex) {
+    if(puzzle->cells[cellIndex] != 0) {
+      continue;
+    }
+    int count = __builtin_popcount(puzzle->candidates[cellIndex]);
+    if(count == 1 && isFullHouse(cellIndex, puzzle->cells)) {
+      int value = getFirstValueFromMask(puzzle->candidates[cellIndex]);
+      current = applyFoundValue(puzzle, value, cellIndex, FULL_HOUSE, current);
+      return current;
+    }
   }
-  uint16_t cell = puzzle->candidates[cellIndex];
+  return current;
+}
+StepNode* findHiddenSingles(Puzzle* puzzle, StepNode* head) {
+  StepNode* current = head;
+  for(int cellIndex = 0; cellIndex < TOTAL_CELLS; ++cellIndex) {
+    if(puzzle->cells[cellIndex] != 0) {
+      continue;
+    }
+    int rowIndex = cellIndex / PUZZLE_WIDTH;
+    int colIndex = cellIndex % PUZZLE_WIDTH;
+    int rowStart = rowIndex * PUZZLE_WIDTH;
+    
+    uint16_t cell = puzzle->candidates[cellIndex];
   
-  uint16_t others = 0;
-  // Check the row;
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if(i == colIndex) continue;
-    others |= puzzle->candidates[rowStart + i];
+    uint16_t others = 0;
+    // Check the row;
+    for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+      if(i == colIndex) continue;
+      others |= puzzle->candidates[rowStart + i];
+    }
+    uint16_t unique = cell & ~others;
+    if(unique) {
+      // TODO: refactor to function
+      int value = getFirstValueFromMask(unique);
+      current = applyFoundValue(puzzle, value, cellIndex, HIDDEN_SINGLE, current);
+      return current;
+    }
+    others = 0;
+  
+    // Check the col;
+    for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+      if(i == rowIndex) continue;
+      others |= puzzle->candidates[i * PUZZLE_WIDTH + colIndex];
+    }
+    unique = cell & ~others;
+    if(unique) {
+      int value = getFirstValueFromMask(unique);
+      current = applyFoundValue(puzzle, value, cellIndex, HIDDEN_SINGLE, current);
+      return current;
+    }
+    
+    others = 0;
+    //Check the block
+    uint16_t block[9];
+    getCandidateBlock(colIndex / BLOCK_WIDTH, rowIndex / BLOCK_WIDTH, puzzle->candidates, block);
+    int cellPosition = getCellPosInBlock(rowIndex, colIndex);
+    for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+      if(i == cellPosition) continue;
+      others |= block[i];
+    }
+    unique = cell & ~others;
+    if(unique) {
+      int value = getFirstValueFromMask(unique);
+      current = applyFoundValue(puzzle, value, cellIndex, HIDDEN_SINGLE, current);
+      return current;
+    }
   }
-  uint16_t unique = cell & ~others;
-  if(unique) return getFirstValueFromMask(unique);
-
-  others = 0;
-
-  // Check the col;
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if(i == rowIndex) continue;
-    others |= puzzle->candidates[i * PUZZLE_WIDTH + colIndex];
-  }
-  unique = cell & ~others;
-  if(unique) return getFirstValueFromMask(unique);
-
-  others = 0;
-  //Check the block
-  uint16_t block[9];
-  getCandidateBlock(colIndex / BLOCK_WIDTH, rowIndex / BLOCK_WIDTH, puzzle->candidates, block);
-  int cellPosition = getCellPosInBlock(rowIndex, colIndex);
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if(i == cellPosition) continue;
-    others |= block[i];
-  }
-  unique = cell & ~others;
-  if(unique) return getFirstValueFromMask(unique);
-  return 0;
+  return current;
 }
 
 StepNode* findLockedCandidates(Puzzle* puzzle, StepNode* head) {
@@ -359,8 +374,8 @@ StepNode* findSubsets(Puzzle* puzzle, StepNode* head) {
       }
       
       // BLOCK
-      int blockX = i / BLOCK_WIDTH;
-      int blockY = i % BLOCK_WIDTH;
+      int blockX = i % BLOCK_WIDTH;
+      int blockY = i / BLOCK_WIDTH;
       getCandidateBlock(blockX, blockY, puzzle->candidates, house.candidates);
       getBlock(blockX, blockY, puzzle->cells, house.cells);
       house.type = BLOCK;
@@ -393,8 +408,8 @@ StepNode* findSubsets(Puzzle* puzzle, StepNode* head) {
         return current;
       }
 
-      int blockX = i / BLOCK_WIDTH;
-      int blockY = i % BLOCK_WIDTH;
+      int blockX = i % BLOCK_WIDTH;
+      int blockY = i / BLOCK_WIDTH;
       getCandidateBlock( blockX, blockY, puzzle->candidates, house.candidates);
       getBlock(blockX, blockY, puzzle->cells, house.cells);
       house.type = BLOCK;
@@ -439,43 +454,41 @@ StepNode* removeNakedSubsetFromHouse(Puzzle* puzzle, NakedComboSearchContext* co
     if(!isSubset && (house->candidates[i] & context->subsetCandidates)) {
       int candidates[subsetSize];
       int candidateCount = getCandidatesInCell(context->subsetCandidates, candidates);
-      for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-        int cellLocation = getCellIndexFromHousePos(house, i);
-        // Check if candidates will be removed and store them here.
-        uint16_t candidatesRemoved = puzzle->candidates[cellLocation] & context->subsetCandidates;
-        // accutally remove them.
-        puzzle->candidates[cellLocation] &= ~context->subsetCandidates;
-        // if no candidates were removed this will be 0
-        if(candidatesRemoved) {
-          Step newStep;
-          newStep.candidatesRemoved = candidatesRemoved;
-          switch(subsetSize) {
-            case 2:
-            newStep.strategyUsed = NAKED_PAIRS;
-            break;
-            case 3:
-            newStep.strategyUsed = NAKED_TRIPLES;
-            break;
-            case 4: 
-            newStep.strategyUsed = NAKED_QUADS;
-          }
-          newStep.value = candidates[i];
-          switch (house->type) {
-            case ROW:
-            newStep.rowIndex = house->index;
-            newStep.colIndex = i;
-            break;
-            case COL: 
-            newStep.rowIndex = i;
-            newStep.colIndex = house->index;
-            break;
-            default: // BLOCK
-            newStep.rowIndex = ((house->index / PUZZLE_WIDTH) * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
-            newStep.colIndex = (house->index % PUZZLE_WIDTH * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
-            break;
-          }
-          current = appendStep(current, newStep);
+      int cellLocation = getCellIndexFromHousePos(house, i);
+      // Check if candidates will be removed and store them here.
+      uint16_t candidatesRemoved = puzzle->candidates[cellLocation] & context->subsetCandidates;
+      // accutally remove them.
+      puzzle->candidates[cellLocation] &= ~context->subsetCandidates;
+      // if no candidates were removed this will be 0
+      if(candidatesRemoved) {
+        Step newStep;
+        newStep.candidatesRemoved = candidatesRemoved;
+        switch(subsetSize) {
+          case 2:
+          newStep.strategyUsed = NAKED_PAIRS;
+          break;
+          case 3:
+          newStep.strategyUsed = NAKED_TRIPLES;
+          break;
+          case 4: 
+          newStep.strategyUsed = NAKED_QUADS;
         }
+        newStep.value = candidates[i];
+        switch (house->type) {
+          case ROW:
+          newStep.rowIndex = house->index;
+          newStep.colIndex = i;
+          break;
+          case COL: 
+          newStep.rowIndex = i;
+          newStep.colIndex = house->index;
+          break;
+          default: // BLOCK
+          newStep.rowIndex = ((house->index / PUZZLE_WIDTH) * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+          newStep.colIndex = (house->index % PUZZLE_WIDTH * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+          break;
+        }
+        current = appendStep(current, newStep);
       }
     }
   }
@@ -536,7 +549,7 @@ StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, S
   uint16_t candidateSubsetBuffer[4] = {0}; // MAX DEPTH
   context.candidateSubset = candidateSubsetBuffer;
 
-  if(findHiddenCombo(&context, 0, 2, 0)) {
+  if(findHiddenCombo(&context, 0, subsetSize, 0)) {
     StepNode* newStep = removeHiddenSubsetFromHouse(puzzle, house, &context, subsetSize, head);
     if(newStep != head) {
       return newStep;
@@ -556,7 +569,7 @@ StepNode* removeHiddenSubsetFromHouse(Puzzle* puzzle, House* house, HiddenComboS
     int cellIndex = context->hiddenComboCellIndices[i];
     int cellLocation = getCellIndexFromHousePos(house, cellIndex);
     uint16_t candidatesRemoved = puzzle->candidates[cellLocation] & ~comboUnion;
-    puzzle->candidates[cellLocation] &= ~comboUnion;
+    puzzle->candidates[cellLocation] &= comboUnion;
     if(candidatesRemoved) {
       Step newStep;
       newStep.candidatesRemoved = candidatesRemoved;
@@ -582,8 +595,8 @@ StepNode* removeHiddenSubsetFromHouse(Puzzle* puzzle, House* house, HiddenComboS
         newStep.colIndex = house->index;
         break;
         default: // BLOCK
-        newStep.rowIndex = ((house->index / PUZZLE_WIDTH) * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
-        newStep.colIndex = (house->index % PUZZLE_WIDTH * BLOCK_WIDTH) + (i / PUZZLE_WIDTH);
+        newStep.rowIndex = cellLocation / PUZZLE_WIDTH;
+        newStep.colIndex = cellLocation % PUZZLE_WIDTH;
         break;
       }
       current = appendStep(current, newStep);
@@ -699,26 +712,43 @@ StepNode* removePointingCol(int colIndex, int skipBlockRow, uint16_t valuesToRem
     return lastStep;
   }
 
-bool isFullHouse(int rowIndex, int colIndex, int* cells) {
+bool isFullHouse(int cellIndex, int* cells) {
   int row[9] = {0};
+  int rowIndex = cellIndex / PUZZLE_WIDTH;
+  int colIndex = cellIndex % PUZZLE_WIDTH;
   getRow(rowIndex, cells, row);
-  if(countFilledCells(row) == 8) {
-    return true;
+  int emptyCount = 0;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(row[i] == 0) {
+      ++emptyCount;
+      if(emptyCount > 1) break;
+    }
   }
+  if(emptyCount == 1) return true;
 
+  emptyCount = 0;
   int col[9] = {0};
   getCol(colIndex, cells, col);
-  if(countFilledCells(col) == 8) {
-    return true;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(col[i] == 0) {
+      ++emptyCount;
+      if(emptyCount > 1) break;
+    }
   }
-
+  if(emptyCount == 1) return true;
+  
+  emptyCount = 0;
   int block[9] = {0};
   int blockX = colIndex / BLOCK_WIDTH;
   int blockY = rowIndex / BLOCK_WIDTH;
   getBlock(blockX, blockY, cells, block);
-  if(countFilledCells(block) == 8) {
-    return true;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(block[i] == 0) {
+      ++emptyCount;
+      if(emptyCount > 1) break;
+    }
   }
+  if(emptyCount == 1) return true;
   return false;
 }
 
@@ -833,4 +863,32 @@ bool makeGuess(Puzzle* puzzle, StepNode* head) {
   }
   return false;
 
+}
+StepNode* applyFoundValue(Puzzle* puzzle, int value, int cellIndex, Strategy stratUsed, StepNode* head) {
+  StepNode* current = head;
+  puzzle->cells[cellIndex] = value;
+  puzzle->candidates[cellIndex] = 0;
+
+  int rowIndex = cellIndex / PUZZLE_WIDTH;
+  int colIndex = cellIndex % PUZZLE_WIDTH;
+  Step newStep = {
+    .value = value,
+    .rowIndex = rowIndex,
+    .colIndex = colIndex,
+    .candidatesRemoved = false,
+    .strategyUsed = stratUsed    
+  };
+  current = appendStep(head, newStep);
+  current = removeCandidateFromRow(rowIndex, value, puzzle, current);
+  current = removeCandidateFromCol(colIndex, value, puzzle, current);
+  current = removeCandidateFromBlock(
+    (BlockCoord){.blockX = colIndex / BLOCK_WIDTH, .blockY = rowIndex / BLOCK_WIDTH},
+    value, 
+    -1, 
+    -1, 
+    NONE, 
+    puzzle, 
+    current
+  );
+  return current;
 }

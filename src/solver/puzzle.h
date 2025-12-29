@@ -6,7 +6,7 @@
 
 #define BLOCK_WIDTH 3
 #define PUZZLE_WIDTH 9
-
+#define TOTAL_CELLS 81
 typedef enum {
   BEGINNER,
   EASY,

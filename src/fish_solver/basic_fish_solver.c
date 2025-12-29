@@ -16,38 +16,39 @@ StepNode* findBasicFish(Puzzle* puzzle, StepNode* head) {
 
 StepNode* findBasicXWing(Puzzle* puzzle, StepNode* head) {
   StepNode* current = head;
-  current = findBasicFishByRow(puzzle, 2, current);
+  current = findBasicFishByRow(puzzle, 2, X_WING, current);
   if(current != head) {
     return current;
   }
-  current = findBasicFishByCol(puzzle, 2, current);
+  current = findBasicFishByCol(puzzle, 2, X_WING, current);
   return current;
 }
 
 StepNode* findBasicSwordfish(Puzzle* puzzle, StepNode* head) {
   StepNode* current = head;
-  current = findBasicFishByRow(puzzle, 3, current);
+  current = findBasicFishByRow(puzzle, 3, SWORDFISH, current);
   if(current != head) {
     return current;
   }
-  current = findBasicFishByCol(puzzle, 3, current);
+  current = findBasicFishByCol(puzzle, 3, SWORDFISH, current);
   return current;
 }
 StepNode* findBasicJellyfish(Puzzle* puzzle, StepNode* head) {
   StepNode* current = head;
-  current = findBasicFishByRow(puzzle, 4, current);
+  current = findBasicFishByRow(puzzle, 4, JELLYFISH, current);
   if(current != head) {
     return current;
   }
-  current = findBasicFishByCol(puzzle, 4, current);
+  current = findBasicFishByCol(puzzle, 4, JELLYFISH, current);
   return current;
 }
 
-StepNode* findBasicFishByRow(Puzzle* puzzle, int fishSize, StepNode* head) {
+StepNode* findBasicFishByRow(Puzzle* puzzle, int fishSize,Strategy stratUsed, StepNode* head) {
   for(int candidate = 1; candidate <= PUZZLE_WIDTH; ++candidate) {
     uint16_t candidateMask = (1 << (candidate - 1));
     uint16_t rowCandidates[9] = {0};
     FishBases fishBases = {
+      .bases = {0},
       .numOfBases = 0
     };
     for(int i = 0; i < PUZZLE_WIDTH; ++i) {
@@ -57,7 +58,7 @@ StepNode* findBasicFishByRow(Puzzle* puzzle, int fishSize, StepNode* head) {
       if(candidateCount > 0 && candidateCount <= fishSize) {
         fishBases.numOfBases++;
         if(fishBases.numOfBases > fishSize) break;
-        FishIndicies* baseHouse = fishBases.bases[fishBases.numOfBases - 1];
+        FishIndicies* baseHouse = &fishBases.bases[fishBases.numOfBases - 1];
         baseHouse->baseIndex = i;
         findCandidateIndiciesInHouse(rowCandidates, candidateMask, &baseHouse->indicies, candidateCount);
       }
@@ -67,8 +68,8 @@ StepNode* findBasicFishByRow(Puzzle* puzzle, int fishSize, StepNode* head) {
     uint16_t candidateIndexUnion = 0;    
     int exceptRows[fishSize];
     for(int i = 0; i < fishBases.numOfBases; ++i) {
-      candidateIndexUnion |= fishBases.bases[i]->indicies;
-      exceptRows[i] = fishBases.bases[i]->baseIndex;
+      candidateIndexUnion |= fishBases.bases[i].indicies;
+      exceptRows[i] = fishBases.bases[i].baseIndex;
     }
     int indicies[fishSize];
     int count = getCandidatesInCell(candidateIndexUnion, indicies); // This isn't actually candidates in a cell, this is indicies of where candidates exist in a row.
@@ -76,7 +77,7 @@ StepNode* findBasicFishByRow(Puzzle* puzzle, int fishSize, StepNode* head) {
 
     StepNode* current = head;
     for(int i = 0; i < fishBases.numOfBases; ++i) {
-      current = removeCandidatesFromColExcept(puzzle, candidateMask, indicies[i], exceptRows, fishSize, head);
+      current = removeCandidatesFromColExcept(puzzle, candidateMask, indicies[i], exceptRows, fishSize, stratUsed, head);
     }
     if(current != head) {
       return current;
@@ -85,7 +86,7 @@ StepNode* findBasicFishByRow(Puzzle* puzzle, int fishSize, StepNode* head) {
   return head;
 }
 
-StepNode* findBasicFishByCol(Puzzle* puzzle, int fishSize, StepNode* head) {
+StepNode* findBasicFishByCol(Puzzle* puzzle, int fishSize, Strategy stratUsed, StepNode* head) {
   for(int candidate = 1; candidate <= PUZZLE_WIDTH; ++candidate) {
     uint16_t candidateMask = 1 << (candidate - 1);
 
@@ -100,7 +101,7 @@ StepNode* findBasicFishByCol(Puzzle* puzzle, int fishSize, StepNode* head) {
       if(candidateCount > 0 && candidateCount <= fishSize) {
         fishBases.numOfBases++;
         if(fishBases.numOfBases > fishSize) break;
-        FishIndicies* baseHouse = fishBases.bases[fishBases.numOfBases - 1];
+        FishIndicies* baseHouse = &fishBases.bases[fishBases.numOfBases - 1];
         baseHouse->baseIndex = i;
         findCandidateIndiciesInHouse(colCandidates, candidateMask, &baseHouse->indicies, candidateCount);
       }
@@ -110,8 +111,8 @@ StepNode* findBasicFishByCol(Puzzle* puzzle, int fishSize, StepNode* head) {
     uint16_t candidateIndexUnion = 0;    
     int exceptRows[fishSize];
     for(int i = 0; i < fishBases.numOfBases; ++i) {
-      candidateIndexUnion |= fishBases.bases[i]->indicies;
-      exceptRows[i] = fishBases.bases[i]->baseIndex;
+      candidateIndexUnion |= fishBases.bases[i].indicies;
+      exceptRows[i] = fishBases.bases[i].baseIndex;
     }
     int indicies[fishSize];
     int count = getCandidatesInCell(candidateIndexUnion, indicies); // This isn't actually candidates in a cell, this is indicies of where candidates exist in a row.
@@ -120,7 +121,7 @@ StepNode* findBasicFishByCol(Puzzle* puzzle, int fishSize, StepNode* head) {
 
     StepNode* current = head;
     for(int i = 0; i < fishBases.numOfBases; ++i) {
-      current = removeCandidatesFromRowExcept(puzzle, candidateMask, indicies[i], exceptRows, fishSize, head);
+      current = removeCandidatesFromRowExcept(puzzle, candidateMask, indicies[i], exceptRows, fishSize, stratUsed, head);
     }
     if(current != head) {
       return current;
@@ -154,7 +155,7 @@ int countCandidateInHouse(uint16_t* house, uint16_t candidateMask, int maxCount)
   return count;
 } 
 
-StepNode* removeCandidatesFromColExcept(Puzzle* puzzle, uint16_t candidateMask, int colIndex, int* exceptIndicies, int exceptSize, StepNode* head) {
+StepNode* removeCandidatesFromColExcept(Puzzle* puzzle, uint16_t candidateMask, int colIndex, int* exceptIndicies, int exceptSize, Strategy stratUsed, StepNode* head) {
   StepNode* current = head;
   for(int rowIndex = 0; rowIndex < PUZZLE_WIDTH; ++rowIndex) {
     if(includes(exceptIndicies, exceptSize, rowIndex)) continue;
@@ -166,7 +167,7 @@ StepNode* removeCandidatesFromColExcept(Puzzle* puzzle, uint16_t candidateMask, 
         .candidatesRemoved = candidateMask,
         .colIndex = colIndex,
         .rowIndex = rowIndex,
-        .strategyUsed = X_WING,
+        .strategyUsed = stratUsed,
         .value = 0        
       };
       current = appendStep(current, newStep);
@@ -175,7 +176,7 @@ StepNode* removeCandidatesFromColExcept(Puzzle* puzzle, uint16_t candidateMask, 
   return current;
 }
 
-StepNode* removeCandidatesFromRowExcept(Puzzle* puzzle, uint16_t candidateMask, int rowIndex, int* exceptIndicies, int exceptSize, StepNode* head) {
+StepNode* removeCandidatesFromRowExcept(Puzzle* puzzle, uint16_t candidateMask, int rowIndex, int* exceptIndicies, int exceptSize, Strategy stratUsed, StepNode* head) {
   StepNode* current = head;
   for(int colIndex = 0; colIndex < PUZZLE_WIDTH; ++colIndex) {
     if(includes(exceptIndicies, exceptSize, colIndex)) continue;

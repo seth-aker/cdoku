@@ -53,14 +53,14 @@ int getCellPosInBlock(int rowIndex, int colIndex) {
 int getCellIndexFromHousePos(House* house, int cellIndex) {
   switch (house->type) {
   case BLOCK:
-    int blockXOffset = house->index % BLOCK_WIDTH;
+    int blockXOffset = (house->index % BLOCK_WIDTH) * BLOCK_WIDTH;
     int blockYOffset = (house->index / BLOCK_WIDTH) * PUZZLE_WIDTH * 3; // 3 Rows of 9 cells
     int blockStart = blockXOffset + blockYOffset;
 
     int rowNum = cellIndex / BLOCK_WIDTH;
     int colNum = cellIndex % BLOCK_WIDTH;
 
-    return blockStart + rowNum + (colNum * PUZZLE_WIDTH);
+    return blockStart + colNum + (rowNum * PUZZLE_WIDTH);
     break;
   case COL:
     return house->index + (cellIndex * PUZZLE_WIDTH);
