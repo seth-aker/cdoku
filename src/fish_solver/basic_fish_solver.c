@@ -71,8 +71,8 @@ StepNode* findBasicFishByRow(Puzzle* puzzle, int fishSize,Strategy stratUsed, St
       candidateIndexUnion |= fishBases.bases[i].indicies;
       exceptRows[i] = fishBases.bases[i].baseIndex;
     }
-    int indicies[fishSize];
-    int count = getCandidatesInCell(candidateIndexUnion, indicies); // This isn't actually candidates in a cell, this is indicies of where candidates exist in a row.
+    int indicies[9] = {0};
+    int count = maskToIntArray(candidateIndexUnion, indicies); 
     if(count != fishSize) continue;
 
     StepNode* current = head;
@@ -114,8 +114,8 @@ StepNode* findBasicFishByCol(Puzzle* puzzle, int fishSize, Strategy stratUsed, S
       candidateIndexUnion |= fishBases.bases[i].indicies;
       exceptRows[i] = fishBases.bases[i].baseIndex;
     }
-    int indicies[fishSize];
-    int count = getCandidatesInCell(candidateIndexUnion, indicies); // This isn't actually candidates in a cell, this is indicies of where candidates exist in a row.
+    int indicies[9] = {0};
+    int count = maskToIntArray(candidateIndexUnion, indicies); 
     
     if(count != fishSize) continue;
 
@@ -134,7 +134,7 @@ void findCandidateIndiciesInHouse(uint16_t* house, uint16_t candidateMask, uint1
   int count = 0;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     if(house[i] & candidateMask) {
-      *indicies |= candidateMask;
+      *indicies |= 1 << (i);
       ++count;
     }
     if(count == indiciesSize) return;

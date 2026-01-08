@@ -141,3 +141,34 @@ int findEmptyCell(Puzzle* puzzle) {
   }
   return -1;
 }
+
+bool isLocationInBlock(int row, int col, int blockIndex) {
+  int blockX = col / BLOCK_WIDTH;
+  int blockY = row / BLOCK_WIDTH;
+
+  return blockX + blockY * BLOCK_WIDTH == blockIndex;
+}
+StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head) {
+  StepNode* lastStep = head;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(skipRow != -1 && (i / BLOCK_WIDTH) == skipRow) continue;
+    if(skipCol != -1 && (i % BLOCK_WIDTH) == skipCol) continue;
+    int rowModifier = (i / BLOCK_WIDTH) * PUZZLE_WIDTH;
+    int colModifier = i % BLOCK_WIDTH;
+    int blockXOffset = blockCoords.blockX * BLOCK_WIDTH;
+    int blockYOffset = blockCoords.blockY * BLOCK_WIDTH * PUZZLE_WIDTH;
+    int cellIndex = rowModifier + colModifier + blockXOffset + blockYOffset;
+
+    bool removed = removeCandidate(&puzzle->candidates[cellIndex], value);
+    if(removed) {
+      Step newStep;
+      newStep.candidatesRemoved = 1 << (value - 1);
+      newStep.colIndex = cellIndex % PUZZLE_WIDTH;
+      newStep.rowIndex = cellIndex / PUZZLE_WIDTH;
+      newStep.strategyUsed = stratUsed;
+      newStep.value = value;
+      lastStep = appendStep(lastStep, newStep);
+    }
+  }
+  return lastStep;
+}

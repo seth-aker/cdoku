@@ -15,22 +15,32 @@ bool solveRecursive(Puzzle* puzzle, StepNode* head) {
     // Find single returns the updated node if a single was found OR the same node that was passed.
     StepNode* newStep = findSingles(puzzle, current);
     if(current != newStep) {
+      current = newStep;
       continue;
     }
     newStep = findLockedCandidates(puzzle, current);
     if(current != newStep) {
+      current = newStep;
       // Puzzle has been modified and we need to check if it can be solved/go through the loop again.
       continue;
     }
 
     newStep = findSubsets(puzzle, current);
     if(current != newStep) {
+      current = newStep;
       continue;
     }
     newStep = findBasicFish(puzzle, current);
     if(current != newStep) {
+      current = newStep;
       continue;
     }
+    newStep = findFinnedFish(puzzle, current);
+    if(current != newStep) {
+      current = newStep;
+      continue;
+    }
+    
     if(makeGuess(puzzle, current)) {
       return true;
     }
@@ -452,7 +462,7 @@ StepNode* removeNakedSubsetFromHouse(Puzzle* puzzle, NakedComboSearchContext* co
       }
     }
     if(!isSubset && (house->candidates[i] & context->subsetCandidates)) {
-      int candidates[subsetSize];
+      int candidates[9] = {0};
       int candidateCount = getCandidatesInCell(context->subsetCandidates, candidates);
       int cellLocation = getCellIndexFromHousePos(house, i);
       // Check if candidates will be removed and store them here.
@@ -532,6 +542,8 @@ StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, S
   context.cells = house->cells;
   context.candidates = house->candidates;
   context.emptyCellCount = 0;
+  int hiddenComboCellIndicies[9] = {0};
+  context.hiddenComboCellIndices = hiddenComboCellIndicies;
   uint16_t allCandidateUnion = 0;
   int emptyCellBuffer[9];
   
@@ -647,7 +659,7 @@ bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subs
       }
     }
     // if we have searched all empty cells and only subsetSize number of cells with the candidateCombo have those candidates, we found a hidden subset.
-    context->hiddenComboCellIndices = cellsWithCandidates;
+    memcpy(context->hiddenComboCellIndices, cellsWithCandidates, sizeof(cellsWithCandidates));
     return true;
   }
   for(int i = startIndex; i < context->allCandidateCount; ++i) {
@@ -784,31 +796,6 @@ StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNo
       newStep.rowIndex = i;
       newStep.strategyUsed = NONE;
       newStep.value = 0;
-      lastStep = appendStep(lastStep, newStep);
-    }
-  }
-  return lastStep;
-}
-
-StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head) {
-  StepNode* lastStep = head;
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if(skipRow != -1 && (i / BLOCK_WIDTH) == skipRow) continue;
-    if(skipCol != -1 && (i % BLOCK_WIDTH) == skipCol) continue;
-    int rowModifier = (i / BLOCK_WIDTH) * PUZZLE_WIDTH;
-    int colModifier = i % BLOCK_WIDTH;
-    int blockXOffset = blockCoords.blockX * BLOCK_WIDTH;
-    int blockYOffset = blockCoords.blockY * BLOCK_WIDTH * PUZZLE_WIDTH;
-    int cellIndex = rowModifier + colModifier + blockXOffset + blockYOffset;
-
-    bool removed = removeCandidate(&puzzle->candidates[cellIndex], value);
-    if(removed) {
-      Step newStep;
-      newStep.candidatesRemoved = 1 << (value - 1);
-      newStep.colIndex = cellIndex % PUZZLE_WIDTH;
-      newStep.rowIndex = cellIndex / PUZZLE_WIDTH;
-      newStep.strategyUsed = stratUsed;
-      newStep.value = value;
       lastStep = appendStep(lastStep, newStep);
     }
   }

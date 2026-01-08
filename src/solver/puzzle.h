@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
+#include "step.h"
 #define BLOCK_WIDTH 3
 #define PUZZLE_WIDTH 9
 #define TOTAL_CELLS 81
@@ -60,6 +60,9 @@ void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col);
 int getCandidatesInCell(uint16_t cellCandidates, int* candidateArray);
 bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells);
 int findEmptyCell(Puzzle* puzzle);
+bool isLocationInBlock(int row, int col, int blockIndex);
+
+StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head);
 
 static inline bool hasCandidate(uint16_t mask, int num) {
   return (mask >> (num - 1)) & 1;

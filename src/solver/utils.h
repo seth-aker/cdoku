@@ -13,5 +13,14 @@ static inline bool includes(int* array, int arrayLen, int value) {
   }
   return false;
 }
-
+static inline int maskToIntArray(uint16_t mask, int* array) {
+  int count = 0;
+  while(mask > 0) {
+    int candidateIndex = __builtin_ctz(mask);
+    array[count++] = candidateIndex;
+    // Removes the lowest set bit.
+    mask &= (mask - 1);
+  }
+  return count;
+}
 #endif // SRC_SOLVER_UTILS_H

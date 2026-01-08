@@ -14,7 +14,7 @@ typedef struct {
 } FishIndicies;
 
 typedef struct {
-  FishIndicies bases[4]; // Max size of fish is 4.
+  FishIndicies bases[9]; // Max size of fish is 4.
   int numOfBases;
 } FishBases;
 

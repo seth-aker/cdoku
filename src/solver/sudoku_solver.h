@@ -7,6 +7,7 @@
 #include "puzzle.h"
 #include "step.h"
 #include "basic_fish_solver.h"
+#include "finned_fish_solver.h"
 
 typedef struct {
   int* values;
@@ -57,7 +58,6 @@ bool isFullHouse(int cellIndex, int* cells);
 
 StepNode* removeCandidateFromRow(int rowIndex, int value, Puzzle* puzzle, StepNode* head);
 StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNode* head);
-StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head);
 StepNode* applyFoundValue(Puzzle* puzzle, int value, int cellIndex, Strategy stratUsed, StepNode* head);
 bool makeGuess(Puzzle* puzzle, StepNode* head);
 
