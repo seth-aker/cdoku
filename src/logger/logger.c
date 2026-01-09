@@ -37,6 +37,12 @@ void printSummary(StepSummary* summary) {
   printf("Hidden Triples: %d\n", summary->hiddenTriplesCount);
   printf("Naked Quads: %d\n", summary->nakedQuadsCount);
   printf("Hidden Quads: %d\n", summary->hiddenQuadsCount);
+  printf("X-Wings: %d\n", summary->xWingCount);
+  printf("Finned X-Wings: %d\n", summary->finnedXWingCount);
+  printf("Swordfish: %d\n", summary->swordfishCount);
+  printf("Finned Swordfish: %d\n", summary->finnedSwordfishCount);
+  printf("Jellyfish: %d\n", summary->jellyfishCount);
+  printf("Finned Jellyfish: %d\n", summary->finnedJellyfishCount);
   printf("Guesses: %d\n", summary->guessCount);
   printf("=========================================\n");
 }

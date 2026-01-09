@@ -33,6 +33,12 @@ typedef struct StepSummary {
   int nakedTriplesCount;
   int hiddenQuadsCount;
   int nakedQuadsCount;
+  int xWingCount;
+  int finnedXWingCount;
+  int swordfishCount;
+  int finnedSwordfishCount;
+  int jellyfishCount;
+  int finnedJellyfishCount;
   int guessCount;
 } StepSummary;
 

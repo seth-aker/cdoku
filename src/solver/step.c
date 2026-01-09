@@ -107,6 +107,24 @@ void updateSummary(StepSummary* summary, Step step) {
   case NAKED_QUADS:
     summary->nakedQuadsCount++;
     break;
+  case X_WING:
+    summary->xWingCount++;
+    break;
+  case FINNED_X_WING:
+    summary->finnedXWingCount++;
+    break;
+  case SWORDFISH:
+    summary->swordfishCount++;
+    break;
+  case FINNED_SWORDFISH:
+    summary->finnedSwordfishCount++;
+    break;
+  case JELLYFISH:
+    summary->jellyfishCount++;
+    break;
+  case FINNED_JELLYFISH:
+    summary->finnedJellyfishCount++;
+    break;
   case GUESS:
     summary->guessCount++;
     break;
