@@ -2,8 +2,13 @@
 #define SRC_SOLVER_UTILS_H
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 static bool debugModeOn = true;
+
+static inline int randSudokuNum() {
+  return (rand() % 9 + 1);
+}
 
 static inline bool includes(int* array, int arrayLen, int value) {
   for(int i = 0; i < arrayLen; ++i) {
@@ -22,5 +27,15 @@ static inline int maskToIntArray(uint16_t mask, int* array) {
     mask &= (mask - 1);
   }
   return count;
+}
+
+static inline void shuffleIntArr(int* array, int arrLen) {
+  int temp;
+  for(int i = arrLen - 1; i > 0; --i) {
+    int j =  rand() % (i + 1);
+    temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
 }
 #endif // SRC_SOLVER_UTILS_H
