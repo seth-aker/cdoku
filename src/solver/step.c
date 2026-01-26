@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "step.h"
 #include "utils.h"
 #include "logger.h"
+
 StepNode* initStepList() {
    StepNode* newNode = calloc(1, sizeof(StepNode));
    if(newNode == NULL) {
@@ -70,7 +72,7 @@ void getStepSummary(StepSummary* summary, StepNode* head) {
   }
   // Get the last step.
   updateSummary(summary, current->step);
-
+  calculateDifficulty(summary);
 }
 void updateSummary(StepSummary* summary, Step step) {
   switch (step.strategyUsed) {
@@ -131,8 +133,82 @@ void updateSummary(StepSummary* summary, Step step) {
   default:
     break;
   }
+  int stratScore = getStrategyScore(step.strategyUsed);
+  if(summary->peakDifficulty < stratScore) {
+    summary->peakDifficulty = stratScore;
+  }
   summary->totalSteps++;
 }
+
+void calculateDifficulty(StepSummary* summary) {
+  int workScore = 0;
+  summary->difficultyScore = 0;
+
+  if(summary->fullHouseCount) {
+    workScore += calcDecayScore(FULL_HOUSE, summary->fullHouseCount);
+  }
+  if(summary->nakedSingleCount) {
+    workScore += calcDecayScore(NAKED_SINGLE, summary->nakedSingleCount);
+  }
+  if(summary->hiddenSingleCount) {
+    workScore += calcDecayScore(HIDDEN_SINGLE, summary->hiddenSingleCount);
+  }
+  if(summary->lockedCandidatePointingCount) {
+    workScore += calcDecayScore(LOCKED_CANDIDATE_POINTING, summary->lockedCandidatePointingCount);
+  }
+  if(summary->lockedCandidateClaimingCount) {
+    workScore += calcDecayScore(LOCKED_CANDIDATE_CLAIMING, summary->lockedCandidateClaimingCount);
+  }
+  if(summary->hiddenPairsCount) {
+    workScore += calcDecayScore(HIDDEN_PAIRS, summary->hiddenPairsCount);
+  }
+  if(summary->nakedPairsCount) {
+    workScore += calcDecayScore(NAKED_PAIRS, summary->nakedPairsCount);
+  }
+  if(summary->hiddenTriplesCount) {
+    workScore += calcDecayScore(HIDDEN_TRIPLES, summary->hiddenTriplesCount);
+  }
+  if(summary->nakedTriplesCount) {
+    workScore += calcDecayScore(NAKED_TRIPLES, summary->nakedTriplesCount);
+  }
+  if(summary->hiddenQuadsCount) {
+    workScore += calcDecayScore(HIDDEN_QUADS, summary->hiddenQuadsCount);
+  }
+  if(summary->nakedQuadsCount) {
+    workScore += calcDecayScore(NAKED_QUADS, summary->nakedQuadsCount);
+  }
+  if(summary->xWingCount) {
+    workScore += calcDecayScore(X_WING, summary->xWingCount);
+  }
+  if(summary->finnedXWingCount) {
+    workScore += calcDecayScore(FINNED_X_WING, summary->finnedXWingCount);
+  }
+  if(summary->swordfishCount) {
+    workScore += calcDecayScore(SWORDFISH, summary->swordfishCount);
+  }
+  if(summary->finnedSwordfishCount) {
+    workScore += calcDecayScore(FINNED_SWORDFISH, summary->finnedSwordfishCount);
+  }
+  if(summary->jellyfishCount) {
+    workScore += calcDecayScore(JELLYFISH, summary->jellyfishCount);
+  }
+  if(summary->finnedJellyfishCount) {
+    workScore += calcDecayScore(FINNED_JELLYFISH, summary->finnedJellyfishCount);
+  }
+  if(summary->skyscraperCount) {
+    workScore += calcDecayScore(SKYSCRAPER, summary->skyscraperCount);
+  }
+  if(summary->xyWingCount) {
+    workScore += calcDecayScore(XY_WING, summary->xyWingCount);
+  }
+  if(summary->guessCount) {
+    workScore += calcDecayScore(GUESS, summary->guessCount);
+  }
+  
+  summary->difficultyScore = summary->peakDifficulty + (int)log10(workScore);
+}
+
+
 
 void freeStepList(StepNode* head) {
   StepNode* current = head;

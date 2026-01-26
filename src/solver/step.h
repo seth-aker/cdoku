@@ -21,6 +21,8 @@ typedef struct StepNode {
 
 typedef struct StepSummary {
   int totalSteps;
+  int difficultyScore;
+  int peakDifficulty;
   bool solved;
   int fullHouseCount;
   int nakedSingleCount;
@@ -39,6 +41,8 @@ typedef struct StepSummary {
   int finnedSwordfishCount;
   int jellyfishCount;
   int finnedJellyfishCount;
+  int skyscraperCount;
+  int xyWingCount;
   int guessCount;
 } StepSummary;
 
@@ -55,4 +59,10 @@ void updateSummary(StepSummary* summary, Step step);
 
 void freeStepList(StepNode* head);
 
+void calculateDifficulty(StepSummary* summary);
+
+static inline int calcDecayScore(Strategy strategy, int count) {
+  int score = getStrategyScore(strategy);
+  return score + ((count - 1) * (score * 0.25));
+}
 #endif // SRC_SOLVER_STEP_H

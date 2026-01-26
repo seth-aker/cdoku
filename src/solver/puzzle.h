@@ -59,7 +59,7 @@ void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col);
 
 int getCandidatesInCell(uint16_t cellCandidates, int* candidateArray);
 bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells);
-int findEmptyCell(Puzzle* puzzle);
+int findEmptyCell(int* cells);
 bool isLocationInBlock(int row, int col, int blockIndex);
 
 StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head);

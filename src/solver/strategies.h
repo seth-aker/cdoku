@@ -20,8 +20,12 @@ typedef enum {
   FINNED_SWORDFISH,
   JELLYFISH,
   FINNED_JELLYFISH,
+  SKYSCRAPER,
+  XY_WING,
   GUESS
 } Strategy;
+
+int getStrategyScore(Strategy strategy);
 
 void getStrategyName(Strategy strategy, char* string);
 #endif // SRC_SOLVER_STRATEGIES_H

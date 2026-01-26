@@ -1,71 +1,96 @@
 #include <stdio.h>
+#include <stdarg.h>
 #include "logger.h"
 #include "puzzle.h"
 #include "sudoku_solver.h"
-void printRow(int rowNum, int* cells) {
-  printf("|");
+#include "log.h"
+
+void setupLogger() {
+  char nameBuf[100];
+  time_t now = time(NULL);
+  struct tm *timenow = localtime(&now);
+
+  strftime(nameBuf, sizeof(nameBuf), "logs/%Y-%m-%d_%H:%M:%S.log", timenow);
+  FILE* log_file = fopen(nameBuf, "a");
+  if(log_file == NULL) {
+    perror(("Error opening log file"));
+    exit(EXIT_FAILURE);
+  }
+  log_add_fp(log_file, LOG_LEVEL);
+
+}
+
+void printRow(int rowNum, int* cells, char* dest) {
+  int strLenth = strlen(dest);
+  strcat(dest, "|");
+  strLenth++;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     int rowOffset = rowNum * PUZZLE_WIDTH;
-    printf("| %d ", cells[i + rowOffset]);
+    snprintf(&dest[strLenth], 1000 - strLenth, "| %d ", cells[i + rowOffset]);
+    strLenth = strlen(dest);
     if(i % BLOCK_WIDTH == 2) {
-      printf("|");
+      strcat(dest, "|");
+      strLenth++;
     }
   }
-  printf("|\n");
+  strcat(dest,"|\n");
 }
 void printCells(int* cells) {
-  printf("=========================================\n");
+  char puzzleStr[1000];
+  strcat(puzzleStr,"=========================================\n");
+  
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    printRow(i, cells);
+    printRow(i, cells, puzzleStr);
     if(i % BLOCK_WIDTH == 2) {
-      printf("=========================================\n");
+      strcat(puzzleStr,"=========================================\n");
     }
   }
+  log_info("\n%s", puzzleStr);
 }
 void printSummary(StepSummary* summary) {
-  printf("\n");
-  printf("================ Summary =================\n");
-  printf("TOTAL STEPS: %d\n", summary->totalSteps);
-  printf("SOLVED: %s\n", summary->solved ? "TRUE" : "FALSE");
-  printf("Strategies Used:\n");
-  printf("Full Houses: %d\n", summary->fullHouseCount);
-  printf("Naked Singles: %d\n", summary->nakedSingleCount);
-  printf("Hidden Singles: %d\n", summary->hiddenSingleCount);
-  printf("Naked Pairs: %d\n", summary->nakedPairsCount);
-  printf("Hidden Pairs: %d\n", summary->nakedSingleCount);
-  printf("Naked Triples: %d\n", summary->nakedTriplesCount);
-  printf("Hidden Triples: %d\n", summary->hiddenTriplesCount);
-  printf("Naked Quads: %d\n", summary->nakedQuadsCount);
-  printf("Hidden Quads: %d\n", summary->hiddenQuadsCount);
-  printf("X-Wings: %d\n", summary->xWingCount);
-  printf("Finned X-Wings: %d\n", summary->finnedXWingCount);
-  printf("Swordfish: %d\n", summary->swordfishCount);
-  printf("Finned Swordfish: %d\n", summary->finnedSwordfishCount);
-  printf("Jellyfish: %d\n", summary->jellyfishCount);
-  printf("Finned Jellyfish: %d\n", summary->finnedJellyfishCount);
-  printf("Guesses: %d\n", summary->guessCount);
-  printf("=========================================\n");
+  log_info("\n");
+  log_info("================ Summary =================\n");
+  log_info("TOTAL STEPS: %d\n", summary->totalSteps);
+  log_info("SOLVED: %s\n", summary->solved ? "TRUE" : "FALSE");
+  log_info("Strategies Used:\n");
+  log_info("Full Houses: %d\n", summary->fullHouseCount);
+  log_info("Naked Singles: %d\n", summary->nakedSingleCount);
+  log_info("Hidden Singles: %d\n", summary->hiddenSingleCount);
+  log_info("Naked Pairs: %d\n", summary->nakedPairsCount);
+  log_info("Hidden Pairs: %d\n", summary->nakedSingleCount);
+  log_info("Naked Triples: %d\n", summary->nakedTriplesCount);
+  log_info("Hidden Triples: %d\n", summary->hiddenTriplesCount);
+  log_info("Naked Quads: %d\n", summary->nakedQuadsCount);
+  log_info("Hidden Quads: %d\n", summary->hiddenQuadsCount);
+  log_info("X-Wings: %d\n", summary->xWingCount);
+  log_info("Finned X-Wings: %d\n", summary->finnedXWingCount);
+  log_info("Swordfish: %d\n", summary->swordfishCount);
+  log_info("Finned Swordfish: %d\n", summary->finnedSwordfishCount);
+  log_info("Jellyfish: %d\n", summary->jellyfishCount);
+  log_info("Finned Jellyfish: %d\n", summary->finnedJellyfishCount);
+  log_info("Guesses: %d\n", summary->guessCount);
+  log_info("=========================================\n");
 }
 void printStep(Step step, int stepNumber) {
-  printf("\n");
+  log_info("\n");
   if(stepNumber != -1) {
-    printf("Step: %d\n", stepNumber);
+    log_info("Step: %d\n", stepNumber);
   }
-  printf("(ROW, COLUMN): (%d, %d)\n", step.rowIndex, step.colIndex);
+  log_info("(ROW, COLUMN): (%d, %d)\n", step.rowIndex, step.colIndex);
   if(step.value) {
-    printf("VALUE: %d\n", step.value);
+    log_info("VALUE: %d\n", step.value);
   }
   if(step.candidatesRemoved) {
     int candidates[9];
-    printf("Candidates Removed: ");
+    log_info("Candidates Removed: ");
     int count = getCandidatesInCell(step.candidatesRemoved, candidates);
     for(int i = 0; i < count; ++i) {
-      printf("%d, ", candidates[i]);
+      log_info("%d, ", candidates[i]);
     }
-    printf("\n");
+    log_info("\n");
   }
   char strategyName[27];
   getStrategyName(step.strategyUsed, strategyName);
-  printf("STRATEGY USED: %s\n", strategyName);
-  printf("\n=========================================\n");
+  log_info("STRATEGY USED: %s\n", strategyName);
+  log_info("\n=========================================\n");
 }

@@ -133,9 +133,9 @@ bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells) {
   return true;
 }
 
-int findEmptyCell(Puzzle* puzzle) {
+int findEmptyCell(int* cells) {
   for(int i = 0; i < PUZZLE_WIDTH * PUZZLE_WIDTH; ++i) {
-    if(puzzle->cells[i] == 0) {
+    if(cells[i] == 0) {
       return i;
     }
   }

@@ -3,8 +3,9 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <time.h>
 
-static bool debugModeOn = true;
+static bool debugModeOn = false;
 
 static inline int randSudokuNum() {
   return (rand() % 9 + 1);

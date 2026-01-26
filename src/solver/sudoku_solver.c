@@ -804,7 +804,7 @@ StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNo
 
 bool makeGuess(Puzzle* puzzle, StepNode* head) {
   StepNode* current = head;
-  int cellIndex = findEmptyCell(puzzle);
+  int cellIndex = findEmptyCell(puzzle->cells);
   if(cellIndex == -1 && isPuzzleSolved(puzzle->cells)) {
     return current;
   }
@@ -847,6 +847,7 @@ bool makeGuess(Puzzle* puzzle, StepNode* head) {
       current = current->prev;
     }
     freeStepList(current->next); // free memory for the steps that didn't lead to a solution.
+    current->next = NULL;
   }
   return false;
 

@@ -3,7 +3,11 @@
 
 #include "step.h"
 
-void printRow(int rowNum, int* cells) ;
+#define LOG_LEVEL LOG_INFO
+
+void setupLogger();
+
+void printRow(int rowNum, int* cells, char* dest) ;
 void printCells(int* cells);
 
 void printSummary(StepSummary* summary);

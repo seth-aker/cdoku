@@ -1,0 +1,33 @@
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:16: Running generator...
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:21: Arg count: 3
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:22: Parsing Arg[1]: 1
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:29: Parsing Arg[2]: BEGINNER
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:35: Found difficulty: 0
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:41: Generating 1 Puzzles...
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:43: Generating puzzle number: 1
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:45: Puzzle 0 Generation finished.
+
+2026-01-25 17:11:26 INFO  /home/saker/workspace/cdoku/src/generator/generate_puzzle.c:53: Puzzle #1
+
+2026-01-25 17:11:33 INFO  /home/saker/workspace/cdoku/src/logger/logger.c:48: 
+=========================================
+|| 3 | 8 | 5 || 0 | 6 | 4 || 0 | 9 | 7 ||
+|| 0 | 2 | 0 || 5 | 3 | 8 || 0 | 0 | 1 ||
+|| 0 | 6 | 1 || 7 | 2 | 9 || 3 | 5 | 8 ||
+=========================================
+|| 5 | 3 | 2 || 9 | 0 | 0 || 0 | 0 | 0 ||
+|| 0 | 0 | 0 || 0 | 0 | 6 || 5 | 0 | 9 ||
+|| 6 | 0 | 4 || 0 | 5 | 0 || 1 | 0 | 0 ||
+=========================================
+|| 2 | 5 | 8 || 6 | 9 | 3 || 7 | 1 | 4 ||
+|| 1 | 0 | 3 || 0 | 0 | 0 || 0 | 0 | 0 ||
+|| 0 | 0 | 6 || 2 | 7 | 1 || 8 | 0 | 0 ||
+=========================================
+
