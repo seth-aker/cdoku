@@ -8,11 +8,11 @@
 void setupLogger() {
   char nameBuf[100];
   time_t now = time(NULL);
-  struct tm *timenow = localtime(&now);
+  struct tm* timenow = localtime(&now);
 
-  strftime(nameBuf, sizeof(nameBuf), "logs/%Y-%m-%d_%H:%M:%S.log", timenow);
+  strftime(nameBuf, sizeof(nameBuf), "logs/%Y%m%d_%H%M%S.log", timenow);
   FILE* log_file = fopen(nameBuf, "a");
-  if(log_file == NULL) {
+  if (log_file == NULL) {
     perror(("Error opening log file"));
     exit(EXIT_FAILURE);
   }
@@ -24,25 +24,25 @@ void printRow(int rowNum, int* cells, char* dest) {
   int strLenth = strlen(dest);
   strcat(dest, "|");
   strLenth++;
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
     int rowOffset = rowNum * PUZZLE_WIDTH;
     snprintf(&dest[strLenth], 1000 - strLenth, "| %d ", cells[i + rowOffset]);
     strLenth = strlen(dest);
-    if(i % BLOCK_WIDTH == 2) {
+    if (i % BLOCK_WIDTH == 2) {
       strcat(dest, "|");
       strLenth++;
     }
   }
-  strcat(dest,"|\n");
+  strcat(dest, "|\n");
 }
 void printCells(int* cells) {
   char puzzleStr[1000];
-  strcat(puzzleStr,"=========================================\n");
-  
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+  strcat(puzzleStr, "=========================================\n");
+
+  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
     printRow(i, cells, puzzleStr);
-    if(i % BLOCK_WIDTH == 2) {
-      strcat(puzzleStr,"=========================================\n");
+    if (i % BLOCK_WIDTH == 2) {
+      strcat(puzzleStr, "=========================================\n");
     }
   }
   log_info("\n%s", puzzleStr);
@@ -73,18 +73,18 @@ void printSummary(StepSummary* summary) {
 }
 void printStep(Step step, int stepNumber) {
   log_info("\n");
-  if(stepNumber != -1) {
+  if (stepNumber != -1) {
     log_info("Step: %d\n", stepNumber);
   }
   log_info("(ROW, COLUMN): (%d, %d)\n", step.rowIndex, step.colIndex);
-  if(step.value) {
+  if (step.value) {
     log_info("VALUE: %d\n", step.value);
   }
-  if(step.candidatesRemoved) {
+  if (step.candidatesRemoved) {
     int candidates[9];
     log_info("Candidates Removed: ");
     int count = getCandidatesInCell(step.candidatesRemoved, candidates);
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
       log_info("%d, ", candidates[i]);
     }
     log_info("\n");

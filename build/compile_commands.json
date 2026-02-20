@@ -1,0 +1,74 @@
+[
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/external/log.c/log.c.o -c /home/saker/workspace/cdoku/external/log.c/log.c",
+  "file": "/home/saker/workspace/cdoku/external/log.c/log.c",
+  "output": "CMakeFiles/sudoku_solver.dir/external/log.c/log.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/logger/logger.c.o -c /home/saker/workspace/cdoku/src/logger/logger.c",
+  "file": "/home/saker/workspace/cdoku/src/logger/logger.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/logger/logger.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/puzzle/puzzle.c.o -c /home/saker/workspace/cdoku/src/puzzle/puzzle.c",
+  "file": "/home/saker/workspace/cdoku/src/puzzle/puzzle.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/puzzle/puzzle.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/puzzle/step.c.o -c /home/saker/workspace/cdoku/src/puzzle/step.c",
+  "file": "/home/saker/workspace/cdoku/src/puzzle/step.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/puzzle/step.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/puzzle/strategies.c.o -c /home/saker/workspace/cdoku/src/puzzle/strategies.c",
+  "file": "/home/saker/workspace/cdoku/src/puzzle/strategies.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/puzzle/strategies.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/solver/basic_fish_solver.c.o -c /home/saker/workspace/cdoku/src/solver/basic_fish_solver.c",
+  "file": "/home/saker/workspace/cdoku/src/solver/basic_fish_solver.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/solver/basic_fish_solver.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/solver/finned_fish_solver.c.o -c /home/saker/workspace/cdoku/src/solver/finned_fish_solver.c",
+  "file": "/home/saker/workspace/cdoku/src/solver/finned_fish_solver.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/solver/finned_fish_solver.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/solver/skyscraper_solver.c.o -c /home/saker/workspace/cdoku/src/solver/skyscraper_solver.c",
+  "file": "/home/saker/workspace/cdoku/src/solver/skyscraper_solver.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/solver/skyscraper_solver.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/sudoku_solver.dir/src/solver/sudoku_solver.c.o -c /home/saker/workspace/cdoku/src/solver/sudoku_solver.c",
+  "file": "/home/saker/workspace/cdoku/src/solver/sudoku_solver.c",
+  "output": "CMakeFiles/sudoku_solver.dir/src/solver/sudoku_solver.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/unity -g -o CMakeFiles/unity.dir/external/unity/unity.c.o -c /home/saker/workspace/cdoku/external/unity/unity.c",
+  "file": "/home/saker/workspace/cdoku/external/unity/unity.c",
+  "output": "CMakeFiles/unity.dir/external/unity/unity.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/external/unity -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/test_suite.dir/tests/test_suite.c.o -c /home/saker/workspace/cdoku/tests/test_suite.c",
+  "file": "/home/saker/workspace/cdoku/tests/test_suite.c",
+  "output": "CMakeFiles/test_suite.dir/tests/test_suite.c.o"
+},
+{
+  "directory": "/home/saker/workspace/cdoku/build",
+  "command": "/usr/bin/gcc -I/home/saker/workspace/cdoku/src/generator -I/home/saker/workspace/cdoku/external/log.c -I/home/saker/workspace/cdoku/src -I/home/saker/workspace/cdoku/src/logger -I/home/saker/workspace/cdoku/src/puzzle -I/home/saker/workspace/cdoku/src/solver -g -o CMakeFiles/puzzle_generator.dir/src/generator/generate_puzzle.c.o -c /home/saker/workspace/cdoku/src/generator/generate_puzzle.c",
+  "file": "/home/saker/workspace/cdoku/src/generator/generate_puzzle.c",
+  "output": "CMakeFiles/puzzle_generator.dir/src/generator/generate_puzzle.c.o"
+}
+]
