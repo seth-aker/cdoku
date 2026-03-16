@@ -92,7 +92,6 @@ int determineDifficulty(int* cells) {
   StepNode* stepList = initStepList();
   Puzzle puzzle = {
     .candidates = {0},
-    .id = 0
   };
   memcpy(puzzle.cells, cells, sizeof(int) * TOTAL_CELLS);
   solvePuzzle(&puzzle, stepList);

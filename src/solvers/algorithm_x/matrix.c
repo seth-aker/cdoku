@@ -1,7 +1,7 @@
 #include "matrix.h";
 
 Node* getNewNode() {
-  return &memory_pool[nodeCounter++];
+  return &matrix_node_pool[matrix_node_counter++];
 }
 int getColValForCell(int row, int col) {
   return (row * 9) + col;
@@ -29,6 +29,7 @@ void initMatrix(Matrix* matrix) {
   matrix->columns[0].column = &matrix->head;
   matrix->columns[0].up = &matrix->columns[0];
   matrix->columns[0].down = &matrix->columns[0];
+  matrix->columns[0].size = 0;
   Node* current = &matrix->head;
   for (int i = 1; i < TOTAL_COLUMNS; ++i) {
     matrix->columns[i].left = &matrix->columns[i - 1];
