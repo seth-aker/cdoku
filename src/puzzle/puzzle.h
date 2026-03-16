@@ -1,5 +1,5 @@
-#ifndef SRC_SOLVER_PUZZLE_H
-#define SRC_SOLVER_PUZZLE_H
+#ifndef SRC_PUZZLE_PUZZLE_H
+#define SRC_PUZZLE_PUZZLE_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -76,16 +76,16 @@ static inline bool removeCandidate(uint16_t* mask, int num) {
   return removed;
 }
 static inline int getFirstValueFromMask(uint16_t mask) {
-  if(mask == 0) return 0;
+  if (mask == 0) return 0;
   return __builtin_ctz(mask) + 1;
 }
 static inline int countFilledCells(int* unit) {
   int count = 0;
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if(unit[i] != 0) {
+  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if (unit[i] != 0) {
       ++count;
     }
   }
   return count;
 }
-#endif // SRC_SOLVER_PUZZLE
+#endif // SRC_PUZZLE_PUZZLE_H

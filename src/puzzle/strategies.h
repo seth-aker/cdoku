@@ -1,5 +1,5 @@
-#ifndef SRC_SOLVER_STRATEGIES_H
-#define SRC_SOLVER_STRATEGIES_H
+#ifndef SRC_PUZZLE_STRATEGIES_H
+#define SRC_PUZZLE_STRATEGIES_H
 
 typedef enum {
   NONE,
@@ -28,4 +28,4 @@ typedef enum {
 int getStrategyScore(Strategy strategy);
 
 void getStrategyName(Strategy strategy, char* string);
-#endif // SRC_SOLVER_STRATEGIES_H
+#endif // SRC_PUZZLE_STRATEGIES_H

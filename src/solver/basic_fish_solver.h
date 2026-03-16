@@ -1,5 +1,5 @@
-#ifndef SRC_FISH_SOLVER_BASIC_FISH_SOLVER_H
-#define SRC_FISH_SOLVER_BASIC_FISH_SOLVER_H
+#ifndef SRC_SOLVER_BASIC_FISH_SOLVER_H
+#define SRC_SOLVER_BASIC_FISH_SOLVER_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -30,4 +30,4 @@ int countCandidateInHouse(uint16_t* house, uint16_t candidateMask, int maxCount)
 StepNode* removeCandidatesFromColExcept(Puzzle* puzzle, uint16_t candidateMask, int colIndex, int* exceptIndicies, int exceptSize, Strategy stratUsed, StepNode* head);
 StepNode* removeCandidatesFromRowExcept(Puzzle* puzzle, uint16_t candidateMask, int rowIndex, int* exceptIndicies, int exceptSize, Strategy stratUsed, StepNode* head);
 
-#endif // SRC_FISH_SOLVER_BASIC_FISH_SOLVER_H
+#endif // SRC_SOLVER_BASIC_FISH_SOLVER_H

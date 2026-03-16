@@ -1,6 +1,7 @@
-#ifndef SRC_SOLVER_STEP_H
-#define SRC_SOLVER_STEP_H
+#ifndef SRC_PUZZLE_STEP_H
+#define SRC_PUZZLE_STEP_H
 
+#include <math.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "strategies.h"
@@ -65,4 +66,4 @@ static inline int calcDecayScore(Strategy strategy, int count) {
   int score = getStrategyScore(strategy);
   return score + ((count - 1) * (score * 0.25));
 }
-#endif // SRC_SOLVER_STEP_H
+#endif // SRC_PUZZLE_STEP_H
