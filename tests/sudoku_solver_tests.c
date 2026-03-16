@@ -9,6 +9,8 @@ void tearDown(void) {
 
 }
 
+void test_
 int main() {
   UNITY_BEGIN();
+  return UNITY_END();
 }

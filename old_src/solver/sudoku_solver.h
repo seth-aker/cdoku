@@ -18,9 +18,9 @@ typedef struct {
 } NakedComboSearchContext;
 
 typedef struct {
-  int* emptyCellIndicies; 
-  int emptyCellCount; 
-  int* cells; 
+  int* emptyCellIndicies;
+  int emptyCellCount;
+  int* cells;
   uint16_t* candidates;
   uint16_t* candidateSubset;
   int* allCandidateArray;
@@ -61,4 +61,4 @@ StepNode* removeCandidateFromCol(int colIndex, int value, Puzzle* puzzle, StepNo
 StepNode* applyFoundValue(Puzzle* puzzle, int value, int cellIndex, Strategy stratUsed, StepNode* head);
 bool makeGuess(Puzzle* puzzle, StepNode* head);
 
-#endif // SUKOKU_SOLVERz
+#endif // SUKOKU_SOLVER_H

@@ -19,7 +19,7 @@ target_include_directories(sudoku_solver PUBLIC
   src
   src/logger
   src/puzzle
-  src/solver
+  src/solvers
 )
 
 add_library(unity STATIC external/unity/unity.c)
