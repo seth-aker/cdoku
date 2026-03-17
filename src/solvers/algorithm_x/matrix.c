@@ -1,5 +1,6 @@
-#include "matrix.h";
+#include <stdbool.h>;
 
+#include "matrix.h";
 Node* getNewNode() {
   return &matrix_node_pool[matrix_node_counter++];
 }
@@ -19,9 +20,34 @@ int getColValForBlock(int row, int col, int num) {
   int n = num - 1;
   return BLOCK_OFFSET + (blockIndex * 9) + n;
 }
+bool search(int depth, Node* root_node, Node solution_nodes[], int* solution_node_count) {
+  if (root_node == root_node->right) {
+    return true;
+  }
 
-void convertPuzzleToMatrix(int* cells, Matrix* matrix) {
+}
+void convertPuzzleToMatrix(int cells[], Matrix* matrix, Node* solution_nodes[], int* solution_node_count) {
+  for (int i = 0; i < TOTAL_CELLS; ++i) {
+    if (cells[i] == 0) {
+      continue;
+    }
+    int r = i / PUZZLE_WIDTH;
+    int c = i % PUZZLE_WIDTH;
 
+    int row_id = (ROW_OFFSET * r) + (c * PUZZLE_WIDTH) + (cells[i] - 1);
+
+    Node* clue_node = matrix->row_lookup[row_id];
+    solution_nodes[*solution_node_count] = clue_node;
+    (*solution_node_count)++;
+
+    cover(clue_node->column);
+
+    Node* right_node = clue_node->right;
+    while (right_node != clue_node) {
+      cover(right_node->column);
+      right_node = right_node->right;
+    }
+  }
 }
 
 void initMatrix(Matrix* matrix) {
@@ -68,7 +94,7 @@ void initMatrix(Matrix* matrix) {
           header_col->up = row_nodes[i];
           header_col->size++;
         }
-
+        matrix->row_lookup[row_id] = row_nodes[0]; // this allows O(1) lookup time for nodes by row_id
         for (int i = 0; i < 4; ++i) {
           int prev = (i == 0) ? 3 : i + 1;
           int next = (i == 3) ? 0 : i - 1;
@@ -81,3 +107,6 @@ void initMatrix(Matrix* matrix) {
   }
 }
 
+Node* get_min_col(Node* root) {
+
+}

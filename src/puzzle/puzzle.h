@@ -19,5 +19,5 @@ typedef struct Puzzle {
   uint16_t candidates[TOTAL_CELLS];
 } Puzzle;
 
-void parsePuzzleStr(char* puzzleStr[]);
+int parsePuzzleStr(char* puzzleStr[], Puzzle* puzzle);
 #endif //SRC_PUZZLE_PUZZLE_H

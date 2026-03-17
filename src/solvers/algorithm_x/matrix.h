@@ -11,11 +11,13 @@
 #define MAX_NODES 2916
 
 extern Node matrix_node_pool[MAX_NODES];
+
 extern int matrix_node_counter;
 
 typedef struct Matrix {
   Node head;
   Node columns[TOTAL_COLUMNS];
+  Node* row_lookup[TOTAL_ROWS];
 } Matrix;
 
 Node* getNewNode();
@@ -24,6 +26,6 @@ int getColValForRow(int row, int col, int num);
 int getColValForCol(int row, int col, int num);
 int getColValForBlock(int row, int col, int num);
 
-void convertPuzzleToMatrix(int* cells, Matrix* matrix);
+void convertPuzzleToMatrix(int cells[], Matrix* matrix, Node* solution_nodes[], int* solution_node_count);
 void initMatrix(Matrix* matrix);
 #endif // SRC_SOLVERS_ALGORITHM_X_H
