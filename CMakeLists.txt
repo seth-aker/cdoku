@@ -8,8 +8,6 @@ add_subdirectory(tests)
 
 add_subdirectory(src/solvers)
 
-include(CTest)
-enable_testing()
 # add_executable(algorithm_x_solver src/solvers/algorithm_x/alg_x_solve.c)
 
 

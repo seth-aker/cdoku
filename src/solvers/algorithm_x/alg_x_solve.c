@@ -13,9 +13,9 @@ bool algorithm_x_has_unique_sol(Puzzle* puzzle) {
   convertPuzzleToMatrix(puzzle->cells, &matrix);
 
   int solution_count = 0;
-  findSolutions(&matrix.head, &solution_count, 1);
+  findSolutions(&matrix.columns[0], &solution_count, 1);
 
-  if(solution_count != 1) {
+  if (solution_count != 1) {
     return false;
   }
   return true;

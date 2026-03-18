@@ -11,7 +11,6 @@
 #define MAX_NODES 2916
 
 typedef struct Matrix {
-  Node head;
   Node columns[TOTAL_COLUMNS];
   Node* row_lookup[TOTAL_ROWS];
 } Matrix;
@@ -24,5 +23,5 @@ void findSolutions(Node* root_node, int* solution_count, int solution_max);
 
 void convertPuzzleToMatrix(int cells[], Matrix* matrix);
 void initMatrix(Matrix* matrix, Node node_pool[], int* matrix_node_counter);
-Node* getMinCol(Node * root);
+Node* getMinCol(Node* root);
 #endif // SRC_SOLVERS_ALGORITHM_X_H
