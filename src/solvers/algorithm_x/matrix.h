@@ -11,6 +11,7 @@
 #define MAX_NODES 2916
 
 typedef struct Matrix {
+  Node root;
   Node columns[TOTAL_COLUMNS];
   Node* row_lookup[TOTAL_ROWS];
 } Matrix;

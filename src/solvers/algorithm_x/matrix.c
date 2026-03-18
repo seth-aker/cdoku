@@ -79,18 +79,22 @@ void initMatrix(Matrix* matrix, Node node_pool[], int* node_pool_counter) {
   matrix->columns[0].up = &matrix->columns[0];
   matrix->columns[0].down = &matrix->columns[0];
   matrix->columns[0].size = 0;
-  Node* current = &matrix->columns[0];
+  matrix->columns[0].left = &matrix->root;
+  Node* prev = &matrix->columns[0];
   for (int i = 1; i < TOTAL_COLUMNS; ++i) {
     matrix->columns[i].left = &matrix->columns[i - 1];
     matrix->columns[i].up = &matrix->columns[i];
     matrix->columns[i].down = &matrix->columns[i];
     matrix->columns[i].size = 0;
     matrix->columns[i].column = &matrix->columns[i];
-    current->right = &matrix->columns[i];
-    current = &matrix->columns[i];
+    prev->right = &matrix->columns[i];
+    prev = &matrix->columns[i];
   }
-  current->right = &matrix->columns[0];
-  matrix->columns[0].left = current;
+  prev->right = &matrix->root;
+  matrix->root.right = &matrix->columns[0];
+  matrix->root.left = prev;
+  matrix->root.size = 0;
+  
 
   for (int r = 0; r < PUZZLE_WIDTH; ++r) {
     for (int c = 0; c < PUZZLE_WIDTH; ++c) {
@@ -133,7 +137,7 @@ void initMatrix(Matrix* matrix, Node node_pool[], int* node_pool_counter) {
 Node* getMinCol(Node* root) {
   Node* min_col = root->right;
   Node* current = root->right;
-  int min_size = 9999;
+  int min_size = current->size;
   while (current != root) {
     if (min_size > current->size) {
       min_size = current->size;
