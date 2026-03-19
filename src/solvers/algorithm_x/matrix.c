@@ -94,7 +94,7 @@ void initMatrix(Matrix* matrix, Node node_pool[], int* node_pool_counter) {
   matrix->root.right = &matrix->columns[0];
   matrix->root.left = prev;
   matrix->root.size = 0;
-  
+
 
   for (int r = 0; r < PUZZLE_WIDTH; ++r) {
     for (int c = 0; c < PUZZLE_WIDTH; ++c) {
