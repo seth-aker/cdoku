@@ -20,7 +20,10 @@ void findSolutions(Node* root_node, int* solution_count, int solution_max) {
     (*solution_count)++;
     return;
   }
-
+  if(*solution_count > solution_max) {
+    return;
+  }
+  
   Node* chosen_col = getMinCol(root_node); // get the column with the fewest potential solutions
 
   if (chosen_col->size == 0) {
@@ -39,9 +42,6 @@ void findSolutions(Node* root_node, int* solution_count, int solution_max) {
 
     findSolutions(root_node, solution_count, solution_max);
 
-    if (*solution_count > solution_max) {
-      return;
-    }
     Node* left_node = row->left;
     while (left_node != row) {
       uncover(left_node->column);

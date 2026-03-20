@@ -26,6 +26,20 @@ bool is_col_active(Matrix* matrix, Node* target_col) {
   return false;
 }
 
+void link_vertical(Node* header, Node* node) {
+    node->column = header;
+    node->up = header->up;
+    node->down = header;
+    header->up->down = node;
+    header->up = node;
+    header->size++;
+}
+
+void link_horizontal(Node* a, Node* b) {
+    a->right = b; a->left = b;
+    b->right = a; b->left = a;
+}
+
 void setUp(void) {
 
 }
