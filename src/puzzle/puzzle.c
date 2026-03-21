@@ -3,11 +3,20 @@
 #include "log.h"
 #include "puzzle.h"
 
-int parsePuzzleStr(char puzzleStr[], Puzzle* puzzle) {
+int findEmptyCell(uint8_t cells[]) {
+  for (int i = 0; i < TOTAL_CELLS; ++i) {
+    if (cells[i] == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+int parsePuzzleStr(char puzzle_str[], Puzzle* puzzle) {
   char* endptr;
   errno = 0;
   for (int i = 0; i < TOTAL_CELLS; ++i) {
-    char* str = &puzzleStr[i];
+    char* str = &puzzle_str[i];
     long num = strtol(str, &endptr, 10);
     if (endptr == str || *endptr != '\0') {
       log_error("Invalid Puzzle String! %s", str);
@@ -24,4 +33,15 @@ int parsePuzzleStr(char puzzleStr[], Puzzle* puzzle) {
     puzzle->cells[i] = (int)num;
   }
   return 0;
+}
+
+bool isValidNumInCell(uint8_t num, int idx, uint8_t cells[]) {
+  const uint8_t* peers = CELL_PEERS_LOOKUP[idx];
+  for (int i = 0; i < 20; ++i) {
+    int peer_idx = peers[i];
+    if (cells[peer_idx] == num) {
+      return false;
+    }
+  }
+  return true;
 }

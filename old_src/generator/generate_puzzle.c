@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 
   setupLogger();
   log_info("Running generator...\n");
-  if(argc != 3) {
+  if (argc != 3) {
     log_info("Incorrect number of arguments: Expected 3, recieved %d\n", argc);
     return 1;
   }
@@ -22,24 +22,24 @@ int main(int argc, char* argv[]) {
   log_info("Parsing Arg[1]: %s\n", argv[1]);
   int puzzleCount = parsePuzzleCount(argv[1]);
   // int puzzleCount = 1;
-  if(puzzleCount == -1) {
+  if (puzzleCount == -1) {
     return 1;
   }
 
   log_info("Parsing Arg[2]: %s\n", argv[2]);
   int difficulty = parseDifficultyArg(argv[2]);
   // int difficulty = EASY;
-  if(difficulty == -1) {
+  if (difficulty == -1) {
     return 1;
   }
   log_info("Found difficulty: %d\n", difficulty);
 
-  int cells[81] = {0};
+  int cells[81] = { 0 };
   int difficultyScore = 0;
   char puzzleString[90];
-  
+
   log_info("Generating %d Puzzles...\n", puzzleCount);
-  for(int i = 0; i < puzzleCount; i++) {
+  for (int i = 0; i < puzzleCount; i++) {
     log_info("Generating puzzle number: %d\n", i + 1);
     generatePuzzle(difficulty, cells, &difficultyScore);
     log_info("Puzzle %d Generation finished.\n", i);
@@ -63,9 +63,9 @@ void generatePuzzle(DifficultyRating targetDifficulty, int* cells, int* difficul
   setMinMaxDifficulty(&minDifficultyScore, &maxDifficultyScore, targetDifficulty);
   bool puzzleAtDifficulty = false;
   fillPuzzleRandomly(cells);
-  while(!puzzleAtDifficulty) {
+  while (!puzzleAtDifficulty) {
     // If removeRandomValue fails to result in a valid puzzle, reset and try again.
-    if(!removeRandomValue(cells)) {
+    if (!removeRandomValue(cells)) {
       memset(cells, 0, sizeof(int) * TOTAL_CELLS);
       fillPuzzleRandomly(cells);
       continue;
@@ -73,15 +73,16 @@ void generatePuzzle(DifficultyRating targetDifficulty, int* cells, int* difficul
     cellsRemovedCount++;
     *difficultyScore = determineDifficulty(cells);
 
-    if(*difficultyScore < minDifficultyScore || cellsRemovedCount < MIN_CELLS_REMOVED) {
+    if (*difficultyScore < minDifficultyScore || cellsRemovedCount < MIN_CELLS_REMOVED) {
       continue;
     }
-    if(*difficultyScore >= maxDifficultyScore) {
+    if (*difficultyScore >= maxDifficultyScore) {
       // reset because the score is greater than the maxDifficulty score.
       memset(cells, 0, sizeof(int) * TOTAL_CELLS);
       fillPuzzleRandomly(cells);
       cellsRemovedCount = 0;
-    } else {
+    }
+    else {
       puzzleAtDifficulty = true;
     }
   }
@@ -96,7 +97,7 @@ int determineDifficulty(int* cells) {
   memcpy(puzzle.cells, cells, sizeof(int) * TOTAL_CELLS);
   solvePuzzle(&puzzle, stepList);
   int totalScore = 0;
-  StepSummary summary = {0};
+  StepSummary summary = { 0 };
   getStepSummary(&summary, stepList);
   freeStepList(stepList);
   return summary.difficultyScore;
@@ -104,25 +105,26 @@ int determineDifficulty(int* cells) {
 
 // Returns true if successfull and false if no more values can be removed without introducing another possible solution.
 bool removeRandomValue(int* cells) {
-  int filledCellIndicies[81] = {-1};
+  int filledCellIndicies[81] = { -1 };
   int filledCount = 0;
   bool removed = false;
-  for(int i = 0; i < TOTAL_CELLS; ++i) {
-    if(cells[i] != 0) {
+  for (int i = 0; i < TOTAL_CELLS; ++i) {
+    if (cells[i] != 0) {
       filledCellIndicies[filledCount] = i;
       filledCount++;
     }
   }
   shuffleIntArr(filledCellIndicies, filledCount);
-  if(filledCount < 1) {
+  if (filledCount < 1) {
     return false;
   }
-  for(int i = 0; i < filledCount; ++i) {
+  for (int i = 0; i < filledCount; ++i) {
     int backtrackValue = cells[filledCellIndicies[i]];
     cells[filledCellIndicies[i]] = 0;
-    if(!isUnique(cells)) {
+    if (!isUnique(cells)) {
       cells[filledCellIndicies[i]] = backtrackValue;
-    } else {
+    }
+    else {
       return true;
     }
   }
@@ -131,19 +133,19 @@ bool removeRandomValue(int* cells) {
 
 bool fillPuzzleRandomly(int* cells) {
   int emptyCellIndex = findEmptyCell(cells);
-  if(emptyCellIndex == -1) {
+  if (emptyCellIndex == -1) {
     return true;
   }
-  int potentialValues[9] = {1,2,3,4,5,6,7,8,9};
+  int potentialValues[9] = { 1,2,3,4,5,6,7,8,9 };
   shuffleIntArr(potentialValues, PUZZLE_WIDTH);
 
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
     int rowIndex = emptyCellIndex / PUZZLE_WIDTH;
     int colIndex = emptyCellIndex % PUZZLE_WIDTH;
-    if(numWorksInCell(rowIndex, colIndex, potentialValues[i], cells)) {
+    if (numWorksInCell(rowIndex, colIndex, potentialValues[i], cells)) {
       cells[emptyCellIndex] = potentialValues[i];
       // recursively solve
-      if(fillPuzzleRandomly(cells)) {
+      if (fillPuzzleRandomly(cells)) {
         return true;
       }
       cells[emptyCellIndex] = 0;
@@ -158,34 +160,35 @@ bool isUnique(int* cells) {
   int solutionCount = 0;
   countSolutionsRecursive(cells, &solutionCount);
 
-  if(solutionCount > 1) {
+  if (solutionCount > 1) {
     return false;
-  } else {
+  }
+  else {
     return true;
   }
 }
 
 void countSolutionsRecursive(int* cells, int* solutionCount) {
-  if(*solutionCount > 1) {
+  if (*solutionCount > 1) {
     return;
   }
   int emptyCellIndex = findEmptyCell(cells);
-  if(emptyCellIndex == -1) {
+  if (emptyCellIndex == -1) {
     *solutionCount++;
     return;
   }
 
-  for(int i = 1; i <= PUZZLE_WIDTH; ++i) {
+  for (int i = 1; i <= PUZZLE_WIDTH; ++i) {
     int rowIndex = emptyCellIndex / PUZZLE_WIDTH;
     int colIndex = emptyCellIndex % PUZZLE_WIDTH;
-    if(numWorksInCell(rowIndex, colIndex, i, cells)) {
+    if (numWorksInCell(rowIndex, colIndex, i, cells)) {
       cells[emptyCellIndex] = i;
       countSolutionsRecursive(cells, solutionCount);
-      if(*solutionCount > 1) return;
+      if (*solutionCount > 1) return;
       // backtrack to check other values;
       cells[emptyCellIndex] = 0;
-    } 
-  }  
+    }
+  }
 }
 
 void setMinMaxDifficulty(int* min, int* max, DifficultyRating targetDifficulty) {
@@ -224,10 +227,12 @@ int parsePuzzleCount(char* arg) {
   if (endptr == arg) {
     fprintf(stderr, "Error: No digits were found in argument '%s'\n", arg);
     return -1;
-  } else if (*endptr != '\0') {
+  }
+  else if (*endptr != '\0') {
     fprintf(stderr, "Error: Trailing characters after number in argument '%s'\n", arg);
     return -1;
-  } else if (errnum == ERANGE) {
+  }
+  else if (errnum == ERANGE) {
     fprintf(stderr, "Error: Number out of range for long int in argument '%s'\n", arg);
     return -1;
   }
@@ -235,17 +240,22 @@ int parsePuzzleCount(char* arg) {
 }
 
 DifficultyRating parseDifficultyArg(char* arg) {
-  if(!strcmp("BEGINNER", arg)) {
+  if (!strcmp("BEGINNER", arg)) {
     return BEGINNER;
-  } else if (!strcmp("EASY", arg)) {
+  }
+  else if (!strcmp("EASY", arg)) {
     return EASY;
-  } else if (!strcmp("MEDIUM", arg)) {
+  }
+  else if (!strcmp("MEDIUM", arg)) {
     return MEDIUM;
-  } else if (!strcmp("HARD", arg)) {
+  }
+  else if (!strcmp("HARD", arg)) {
     return HARD;
-  } else if (!strcmp("IMPOSSIBLE", arg)) {
+  }
+  else if (!strcmp("IMPOSSIBLE", arg)) {
     return IMPOSSIBLE;
-  } else {
+  }
+  else {
     fprintf(stderr, "Error: Difficulty argurment is incorrect: '%s' not recognized.", arg);
     return -1;
   }
@@ -253,7 +263,7 @@ DifficultyRating parseDifficultyArg(char* arg) {
 
 void formatCellsToString(int* cells, char* string) {
   int i;
-  for(i = 0; i < TOTAL_CELLS; ++i) {
+  for (i = 0; i < TOTAL_CELLS; ++i) {
     string[i] = cells[i] + '0'; // int to ascii conversion
   }
   string[i] = '\0';
