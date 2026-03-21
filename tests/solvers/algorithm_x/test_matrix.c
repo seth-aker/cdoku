@@ -27,17 +27,17 @@ bool is_col_active(Matrix* matrix, Node* target_col) {
 }
 
 void link_vertical(Node* header, Node* node) {
-    node->column = header;
-    node->up = header->up;
-    node->down = header;
-    header->up->down = node;
-    header->up = node;
-    header->size++;
+  node->column = header;
+  node->up = header->up;
+  node->down = header;
+  header->up->down = node;
+  header->up = node;
+  header->size++;
 }
 
 void link_horizontal(Node* a, Node* b) {
-    a->right = b; a->left = b;
-    b->right = a; b->left = a;
+  a->right = b; a->left = b;
+  b->right = a; b->left = a;
 }
 
 void setUp(void) {
@@ -261,6 +261,84 @@ void test_covertPuzzleToMatrix_covers_specific_constraints(void) {
   TEST_ASSERT_MESSAGE(is_col_active(&matrix, &matrix.columns[1]), "Other cols are still active");
 }
 
+void test_findSolutions_returns_solution_count_1_when_solution_is_reached(void) {
+  Node root;
+  root.right = &root;
+  int solution_count = 0;
+  int solution_max = 1;
+
+  findSolutions(&root, &solution_count, solution_max);
+
+  TEST_ASSERT_EQUAL_INT_MESSAGE(1, solution_count, "Expected solution count to be 1 when root node points to itself.");
+}
+
+void test_findSolutions_returns_2_when_two_solutions_exist(void) {
+  Node root, colA, colB, colC;
+  root.left = &colC; root.right = &colA; root.up = &root; root.down = &root;
+  colA.left = &root; colA.right = &colB; colA.up = &colA; colB.down = &colB;
+  colB.left = &colA; colB.right = &colC; colB.up = &colB; colB.down = &colB;
+  colC.left = &colB; colC.right = &root; colC.up = &colC; colC.down = &colC;
+  colA.size = 0; colB.size = 0; colC.size = 0;
+
+  Node r1A, r2b, r2c, r3a, r3b, r4c;
+
+  link_vertical(&colA, &r1A);
+  r1A.left = &r1A; r1A.right = &r1A;
+
+  link_vertical(&colB, &r2b);
+  link_vertical(&colC, &r2c);
+  link_horizontal(&r2b, &r2c);
+
+  link_vertical(&colA, &r3a);
+  link_vertical(&colB, &r3b);
+  link_horizontal(&r3a, &r3b);
+
+  link_vertical(&colC, &r4c);
+  r4c.left = &r4c; r4c.right = &r4c;
+
+  int solution_count = 0;
+  int solution_max = 3;
+
+  findSolutions(&root, &solution_count, solution_max);
+
+  TEST_ASSERT_EQUAL_INT_MESSAGE(2, solution_count, "Expected 2 solutions to be found");
+}
+void test_findSolutions_short_circuits_after_finding_2_solutions(void) {
+  Matrix matrix;
+  Node matrix_node_pool[MAX_NODES];
+  int matrix_node_counter = 0;
+
+  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  // This array will yield exactly 6 valid solutions
+  int six_solution_puzzle[81] = {
+      5, 0, 4,  6, 7, 8,  9, 0, 0,
+      6, 7, 0,  0, 9, 5,  0, 4, 8,
+      0, 9, 8,  0, 4, 0,  5, 6, 7,
+
+      8, 5, 9,  7, 6, 0,  4, 0, 0,
+      4, 0, 6,  8, 5, 0,  7, 9, 0,
+      7, 0, 0,  9, 0, 4,  8, 5, 6,
+
+      9, 6, 0,  5, 0, 7,  0, 8, 4,
+      0, 8, 7,  4, 0, 9,  6, 0, 5,
+      0, 4, 5,  0, 8, 6,  0, 7, 9
+  };
+  convertPuzzleToMatrix(six_solution_puzzle, &matrix);
+
+  int solution_count = 0;
+  findSolutions(&matrix.root, &solution_count, 1);
+  TEST_ASSERT_EQUAL_INT_MESSAGE(2, solution_count, "Expected findSolutions() to short-circuit at puzzle count of 2 even though total solutions is 6.");
+  TEST_ASSERT_EQUAL_INT_MESSAGE(108, count_active_cols(&matrix), "Expect matrix to be intact.");
+
+  convertPuzzleToMatrix(six_solution_puzzle, &matrix);
+
+  solution_count = 0;
+  findSolutions(&matrix.root, &solution_count, 100);
+
+  TEST_ASSERT_EQUAL_INT_MESSAGE(18, solution_count, "Expected findSolutions() to find exactly 6 solutions and stop.");
+  TEST_ASSERT_EQUAL_INT_MESSAGE(108, count_active_cols(&matrix), "Expected matrix to be intact.");
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_initMatrix_operates_on_all_nodes);
@@ -275,5 +353,10 @@ int main(void) {
   RUN_TEST(test_convertPuzzleToMatrix_should_cover_correct_cols);
   RUN_TEST(test_convertPuzzleToMatrix_should_not_change_matrix_with_empty_puzzle);
   RUN_TEST(test_covertPuzzleToMatrix_covers_specific_constraints);
+
+  RUN_TEST(test_findSolutions_returns_solution_count_1_when_solution_is_reached);
+  RUN_TEST(test_findSolutions_returns_2_when_two_solutions_exist);
+  RUN_TEST(test_findSolutions_short_circuits_after_finding_2_solutions);
+
   return UNITY_END();
 }
