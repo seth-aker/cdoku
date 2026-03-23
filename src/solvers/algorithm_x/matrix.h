@@ -22,7 +22,7 @@ int getColValForCol(int row, int col, int num);
 int getColValForBlock(int row, int col, int num);
 void findSolutions(Node* root_node, int* solution_count, int solution_max);
 
-void convertPuzzleToMatrix(int cells[], Matrix* matrix);
+void convertPuzzleToMatrix(uint8_t cells[], Matrix* matrix);
 void initMatrix(Matrix* matrix, Node node_pool[], int* matrix_node_counter);
 Node* getMinCol(Node* root);
 #endif // SRC_SOLVERS_ALGORITHM_X_H

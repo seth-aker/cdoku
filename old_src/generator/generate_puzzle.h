@@ -3,7 +3,7 @@
 #include "puzzle.h"
 #include "step.h"
 
-void generatePuzzle(DifficultyRating targetDifficulty, int* cells, int* difficultyScore);
+void generatePuzzle(DiffRating targetDifficulty, int* cells, int* difficultyScore);
 
 int determineDifficulty(int* cells);
 
@@ -15,11 +15,11 @@ bool isUnique(int* cells);
 
 void countSolutionsRecursive(int* cells, int* solutionCount);
 
-void setMinMaxDifficulty(int* min, int* max, DifficultyRating targetDifficulty);
+void setMinMaxDifficulty(int* min, int* max, DiffRating targetDifficulty);
 
 int parsePuzzleCount(char* arg);
 
-DifficultyRating parseDifficultyArg(char* arg);
+DiffRating parseDifficultyArg(char* arg);
 
 void formatCellsToString(int* cells, char* string);
 

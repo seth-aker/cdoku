@@ -6,7 +6,7 @@ add_subdirectory(external)
 
 add_subdirectory(tests)
 
-add_subdirectory(src/solvers)
+add_subdirectory(src)
 
 # add_executable(algorithm_x_solver src/solvers/algorithm_x/alg_x_solve.c)
 

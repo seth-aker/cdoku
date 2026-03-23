@@ -221,7 +221,7 @@ void test_convertPuzzleToMatrix_should_cover_correct_cols(void) {
   initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
   TEST_ASSERT_EQUAL_INT(TOTAL_COLUMNS, count_active_cols(&matrix));
 
-  int puzzle_cells[81] = { 0 };
+  uint8_t puzzle_cells[81] = { 0 };
   puzzle_cells[0] = 1;
 
   convertPuzzleToMatrix(puzzle_cells, &matrix);
@@ -236,7 +236,7 @@ void test_convertPuzzleToMatrix_should_not_change_matrix_with_empty_puzzle(void)
   initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
   TEST_ASSERT_EQUAL_INT(TOTAL_COLUMNS, count_active_cols(&matrix));
 
-  int puzzle_cells[81] = { 0 };
+  uint8_t puzzle_cells[81] = { 0 };
   convertPuzzleToMatrix(puzzle_cells, &matrix);
   TEST_ASSERT_EQUAL_INT_MESSAGE(324, count_active_cols(&matrix), "should have all cols");
 }
@@ -249,7 +249,7 @@ void test_covertPuzzleToMatrix_covers_specific_constraints(void) {
   initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
   TEST_ASSERT_EQUAL_INT(TOTAL_COLUMNS, count_active_cols(&matrix));
 
-  int puzzle_cells[81] = { 0 };
+  uint8_t puzzle_cells[81] = { 0 };
   puzzle_cells[0] = 5;
 
   convertPuzzleToMatrix(puzzle_cells, &matrix);
@@ -310,7 +310,7 @@ void test_findSolutions_short_circuits_after_finding_2_solutions(void) {
 
   initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
   // This array will yield exactly 6 valid solutions
-  int six_solution_puzzle[81] = {
+  uint8_t six_solution_puzzle[81] = {
       5, 0, 4,  6, 7, 8,  9, 0, 0,
       6, 7, 0,  0, 9, 5,  0, 4, 8,
       0, 9, 8,  0, 4, 0,  5, 6, 7,

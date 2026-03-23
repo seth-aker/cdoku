@@ -4,13 +4,13 @@
 #include <stdbool.h>
 
 
-bool algorithm_x_has_unique_sol(Puzzle* puzzle) {
+bool algorithm_x_has_unique_sol(uint8_t cells[]) {
   Node matrix_node_pool[MAX_NODES];
   int matrix_node_counter = 0;
 
   Matrix matrix;
   initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
-  convertPuzzleToMatrix(puzzle->cells, &matrix);
+  convertPuzzleToMatrix(cells, &matrix);
 
   int solution_count = 0;
   findSolutions(&matrix.columns[0], &solution_count, 1);

@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
   }
 }
 
-void generatePuzzle(DifficultyRating targetDifficulty, int* cells, int* difficultyScore) {
+void generatePuzzle(DiffRating targetDifficulty, int* cells, int* difficultyScore) {
   int cellsRemovedCount = 0;
   int MIN_CELLS_REMOVED = (rand() % 15) + 25; // generate a random number of min cells removed between 25 and 39 inclusive 
   int minDifficultyScore = 0;
@@ -191,7 +191,7 @@ void countSolutionsRecursive(int* cells, int* solutionCount) {
   }
 }
 
-void setMinMaxDifficulty(int* min, int* max, DifficultyRating targetDifficulty) {
+void setMinMaxDifficulty(int* min, int* max, DiffRating targetDifficulty) {
   switch (targetDifficulty)
   {
   case BEGINNER:
@@ -239,7 +239,7 @@ int parsePuzzleCount(char* arg) {
   return count;
 }
 
-DifficultyRating parseDifficultyArg(char* arg) {
+DiffRating parseDifficultyArg(char* arg) {
   if (!strcmp("BEGINNER", arg)) {
     return BEGINNER;
   }

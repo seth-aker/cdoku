@@ -52,13 +52,13 @@ void findSolutions(Node* root_node, int* solution_count, int solution_max) {
   uncover(chosen_col);
 }
 
-void convertPuzzleToMatrix(int cells[], Matrix* matrix) {
+void convertPuzzleToMatrix(uint8_t cells[], Matrix* matrix) {
   for (int i = 0; i < TOTAL_CELLS; ++i) {
     if (cells[i] == 0) {
       continue;
     }
-    int r = i / PUZZLE_WIDTH;
-    int c = i % PUZZLE_WIDTH;
+    int r = (int)IDX_TO_ROW[i];
+    int c = (int)IDX_TO_COL[i];
 
     int row_id = (ROW_OFFSET * r) + (c * PUZZLE_WIDTH) + (cells[i] - 1);
 
