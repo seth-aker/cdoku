@@ -9,3 +9,14 @@ target_include_directories(algorithm_x_solver PUBLIC
 )
 
 target_link_libraries(algorithm_x_solver PUBLIC puzzle logger)
+
+
+add_library(logical_solver STATIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/logical/singles.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/logical/logical_solve.c
+)
+target_include_directories(logical_solver PUBLIC 
+  ${CMAKE_CURRENT_SOURCE_DIR}/logical
+)
+
+target_link_libraries(logical_solver PUBLIC puzzle logger)
