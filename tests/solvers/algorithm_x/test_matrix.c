@@ -53,7 +53,7 @@ void test_initMatrix_operates_on_all_nodes(void) {
   int matrix_node_counter = 0;
   Matrix matrix;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   Node* current = &matrix.columns[0];
 
   TEST_ASSERT_EQUAL_INT(MAX_NODES, matrix_node_counter);
@@ -64,7 +64,7 @@ void test_initMatrix_created_doubly_linked_column_list(void) {
   int matrix_node_counter = 0;
   Matrix matrix;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   Node* current = &matrix.columns[0];
 
 
@@ -87,7 +87,7 @@ void test_initMatrix_assigns_nine_rows_to_each_column(void) {
 
   int expected_header_size = 9;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   Node* current_header = &matrix.columns[0];
 
   for (int i = 0; i < TOTAL_COLUMNS; ++i) {
@@ -114,7 +114,7 @@ void test_initMatrix_correctly_assigns_row_lookup_ptrs(void) {
   int matrix_node_counter = 0;
   Matrix matrix;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   Node* current_header = &matrix.columns[0];
 
 
@@ -129,7 +129,7 @@ void test_initMatrix_correctly_connects_the_row_nodes_horizontally(void) {
   int matrix_node_counter = 0;
   Matrix matrix;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
 
   for (int i = 0; i < TOTAL_ROWS; ++i) {
     Node* row_node = matrix.row_lookup[i];
@@ -163,14 +163,14 @@ void test_getMinCol_correctly_returns_smallest_col_size(void) {
   c3.size = 2;
   c4.size = 9;
 
-  Node* result = getMinCol(&root);
+  Node* result = get_min_col(&root);
   TEST_ASSERT_EQUAL_PTR_MESSAGE(&c3, result, "c3 has the smallest size and should be returned by getMinCol()");
 
   c1.size = 0;
   c2.size = 5;
   c3.size = 9;
   c4.size = 9;
-  result = getMinCol(&root);
+  result = get_min_col(&root);
   TEST_ASSERT_EQUAL_PTR_MESSAGE(&c1, result, "c1 should return when it has a value of 0");
 }
 
@@ -187,7 +187,7 @@ void test_getMinCol_returns_first_of_cols_with_equal_size(void) {
   c3.size = 5;
   c4.size = 5;
 
-  Node* result = getMinCol(&root);
+  Node* result = get_min_col(&root);
   TEST_ASSERT_EQUAL_PTR_MESSAGE(&c1, result, "First of equally sized cols should be returned");
 }
 
@@ -195,7 +195,7 @@ void test_getMinCol_returns_root_when_puzzle_solved(void) {
   Node root;
   root.right = &root;
   root.size = 0;
-  Node* result = getMinCol(&root);
+  Node* result = get_min_col(&root);
 
   TEST_ASSERT_EQUAL_PTR_MESSAGE(&root, result, "root should be returned if no colunms are attached");
 
@@ -209,7 +209,7 @@ void test_getMinCol_returns_correct_col_when_only_one_option(void) {
   c1.left = &root;
 
   c1.size = 1;
-  Node* result = getMinCol(&root);
+  Node* result = get_min_col(&root);
   TEST_ASSERT_EQUAL_PTR_MESSAGE(&c1, result, "c1 should be returned when it is the only col left.");
 }
 
@@ -218,13 +218,13 @@ void test_convertPuzzleToMatrix_should_cover_correct_cols(void) {
   int matrix_node_counter = 0;
   Matrix matrix;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   TEST_ASSERT_EQUAL_INT(TOTAL_COLUMNS, count_active_cols(&matrix));
 
   uint8_t puzzle_cells[81] = { 0 };
   puzzle_cells[0] = 1;
 
-  convertPuzzleToMatrix(puzzle_cells, &matrix);
+  convert_puzzle_to_matrix(puzzle_cells, &matrix);
   TEST_ASSERT_EQUAL_INT_MESSAGE(320, count_active_cols(&matrix), "4 constraints should be covered.");
 }
 
@@ -233,11 +233,11 @@ void test_convertPuzzleToMatrix_should_not_change_matrix_with_empty_puzzle(void)
   int matrix_node_counter = 0;
   Matrix matrix;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   TEST_ASSERT_EQUAL_INT(TOTAL_COLUMNS, count_active_cols(&matrix));
 
   uint8_t puzzle_cells[81] = { 0 };
-  convertPuzzleToMatrix(puzzle_cells, &matrix);
+  convert_puzzle_to_matrix(puzzle_cells, &matrix);
   TEST_ASSERT_EQUAL_INT_MESSAGE(324, count_active_cols(&matrix), "should have all cols");
 }
 
@@ -246,13 +246,13 @@ void test_covertPuzzleToMatrix_covers_specific_constraints(void) {
   int matrix_node_counter = 0;
   Matrix matrix;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   TEST_ASSERT_EQUAL_INT(TOTAL_COLUMNS, count_active_cols(&matrix));
 
   uint8_t puzzle_cells[81] = { 0 };
   puzzle_cells[0] = 5;
 
-  convertPuzzleToMatrix(puzzle_cells, &matrix);
+  convert_puzzle_to_matrix(puzzle_cells, &matrix);
   TEST_ASSERT_MESSAGE(is_col_active(&matrix, &matrix.columns[0]) == false, "Cell Constraint: (0 * 9) + 0 = 0");
   TEST_ASSERT_MESSAGE(is_col_active(&matrix, &matrix.columns[85]) == false, "Row Constraint: 81 + (0 * 9) + 4 = 85");
   TEST_ASSERT_MESSAGE(is_col_active(&matrix, &matrix.columns[166]) == false, "Col Constraint: 162 + (0 * 9) + 4 = 166");
@@ -267,7 +267,7 @@ void test_findSolutions_returns_solution_count_1_when_solution_is_reached(void) 
   int solution_count = 0;
   int solution_max = 1;
 
-  findSolutions(&root, &solution_count, solution_max);
+  find_solutions(&root, &solution_count, solution_max);
 
   TEST_ASSERT_EQUAL_INT_MESSAGE(1, solution_count, "Expected solution count to be 1 when root node points to itself.");
 }
@@ -299,7 +299,7 @@ void test_findSolutions_returns_2_when_two_solutions_exist(void) {
   int solution_count = 0;
   int solution_max = 3;
 
-  findSolutions(&root, &solution_count, solution_max);
+  find_solutions(&root, &solution_count, solution_max);
 
   TEST_ASSERT_EQUAL_INT_MESSAGE(2, solution_count, "Expected 2 solutions to be found");
 }
@@ -308,7 +308,7 @@ void test_findSolutions_short_circuits_after_finding_2_solutions(void) {
   Node matrix_node_pool[MAX_NODES];
   int matrix_node_counter = 0;
 
-  initMatrix(&matrix, matrix_node_pool, &matrix_node_counter);
+  init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   // This array will yield exactly 6 valid solutions
   uint8_t six_solution_puzzle[81] = {
       5, 0, 4,  6, 7, 8,  9, 0, 0,
@@ -323,17 +323,17 @@ void test_findSolutions_short_circuits_after_finding_2_solutions(void) {
       0, 8, 7,  4, 0, 9,  6, 0, 5,
       0, 4, 5,  0, 8, 6,  0, 7, 9
   };
-  convertPuzzleToMatrix(six_solution_puzzle, &matrix);
+  convert_puzzle_to_matrix(six_solution_puzzle, &matrix);
 
   int solution_count = 0;
-  findSolutions(&matrix.root, &solution_count, 1);
+  find_solutions(&matrix.root, &solution_count, 1);
   TEST_ASSERT_EQUAL_INT_MESSAGE(2, solution_count, "Expected findSolutions() to short-circuit at puzzle count of 2 even though total solutions is 6.");
   TEST_ASSERT_EQUAL_INT_MESSAGE(108, count_active_cols(&matrix), "Expect matrix to be intact.");
 
-  convertPuzzleToMatrix(six_solution_puzzle, &matrix);
+  convert_puzzle_to_matrix(six_solution_puzzle, &matrix);
 
   solution_count = 0;
-  findSolutions(&matrix.root, &solution_count, 100);
+  find_solutions(&matrix.root, &solution_count, 100);
 
   TEST_ASSERT_EQUAL_INT_MESSAGE(18, solution_count, "Expected findSolutions() to find exactly 6 solutions and stop.");
   TEST_ASSERT_EQUAL_INT_MESSAGE(108, count_active_cols(&matrix), "Expected matrix to be intact.");

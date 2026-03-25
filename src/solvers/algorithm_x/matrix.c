@@ -2,29 +2,29 @@
 #include "log.h"
 #include "matrix.h"
 
-int getColValForCell(int row, int col) {
+int get_col_val_for_cell(int row, int col) {
   return (row * 9) + col;
 }
-int getColValForRow(int row, int col, int num) {
+int get_col_val_for_row(int row, int col, int num) {
   return ROW_OFFSET + (row * 9) + num;
 }
-int getColValForCol(int row, int col, int num) {
+int get_col_val_for_col(int row, int col, int num) {
   return COL_OFFSET + (col * 9) + num;
 }
-int getColValForBlock(int row, int col, int num) {
+int get_col_val_for_block(int row, int col, int num) {
   int blockIndex = (row / 3) * 3 + (col / 3);
   return BLOCK_OFFSET + (blockIndex * 9) + num;
 }
-void findSolutions(Node* root_node, int* solution_count, int solution_max) {
+void find_solutions(Node* root_node, int* solution_count, int solution_max) {
   if (root_node == root_node->right) {
     (*solution_count)++;
     return;
   }
-  if(*solution_count > solution_max) {
+  if (*solution_count > solution_max) {
     return;
   }
-  
-  Node* chosen_col = getMinCol(root_node); // get the column with the fewest potential solutions
+
+  Node* chosen_col = get_min_col(root_node); // get the column with the fewest potential solutions
 
   if (chosen_col->size == 0) {
     return;
@@ -40,7 +40,7 @@ void findSolutions(Node* root_node, int* solution_count, int solution_max) {
       right_node = right_node->right;
     }
 
-    findSolutions(root_node, solution_count, solution_max);
+    find_solutions(root_node, solution_count, solution_max);
 
     Node* left_node = row->left;
     while (left_node != row) {
@@ -52,7 +52,7 @@ void findSolutions(Node* root_node, int* solution_count, int solution_max) {
   uncover(chosen_col);
 }
 
-void convertPuzzleToMatrix(uint8_t cells[], Matrix* matrix) {
+void convert_puzzle_to_matrix(uint8_t cells[], Matrix* matrix) {
   for (int i = 0; i < TOTAL_CELLS; ++i) {
     if (cells[i] == 0) {
       continue;
@@ -74,7 +74,7 @@ void convertPuzzleToMatrix(uint8_t cells[], Matrix* matrix) {
   }
 }
 
-void initMatrix(Matrix* matrix, Node node_pool[], int* node_pool_counter) {
+void init_matrix(Matrix* matrix, Node node_pool[], int* node_pool_counter) {
   matrix->columns[0].column = &matrix->columns[0];
   matrix->columns[0].up = &matrix->columns[0];
   matrix->columns[0].down = &matrix->columns[0];
@@ -102,10 +102,10 @@ void initMatrix(Matrix* matrix, Node node_pool[], int* node_pool_counter) {
         int row_id = (r * 81) + (c * 9) + n;
 
         int col_idx[4];
-        col_idx[0] = getColValForCell(r, c);
-        col_idx[1] = getColValForRow(r, c, n);
-        col_idx[2] = getColValForCol(r, c, n);
-        col_idx[3] = getColValForBlock(r, c, n);
+        col_idx[0] = get_col_val_for_cell(r, c);
+        col_idx[1] = get_col_val_for_row(r, c, n);
+        col_idx[2] = get_col_val_for_col(r, c, n);
+        col_idx[3] = get_col_val_for_block(r, c, n);
 
         Node* row_nodes[4];
         for (int i = 0; i < 4; ++i) {
@@ -134,7 +134,7 @@ void initMatrix(Matrix* matrix, Node node_pool[], int* node_pool_counter) {
   }
 }
 
-Node* getMinCol(Node* root) {
+Node* get_min_col(Node* root) {
   Node* min_col = root->right;
   Node* current = root->right;
   int min_size = current->size;

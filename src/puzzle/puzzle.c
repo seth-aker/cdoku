@@ -3,7 +3,7 @@
 #include "log.h"
 #include "puzzle.h"
 
-int findEmptyCell(uint8_t cells[]) {
+int find_empty_cell(uint8_t cells[]) {
   for (int i = 0; i < TOTAL_CELLS; ++i) {
     if (cells[i] == 0) {
       return i;
@@ -12,7 +12,7 @@ int findEmptyCell(uint8_t cells[]) {
   return -1;
 }
 
-int parsePuzzleStr(char puzzle_str[], Puzzle* puzzle) {
+int pasre_puzzle_str(char puzzle_str[], Puzzle* puzzle) {
   char* endptr;
   errno = 0;
   for (int i = 0; i < TOTAL_CELLS; ++i) {
@@ -35,8 +35,8 @@ int parsePuzzleStr(char puzzle_str[], Puzzle* puzzle) {
   return 0;
 }
 
-bool isValidNumInCell(uint8_t num, int idx, uint8_t cells[]) {
-  if(cells[idx] != 0) {
+bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]) {
+  if (cells[idx] != 0) {
     return false;
   }
   const uint8_t* peers = CELL_PEERS_LOOKUP[idx];
@@ -47,6 +47,27 @@ bool isValidNumInCell(uint8_t num, int idx, uint8_t cells[]) {
     }
   }
   return true;
+}
+void get_row(uint8_t idx, Puzzle* puzzle, House* row) {
+  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
+    uint8_t offset = idx * 9;
+    row->candidates[i] = puzzle->candidates[offset + i];
+    row->cells[i] = puzzle->cells[offset + i];
+  }
+}
+void get_col(uint8_t idx, Puzzle* puzzle, House* col) {
+  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
+    uint8_t offset = i * 9;
+    col->candidates[i] = puzzle->candidates[offset + idx];
+    col->cells[i] = puzzle->cells[offset + idx];
+  }
+}
+void get_block(uint8_t idx, Puzzle* puzzle, House* block) {
+  const uint8_t* block_idxs = BLOCK_TO_IDXS[idx];
+  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
+    block->candidates[block_idxs[i]] = puzzle->candidates[block_idxs[i]];
+    block->cells[block_idxs[i]] = puzzle->cells[block_idxs[i]];
+  }
 }
 
 // Lookup tables for SPEED!!!
@@ -83,6 +104,42 @@ const uint8_t IDX_TO_BLOCK[TOTAL_CELLS] = {
   6,6,6,7,7,7,8,8,8,
   6,6,6,7,7,7,8,8,8,
   6,6,6,7,7,7,8,8,8
+};
+
+const uint8_t BLOCK_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH] = {
+  {0,1,2,9,10,11,18,19,20},
+  {3,4,5,12,13,14,21,22,23},
+  {6,7,8,15,16,17,24,25,26},
+  {27,28,29,36,37,38,45,46,47},
+  {30,31,32,39,40,41,48,49,50},
+  {33,34,35,42,43,44,51,52,53},
+  {54,55,56,63,64,65,72,73,74},
+  {57,58,59,66,67,68,75,76,77},
+  {60,61,62,69,70,71,78,79,80}
+};
+
+const uint8_t ROW_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH] = {
+  {0,1,2,3,4,5,6,7,8},
+  {9,10,11,12,13,14,15,16,17},
+  {18,19,20,21,22,23,24,25,26},
+  {27,28,29,30,31,32,33,34,35},
+  {36,37,37,39,40,41,42,43,44},
+  {45,46,47,48,49,50,51,52,53},
+  {54,55,56,57,58,59,60,61,62},
+  {63,64,65,66,67,68,69,70,71},
+  {72,73,74,75,76,77,78,79,80}
+};
+
+const uint8_t COL_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH] = {
+  {0,9,18,27,36,45,54,63,72},
+  {1,10,19,28,37,46,55,64,73},
+  {2,11,20,29,38,47,56,65,74},
+  {3,12,21,30,39,48,57,66,75},
+  {4,13,22,31,40,49,58,67,76},
+  {5,14,23,32,41,50,59,68,77},
+  {6,15,24,33,42,51,60,69,78},
+  {7,16,25,34,43,52,61,70,79},
+  {8,17,26,35,44,53,62,71,80}
 };
 
 const uint8_t CELL_PEERS_LOOKUP[TOTAL_CELLS][20] = {

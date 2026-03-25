@@ -16,13 +16,13 @@ typedef struct Matrix {
   Node* row_lookup[TOTAL_ROWS];
 } Matrix;
 
-int getColValForCell(int row, int col);
-int getColValForRow(int row, int col, int num);
-int getColValForCol(int row, int col, int num);
-int getColValForBlock(int row, int col, int num);
-void findSolutions(Node* root_node, int* solution_count, int solution_max);
+int get_col_val_for_cell(int row, int col);
+int get_col_val_for_row(int row, int col, int num);
+int get_col_val_for_col(int row, int col, int num);
+int get_col_val_for_block(int row, int col, int num);
+void find_solutions(Node* root_node, int* solution_count, int solution_max);
 
-void convertPuzzleToMatrix(uint8_t cells[], Matrix* matrix);
-void initMatrix(Matrix* matrix, Node node_pool[], int* matrix_node_counter);
-Node* getMinCol(Node* root);
+void convert_puzzle_to_matrix(uint8_t cells[], Matrix* matrix);
+void init_matrix(Matrix* matrix, Node node_pool[], int* matrix_node_counter);
+Node* get_min_col(Node* root);
 #endif // SRC_SOLVERS_ALGORITHM_X_H

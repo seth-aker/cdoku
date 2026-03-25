@@ -132,7 +132,7 @@ bool removeRandomValue(int* cells) {
 }
 
 bool fillPuzzleRandomly(int* cells) {
-  int emptyCellIndex = findEmptyCell(cells);
+  int emptyCellIndex = find_empty_cell(cells);
   if (emptyCellIndex == -1) {
     return true;
   }
@@ -172,7 +172,7 @@ void countSolutionsRecursive(int* cells, int* solutionCount) {
   if (*solutionCount > 1) {
     return;
   }
-  int emptyCellIndex = findEmptyCell(cells);
+  int emptyCellIndex = find_empty_cell(cells);
   if (emptyCellIndex == -1) {
     *solutionCount++;
     return;

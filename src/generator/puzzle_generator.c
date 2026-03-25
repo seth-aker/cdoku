@@ -5,11 +5,11 @@
 #include "utils.h"
 #include "alg_x_solve.h"
 
-void generatePuzzle(DiffRating targetDiff, uint8_t cells[], int* diffScore) {
+void generate_puzzle(DiffRating targetDiff, uint8_t cells[], int* diffScore) {
   bool isAtDiff = false;
-  fillPuzzleRandomly(cells);
+  fill_puzzle_randomly(cells);
   while (!isAtDiff) {
-    bool isStillUnique = removeRandomVal(cells);
+    bool isStillUnique = remove_random_val(cells);
     if (!isStillUnique) {
       // reset and try again
       resetPuzzle(cells);
@@ -19,8 +19,8 @@ void generatePuzzle(DiffRating targetDiff, uint8_t cells[], int* diffScore) {
   }
 }
 
-bool fillPuzzleRandomly(uint8_t cells[]) {
-  int emptyIdx = findEmptyCell(cells);
+bool fill_puzzle_randomly(uint8_t cells[]) {
+  int emptyIdx = find_empty_cell(cells);
   if (emptyIdx == -1) {
     return true;
   }
@@ -28,10 +28,10 @@ bool fillPuzzleRandomly(uint8_t cells[]) {
   uint8_t potentialVals[PUZZLE_WIDTH] = { 1,2,3,4,5,6,7,8,9 };
   shuffleIntArr(potentialVals, PUZZLE_WIDTH);
   for (int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if (isValidNumInCell(potentialVals[i], emptyIdx, cells)) {
+    if (is_valid_num_in_cell(potentialVals[i], emptyIdx, cells)) {
       cells[emptyIdx] = potentialVals[i];
 
-      if (fillPuzzleRandomly(cells)) {
+      if (fill_puzzle_randomly(cells)) {
         return true;
       }
       cells[emptyIdx] = 0;
@@ -41,7 +41,7 @@ bool fillPuzzleRandomly(uint8_t cells[]) {
 }
 
 // removes a random value and then checks for a unique solution.
-bool removeRandomVal(uint8_t cells[]) {
+bool remove_random_val(uint8_t cells[]) {
   uint8_t filledCellsIdx[TOTAL_CELLS] = { -1 };
   int filledCount = 0;
   bool removed = false;
@@ -70,5 +70,5 @@ bool removeRandomVal(uint8_t cells[]) {
 
 void resetPuzzle(uint8_t cells[]) {
   memset(cells, 0, sizeof(uint8_t) * TOTAL_CELLS);
-  fillPuzzleRandomly(cells);
+  fill_puzzle_randomly(cells);
 }
