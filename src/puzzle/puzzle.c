@@ -72,6 +72,9 @@ void get_block(uint8_t idx, Puzzle* puzzle, House* block) {
 
 // Lookup tables for SPEED!!!
 
+const uint8_t ROW_NORM[9] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
+const uint8_t COL_NORM[9] = {0, 1, 2, 0, 1, 2, 0, 1, 2};
+
 const uint8_t IDX_TO_ROW[TOTAL_CELLS] = {
   0,0,0,0,0,0,0,0,0,
   1,1,1,1,1,1,1,1,1,

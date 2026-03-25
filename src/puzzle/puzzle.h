@@ -49,6 +49,12 @@ static inline bool remove_candidate(uint16_t* mask, uint8_t num) {
   return removed;
 }
 
+static inline int get_cell_pos_in_block(uint8_t row_idx, uint8_t col_idx) {
+  return ROW_NORM[row_idx] + COL_NORM[col_idx];
+}
+
+extern const uint8_t ROW_NORM[PUZZLE_WIDTH];
+extern const uint8_t COL_NORM[PUZZLE_WIDTH];
 extern const uint8_t IDX_TO_ROW[TOTAL_CELLS];
 extern const uint8_t IDX_TO_COL[TOTAL_CELLS];
 extern const uint8_t IDX_TO_BLOCK[TOTAL_CELLS];

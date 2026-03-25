@@ -30,6 +30,12 @@ typedef enum : uint8_t {
   GUESS
 } Technique;
 
+typedef enum TechiqueResult {
+  INVALID_STATE = -1,
+  NONE_FOUND = 0,
+  PROGRESS_MADE = 1
+} TechiqueResult;
+
 typedef struct Step {
   uint16_t eliminated_mask;
   Technique technique;
