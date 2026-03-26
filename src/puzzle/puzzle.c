@@ -65,15 +65,13 @@ void get_col(uint8_t idx, Puzzle* puzzle, House* col) {
 void get_block(uint8_t idx, Puzzle* puzzle, House* block) {
   const uint8_t* block_idxs = BLOCK_TO_IDXS[idx];
   for (int i = 0; i < PUZZLE_WIDTH; ++i) {
-    block->candidates[block_idxs[i]] = puzzle->candidates[block_idxs[i]];
-    block->cells[block_idxs[i]] = puzzle->cells[block_idxs[i]];
+    block->candidates[i] = puzzle->candidates[block_idxs[i]];
+    block->cells[i] = puzzle->cells[block_idxs[i]];
   }
 }
 
 // Lookup tables for SPEED!!!
 
-const uint8_t ROW_NORM[9] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
-const uint8_t COL_NORM[9] = {0, 1, 2, 0, 1, 2, 0, 1, 2};
 
 const uint8_t IDX_TO_ROW[TOTAL_CELLS] = {
   0,0,0,0,0,0,0,0,0,
@@ -228,3 +226,16 @@ const uint8_t CELL_PEERS_LOOKUP[TOTAL_CELLS][20] = {
  { 72,73,74,75,76,77,78,80,7,16,25,34,43,52,61,70,60,62,69,71 },
  { 72,73,74,75,76,77,78,79,8,17,26,35,44,53,62,71,60,61,69,70 }
 };
+
+const uint8_t CELL_POS_IN_BLOCK[PUZZLE_WIDTH][PUZZLE_WIDTH] = {
+  {0,1,2,0,1,2,0,1,2},
+  {3,4,5,3,4,5,3,4,5},
+  {6,7,8,6,7,8,6,7,8},
+  {0,1,2,0,1,2,0,1,2},
+  {3,4,5,3,4,5,3,4,5},
+  {6,7,8,6,7,8,6,7,8},
+  {0,1,2,0,1,2,0,1,2},
+  {3,4,5,3,4,5,3,4,5},
+  {6,7,8,6,7,8,6,7,8}
+};
+

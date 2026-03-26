@@ -78,8 +78,8 @@ bool is_full_house(Puzzle* puzzle, uint8_t idx) {
 }
 TechiqueResult find_hidden_single(Puzzle* puzzle) {
   House house;
-  for(int i = 0; i < TOTAL_CELLS; ++i) {
-    if(puzzle->cells[i] != 0) {
+  for (int i = 0; i < TOTAL_CELLS; ++i) {
+    if (puzzle->cells[i] != 0) {
       continue;
     }
     uint16_t candidate_mask = puzzle->candidates[i];
@@ -89,16 +89,16 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
     uint8_t col_idx = IDX_TO_COL[i];
     get_row(row_idx, puzzle, &house);
 
-    for(int k = 0; k < PUZZLE_WIDTH; ++k) {
-      if(house.cells[k] != 0 || k == col_idx) {
+    for (int k = 0; k < PUZZLE_WIDTH; ++k) {
+      if (house.cells[k] != 0 || k == col_idx) {
         continue;
       }
       other_cell_masks |= house.candidates[k];
     }
 
     uint16_t unique = candidate_mask & ~other_cell_masks;
-    if(unique) {
-      if(__builtin_popcount(unique) != 1) {
+    if (unique) {
+      if (__builtin_popcount(unique) != 1) {
         log_error("Error: Found multiple unique candiates in cell idx: %d", i);
         return INVALID_STATE;
       }
@@ -117,15 +117,15 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
     get_col(col_idx, puzzle, &house);
     other_cell_masks = 0;
 
-    for(int k = 0; k < PUZZLE_WIDTH; ++k) {
-      if(house.cells[k] != 0 || k == row_idx) {
+    for (int k = 0; k < PUZZLE_WIDTH; ++k) {
+      if (house.cells[k] != 0 || k == row_idx) {
         continue;
       }
       other_cell_masks |= house.candidates[k];
     }
     unique = candidate_mask & ~other_cell_masks;
-    if(unique) {
-      if(__builtin_popcount(unique) != 1) {
+    if (unique) {
+      if (__builtin_popcount(unique) != 1) {
         log_error("Error: Found multiple unique candiates in cell idx: %d", i);
         return INVALID_STATE;
       }
@@ -143,16 +143,16 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
     uint8_t block_idx = IDX_TO_BLOCK[i];
     get_block(block_idx, puzzle, &house);
     other_cell_masks = 0;
-    
-    for(int k = 0; k < PUZZLE_WIDTH; ++k) {
-      if(house.cells[k] != 0 || k == get_cell_pos_in_block(row_idx, col_idx)) {
+
+    for (int k = 0; k < PUZZLE_WIDTH; ++k) {
+      if (house.cells[k] != 0 || k == CELL_POS_IN_BLOCK[row_idx][col_idx]) {
         continue;
       }
       other_cell_masks |= house.candidates[k];
     }
     unique = candidate_mask & ~other_cell_masks;
-    if(unique) {
-      if(__builtin_popcount(unique) != 1) {
+    if (unique) {
+      if (__builtin_popcount(unique) != 1) {
         log_error("Error: Found multiple unique candiates in cell idx: %d", i);
         return INVALID_STATE;
       }

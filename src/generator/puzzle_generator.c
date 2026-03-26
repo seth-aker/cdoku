@@ -12,10 +12,10 @@ void generate_puzzle(DiffRating targetDiff, uint8_t cells[], int* diffScore) {
     bool isStillUnique = remove_random_val(cells);
     if (!isStillUnique) {
       // reset and try again
-      resetPuzzle(cells);
+      reset_puzzle(cells);
       continue;
     }
-    *diffScore = determineDiff(cells);
+    // *diffScore = determineDiff(cells);
   }
 }
 
@@ -26,7 +26,7 @@ bool fill_puzzle_randomly(uint8_t cells[]) {
   }
 
   uint8_t potentialVals[PUZZLE_WIDTH] = { 1,2,3,4,5,6,7,8,9 };
-  shuffleIntArr(potentialVals, PUZZLE_WIDTH);
+  shuffle_uint_8_array(potentialVals, PUZZLE_WIDTH);
   for (int i = 0; i < PUZZLE_WIDTH; ++i) {
     if (is_valid_num_in_cell(potentialVals[i], emptyIdx, cells)) {
       cells[emptyIdx] = potentialVals[i];
@@ -68,7 +68,7 @@ bool remove_random_val(uint8_t cells[]) {
   }
 }
 
-void resetPuzzle(uint8_t cells[]) {
+void reset_puzzle(uint8_t cells[]) {
   memset(cells, 0, sizeof(uint8_t) * TOTAL_CELLS);
   fill_puzzle_randomly(cells);
 }

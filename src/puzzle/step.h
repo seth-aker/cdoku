@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 
-#include "puzzle.h"
-
+struct Puzzle;
 typedef enum : uint8_t {
   FULL_HOUSE,
   NAKED_SINGLE,
@@ -43,10 +42,6 @@ typedef struct Step {
   uint8_t placed_val;
 } Step;
 
-void apply_step(Puzzle* puzzle, Step step);
+void apply_step(struct Puzzle* puzzle, Step step);
 
-static inline void log_step(Puzzle* puzzle, Step step) {
-  puzzle->solution[puzzle->step_count] = step;
-  puzzle->step_count++;
-}
 #endif // SRC_PUZZLE_STEP_H

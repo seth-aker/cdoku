@@ -9,6 +9,15 @@
 #define PUZZLE_WIDTH 9
 #define TOTAL_CELLS 81
 
+extern const uint8_t IDX_TO_ROW[TOTAL_CELLS];
+extern const uint8_t IDX_TO_COL[TOTAL_CELLS];
+extern const uint8_t IDX_TO_BLOCK[TOTAL_CELLS];
+extern const uint8_t CELL_PEERS_LOOKUP[TOTAL_CELLS][20];
+extern const uint8_t BLOCK_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
+extern const uint8_t ROW_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
+extern const uint8_t COL_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
+extern const uint8_t CELL_POS_IN_BLOCK[PUZZLE_WIDTH][PUZZLE_WIDTH];
+
 typedef enum DiffRating {
   BEGINNER,
   EASY,
@@ -49,15 +58,9 @@ static inline bool remove_candidate(uint16_t* mask, uint8_t num) {
   return removed;
 }
 
-static inline int get_cell_pos_in_block(uint8_t row_idx, uint8_t col_idx) {
-  return ROW_NORM[row_idx] + COL_NORM[col_idx];
+static inline void log_step(Puzzle* puzzle, Step step) {
+  puzzle->solution[puzzle->step_count] = step;
+  puzzle->step_count++;
 }
-
-extern const uint8_t ROW_NORM[PUZZLE_WIDTH];
-extern const uint8_t COL_NORM[PUZZLE_WIDTH];
-extern const uint8_t IDX_TO_ROW[TOTAL_CELLS];
-extern const uint8_t IDX_TO_COL[TOTAL_CELLS];
-extern const uint8_t IDX_TO_BLOCK[TOTAL_CELLS];
-extern const uint8_t CELL_PEERS_LOOKUP[TOTAL_CELLS][20];
 
 #endif //SRC_PUZZLE_PUZZLE_H
