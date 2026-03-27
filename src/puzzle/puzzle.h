@@ -4,19 +4,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "step.h"
-
-#define BLOCK_WIDTH 3
-#define PUZZLE_WIDTH 9
-#define TOTAL_CELLS 81
-
-extern const uint8_t IDX_TO_ROW[TOTAL_CELLS];
-extern const uint8_t IDX_TO_COL[TOTAL_CELLS];
-extern const uint8_t IDX_TO_BLOCK[TOTAL_CELLS];
-extern const uint8_t CELL_PEERS_LOOKUP[TOTAL_CELLS][20];
-extern const uint8_t BLOCK_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
-extern const uint8_t ROW_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
-extern const uint8_t COL_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
-extern const uint8_t CELL_POS_IN_BLOCK[PUZZLE_WIDTH][PUZZLE_WIDTH];
+#include "globals.h"
 
 typedef enum DiffRating {
   BEGINNER,
