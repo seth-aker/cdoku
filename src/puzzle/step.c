@@ -12,18 +12,23 @@ void apply_step(Puzzle* puzzle, Step step) {
   }
 
   log_step(puzzle, step);
-  for (int i = 0; i < 20; ++i) {
-    uint8_t peer_idx = peers[i];
-    if (puzzle->cells[peer_idx] != 0) {
-      continue;
-    }
-    uint16_t vals_eliminated = (puzzle->candidates[peer_idx] & step.eliminated_mask);
-    if (vals_eliminated != 0) {
-      puzzle->candidates[peer_idx] &= ~step.eliminated_mask;
-      Step anotherStep = step;
-      anotherStep.target_cell = peer_idx;
-      anotherStep.eliminated_mask = vals_eliminated;
-      log_step(puzzle, anotherStep);
+  if (step.placed_val != 0) {
+    for (int i = 0; i < 20; ++i) {
+      uint8_t peer_idx = peers[i];
+      if (puzzle->cells[peer_idx] != 0) {
+        continue;
+      }
+      uint16_t vals_eliminated = (puzzle->candidates[peer_idx] & step.eliminated_mask);
+      if (vals_eliminated != 0) {
+        puzzle->candidates[peer_idx] &= ~step.eliminated_mask;
+        Step propagated_step = {
+          .target_cell = peer_idx,
+          .eliminated_mask = vals_eliminated,
+          .placed_val = 0,
+          .technique = step.technique
+        };
+        log_step(puzzle, propagated_step);
+      }
     }
   }
 }

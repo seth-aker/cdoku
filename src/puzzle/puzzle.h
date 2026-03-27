@@ -33,9 +33,15 @@ typedef struct Puzzle {
   uint16_t step_count;
 } Puzzle;
 
+typedef enum : uint8_t {
+  ROW,
+  COL,
+  BLOCK
+} HouseType;
 typedef struct House {
   uint16_t candidates[PUZZLE_WIDTH];
   uint8_t cells[PUZZLE_WIDTH];
+  uint8_t idx_lookup[PUZZLE_WIDTH];
 } House;
 
 void get_row(uint8_t idx, Puzzle* puzzle, House* row);
@@ -45,6 +51,7 @@ void get_block(uint8_t idx, Puzzle* puzzle, House* block);
 int find_empty_cell(uint8_t cells[]);
 int pasre_puzzle_str(char puzzle_str[], Puzzle* puzzle);
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]);
+bool is_puzzle_solved(uint8_t cells[]);
 
 static inline bool has_candidate(uint16_t mask, uint8_t num) {
   return (mask >> (num - 1)) & 1;

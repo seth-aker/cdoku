@@ -31,7 +31,7 @@ typedef enum : uint8_t {
 
 typedef enum TechiqueResult {
   INVALID_STATE = -1,
-  NONE_FOUND = 0,
+  NO_PROGRESS = 0,
   PROGRESS_MADE = 1
 } TechiqueResult;
 

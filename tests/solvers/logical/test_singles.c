@@ -52,7 +52,7 @@ void test_find_naked_single_success(void) {
 void test_find_naked_single_none_found(void) {
   TechiqueResult result = find_naked_single(&p);
 
-  TEST_ASSERT_EQUAL(NONE_FOUND, result);
+  TEST_ASSERT_EQUAL(NO_PROGRESS, result);
 }
 
 void test_find_hidden_single_in_row_success(void) {
@@ -101,7 +101,7 @@ void test_find_hidden_single_invalid_state(void) {
 void test_find_hidden_single_none_found(void) {
   TechiqueResult result = find_hidden_single(&p);
 
-  TEST_ASSERT_EQUAL(NONE_FOUND, result);
+  TEST_ASSERT_EQUAL(NO_PROGRESS, result);
 }
 
 int main(void) {

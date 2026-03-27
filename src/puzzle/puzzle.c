@@ -53,6 +53,7 @@ void get_row(uint8_t idx, Puzzle* puzzle, House* row) {
     uint8_t offset = idx * 9;
     row->candidates[i] = puzzle->candidates[offset + i];
     row->cells[i] = puzzle->cells[offset + i];
+    row->idx_lookup[i] = ROW_TO_IDXS[idx][i];
   }
 }
 void get_col(uint8_t idx, Puzzle* puzzle, House* col) {
@@ -60,6 +61,7 @@ void get_col(uint8_t idx, Puzzle* puzzle, House* col) {
     uint8_t offset = i * 9;
     col->candidates[i] = puzzle->candidates[offset + idx];
     col->cells[i] = puzzle->cells[offset + idx];
+    col->idx_lookup[i] = COL_TO_IDXS[idx][i];
   }
 }
 void get_block(uint8_t idx, Puzzle* puzzle, House* block) {
@@ -67,7 +69,16 @@ void get_block(uint8_t idx, Puzzle* puzzle, House* block) {
   for (int i = 0; i < PUZZLE_WIDTH; ++i) {
     block->candidates[i] = puzzle->candidates[block_idxs[i]];
     block->cells[i] = puzzle->cells[block_idxs[i]];
+    block->idx_lookup[i] = BLOCK_TO_IDXS[idx][i];
   }
+}
+bool is_puzzle_solved(uint8_t cells[]) {
+  for (int i = 0; i < TOTAL_CELLS; ++i) {
+    if (cells[i] == 0 || !is_valid_num_in_cell(cells[i], i, cells)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // Lookup tables for SPEED!!!

@@ -23,7 +23,7 @@ TechiqueResult find_naked_single(Puzzle* puzzle) {
     apply_step(puzzle, step);
     progress_made = true;
   }
-  return progress_made ? PROGRESS_MADE : NONE_FOUND;
+  return progress_made ? PROGRESS_MADE : NO_PROGRESS;
 }
 bool is_full_house(Puzzle* puzzle, uint8_t idx) {
   bool is_full_house_row = true;
@@ -167,6 +167,6 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
       return PROGRESS_MADE;
     }
   }
-  return NONE_FOUND;
+  return NO_PROGRESS;
 }
 
