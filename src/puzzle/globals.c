@@ -167,7 +167,7 @@ const uint8_t CELL_POS_IN_BLOCK[PUZZLE_WIDTH][PUZZLE_WIDTH] = {
 };
 
 // Pass candidate mask to get the array of the candidates from this list.
-const uint8_t MASK_TO_ARRAY_LOOKUP[512] = {
+const MaskArr MASK_TO_ARRAY_LOOKUP[512] = {
   {0, {0, 0, 0, 0, 0, 0, 0, 0, 0}},
   {1, {1, 0, 0, 0, 0, 0, 0, 0, 0}},
   {1, {2, 0, 0, 0, 0, 0, 0, 0, 0}},
