@@ -4,7 +4,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "step.h"
-#include "globals.h"
+#include "puzzle_globals.h"
 
 typedef enum DiffRating {
   BEGINNER,

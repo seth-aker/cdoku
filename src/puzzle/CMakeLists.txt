@@ -1,7 +1,7 @@
 add_library(puzzle STATIC 
   puzzle.c
   step.c
-  globals.c
+  puzzle_globals.c
 )
 
 target_include_directories(puzzle PUBLIC 

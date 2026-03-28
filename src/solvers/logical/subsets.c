@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "subsets.h"
 #include "utils.h"
-#include "globals.h"
+#include "puzzle_globals.h"
 TechiqueResult find_naked_pair(Puzzle* puzzle, House* house) {
   for(int i1 = 0; i1 < PUZZLE_WIDTH - 1; ++i1) {
     if(house->cells[i1] > 0 || __builtin_popcount(house->candidates[i1]) > 2) {

@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "puzzle_globals.h"
 #include <stdint.h>
 const uint8_t IDX_TO_ROW[TOTAL_CELLS] = {
   0,0,0,0,0,0,0,0,0,
@@ -68,6 +68,13 @@ const uint8_t COL_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH] = {
   {6,15,24,33,42,51,60,69,78},
   {7,16,25,34,43,52,61,70,79},
   {8,17,26,35,44,53,62,71,80}
+};
+
+const uint8_t BLOCK_IDX_TO_START_COL[9] = {
+  0,3,6,0,3,6,0,3,6
+};
+const uint8_t BLOCK_IDX_TO_START_ROW[9] = {
+  0,0,0,3,3,3,6,6,6
 };
 
 const uint8_t CELL_PEERS_LOOKUP[TOTAL_CELLS][20] = {
