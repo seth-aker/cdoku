@@ -6,7 +6,7 @@ Puzzle p;
 
 void setUp(void) {
   memset(p.cells, 0, sizeof(uint8_t) * TOTAL_CELLS);
-  for (int i = 0; i < TOTAL_CELLS; ++i) {
+  for(int i = 0; i < TOTAL_CELLS; ++i) {
     p.candidates[i] = (uint16_t)0x01FF;
   }
 }
@@ -15,7 +15,7 @@ void tearDown(void) {
 
 }
 void test_is_full_house_row_true(void) {
-  for (uint8_t i = 0; i < 8; i++) {
+  for(uint8_t i = 0; i < 8; i++) {
     p.cells[i] = i + 1;
   }
 
@@ -23,14 +23,14 @@ void test_is_full_house_row_true(void) {
 
 }
 void test_is_full_house_col_true(void) {
-  for (int i = 0; i < 8; i++) {
+  for(int i = 0; i < 8; i++) {
     p.cells[i * 9] = i + 1;
   }
   TEST_ASSERT_TRUE(is_full_house(&p, 72));
 }
 
 void test_is_full_house_block_true(void) {
-  for (int i = 0; i < 8; i++) {
+  for(int i = 0; i < 8; i++) {
     p.cells[BLOCK_TO_IDXS[0][i]] = i + 1;
   }
   TEST_ASSERT_TRUE(is_full_house(&p, BLOCK_TO_IDXS[0][8]));
@@ -56,8 +56,8 @@ void test_find_naked_single_none_found(void) {
 }
 
 void test_find_hidden_single_in_row_success(void) {
-  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if (i != 3) {
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(i != 3) {
       p.candidates[i] &= ~0x0040; // Remove bit 6 from all other cells in Row 0
     }
   }
@@ -68,8 +68,8 @@ void test_find_hidden_single_in_row_success(void) {
 }
 
 void test_find_hidden_single_in_col_success(void) {
-  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if (i != 3) {
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(i != 3) {
       p.candidates[i * 9] &= ~0x0040;
     }
   }
@@ -79,8 +79,8 @@ void test_find_hidden_single_in_col_success(void) {
 }
 
 void test_find_hidden_single_in_block_success(void) {
-  for (int i = 0; i < PUZZLE_WIDTH; ++i) {
-    if (i != 3) {
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    if(i != 3) {
       p.candidates[BLOCK_TO_IDXS[0][i]] &= ~0x0040;
     }
   }
@@ -89,7 +89,7 @@ void test_find_hidden_single_in_block_success(void) {
   TEST_ASSERT_EQUAL(PROGRESS_MADE, result);
 }
 void test_find_hidden_single_invalid_state(void) {
-  for (int i = 1; i < PUZZLE_WIDTH; ++i) {
+  for(int i = 1; i < PUZZLE_WIDTH; ++i) {
     p.candidates[i] &= ~0x00C0; // Remove both bits (0x0040 | 0x0080) from other cells
   }
 

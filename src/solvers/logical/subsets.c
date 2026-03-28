@@ -1,8 +1,78 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include "puzzle.h"
 #include "subsets.h"
 #include "utils.h"
 #include "puzzle_globals.h"
+
+TechiqueResult search_naked_pairs(Puzzle* puzzle) {
+  House house;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_row(i, puzzle, &house);
+    if(find_naked_pair(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_col(i, puzzle, &house);
+    if(find_naked_pair(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_block(i, puzzle, &house);
+    if(find_naked_pair(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  return NO_PROGRESS;
+}
+
+TechiqueResult search_naked_triples(Puzzle* puzzle) {
+  House house;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_row(i, puzzle, &house);
+    if(find_naked_triple(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_col(i, puzzle, &house);
+    if(find_naked_triple(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_block(i, puzzle, &house);
+    if(find_naked_triple(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  return NO_PROGRESS;
+}
+TechiqueResult search_naked_quads(Puzzle* puzzle) {
+  House house;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_row(i, puzzle, &house);
+    if(find_naked_quad(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_col(i, puzzle, &house);
+    if(find_naked_quad(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_block(i, puzzle, &house);
+    if(find_naked_quad(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  return NO_PROGRESS;
+}
+
 TechiqueResult find_naked_pair(Puzzle* puzzle, House* house) {
   for(int i1 = 0; i1 < PUZZLE_WIDTH - 1; ++i1) {
     if(house->cells[i1] > 0 || __builtin_popcount(house->candidates[i1]) > 2) {
@@ -116,6 +186,73 @@ TechiqueResult find_naked_quad(Puzzle* puzzle, House* house) {
           }
         }
       }
+    }
+  }
+  return NO_PROGRESS;
+}
+
+TechiqueResult search_hidden_pairs(Puzzle* puzzle) {
+  House house;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_row(i, puzzle, &house);
+    if(find_hidden_pair(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_col(i, puzzle, &house);
+    if(find_hidden_pair(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_block(i, puzzle, &house);
+    if(find_hidden_pair(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  return NO_PROGRESS;
+}
+TechiqueResult search_hidden_triples(Puzzle* puzzle) {
+  House house;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_row(i, puzzle, &house);
+    if(find_hidden_triple(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_col(i, puzzle, &house);
+    if(find_hidden_triple(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_block(i, puzzle, &house);
+    if(find_hidden_triple(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  return NO_PROGRESS;
+}
+TechiqueResult search_hidden_quads(Puzzle* puzzle) {
+  House house;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_row(i, puzzle, &house);
+    if(find_hidden_quad(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_col(i, puzzle, &house);
+    if(find_hidden_quad(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
+    }
+  }
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    get_block(i, puzzle, &house);
+    if(find_hidden_quad(puzzle, &house) == PROGRESS_MADE) {
+      return PROGRESS_MADE;
     }
   }
   return NO_PROGRESS;

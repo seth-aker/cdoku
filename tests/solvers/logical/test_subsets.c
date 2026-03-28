@@ -1,5 +1,7 @@
 #include "unity.h"
 #include "subsets.h" 
+#include "puzzle.h"
+#include "step.h"
 #include <string.h>
 
 // Global test state

@@ -47,11 +47,6 @@ static inline bool has_candidate(uint16_t mask, uint8_t num) {
 static inline void add_candidate(uint16_t* mask, uint8_t num) {
   *mask |= (1 << (num - 1));
 }
-static inline bool remove_candidate(uint16_t* mask, uint8_t num) {
-  bool removed = has_candidate(*mask, num);
-  *mask &= ~(1 << (num - 1));
-  return removed;
-}
 
 static inline void log_step(Puzzle* puzzle, Step step) {
   puzzle->solution[puzzle->step_count] = step;
