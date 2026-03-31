@@ -29,7 +29,7 @@ void solve_puzzle(Puzzle* puzzle) {
     // Advanced solutions
 
   }
-
+  set_diff_rating(puzzle);
 
 }
 

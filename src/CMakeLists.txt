@@ -7,3 +7,5 @@ add_subdirectory(solvers)
 add_subdirectory(utils)
 
 add_subdirectory(generator)
+
+add_subdirectory(app)

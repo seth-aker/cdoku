@@ -6,7 +6,7 @@
 #include "step.h"
 #include "puzzle_globals.h"
 
-typedef enum DiffRating {
+typedef enum DiffRating : uint16_t {
   BEGINNER,
   EASY,
   MEDIUM,
@@ -14,8 +14,15 @@ typedef enum DiffRating {
   IMPOSSIBLE
 } DiffRating;
 
+typedef struct PuzzleDiff {
+  uint32_t score;
+  DiffRating rating;
+  Technique hardest_step;
+} PuzzleDiff;
+
 typedef struct Puzzle {
   Step solution[729];
+  PuzzleDiff difficulty;
   uint16_t candidates[TOTAL_CELLS];
   uint8_t cells[TOTAL_CELLS];
   uint16_t step_count;
@@ -37,6 +44,7 @@ void get_col(uint8_t idx, Puzzle* puzzle, House* col);
 void get_block(uint8_t idx, Puzzle* puzzle, House* block);
 
 int find_empty_cell(uint8_t cells[]);
+void set_diff_rating(Puzzle* puzzle);
 int pasre_puzzle_str(char puzzle_str[], Puzzle* puzzle);
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]);
 bool is_puzzle_solved(uint8_t cells[]);
@@ -49,8 +57,11 @@ static inline void add_candidate(uint16_t* mask, uint8_t num) {
 }
 
 static inline void log_step(Puzzle* puzzle, Step step) {
-  puzzle->solution[puzzle->step_count] = step;
-  puzzle->step_count++;
+  puzzle->solution[puzzle->step_count++] = step;
+  puzzle->difficulty.score += (uint32_t)step.technique;
+  if(puzzle->difficulty.hardest_step < step.technique) {
+    puzzle->difficulty.hardest_step = step.technique;
+  }
 }
 
 #endif //SRC_PUZZLE_PUZZLE_H

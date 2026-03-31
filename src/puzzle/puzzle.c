@@ -13,7 +13,20 @@ int find_empty_cell(uint8_t cells[]) {
   }
   return -1;
 }
-
+void set_diff_rating(Puzzle* puzzle) {
+  Technique hardest_step = puzzle->difficulty.hardest_step;
+  if(hardest_step <= HIDDEN_SINGLE) {
+    puzzle->difficulty.rating = BEGINNER;
+  } else if(hardest_step <= HIDDEN_TRIPLE) {
+    puzzle->difficulty.rating = EASY;
+  } else if(hardest_step <= SIMPLE_COLORS) {
+    puzzle->difficulty.rating = MEDIUM;
+  } else if(hardest_step <= JELLYFISH) {
+    puzzle->difficulty.rating = HARD;
+  } else {
+    puzzle->difficulty.rating = IMPOSSIBLE;
+  }
+}
 int pasre_puzzle_str(char puzzle_str[], Puzzle* puzzle) {
   char* endptr;
   errno = 0;
