@@ -138,14 +138,13 @@ void test_initMatrix_correctly_connects_the_row_nodes_horizontally(void) {
       TEST_ASSERT_EQUAL_INT_MESSAGE(row_id, row_node->row_id, "horizontally connected nodes should have the same row_id");
       row_node = row_node->right;
     }
-    row_node = row_node->right;
-    TEST_ASSERT_EQUAL_PTR_MESSAGE(matrix.row_lookup[i], row_node->right, "horizonally linked nodes should loop back to starting node going right");
+    TEST_ASSERT_EQUAL_PTR_MESSAGE(matrix.row_lookup[i], row_node, "horizonally linked nodes should loop back to starting node going right");
 
     row_node = matrix.row_lookup[i];
     for(int r = 0; r < 4; ++r) {
       row_node = row_node->left;
     }
-    TEST_ASSERT_EQUAL_PTR_MESSAGE(matrix.row_lookup[i], row_node->left, "horizontally linked nodes should loop back to starting node going left");
+    TEST_ASSERT_EQUAL_PTR_MESSAGE(matrix.row_lookup[i], row_node, "horizontally linked nodes should loop back to starting node going left");
   }
 
 }

@@ -33,20 +33,20 @@ int stringify_puzzle(char dest[], int dest_size, const Puzzle* puzzle) {
     dest[0] = '\0';
     return -1;
   }
-  for (int i = 0; i < TOTAL_CELLS; ++i) {
+  for(int i = 0; i < TOTAL_CELLS; ++i) {
     dest[i] = puzzle->cells[i] + '0'; // int to ascii conversion
   }
 
-  return snprintf(dest + TOTAL_CELLS, dest_size - TOTAL_CELLS, ":%u:%d", 
-          puzzle->difficulty.score, 
-          puzzle->difficulty.rating);
+  return snprintf(dest + TOTAL_CELLS, dest_size - TOTAL_CELLS, ":%u:%d",
+    puzzle->difficulty.score,
+    puzzle->difficulty.rating);
 
 }
-int parse_puzzle_str(char puzzle_str[], Puzzle* puzzle) {
+int parse_puzzle_str(const char puzzle_str[], Puzzle* puzzle) {
   char* endptr;
   errno = 0;
   for(int i = 0; i < TOTAL_CELLS; ++i) {
-    char* str = &puzzle_str[i];
+    const char* str = &puzzle_str[i];
     long num = strtol(str, &endptr, 10);
     if(endptr == str || *endptr != '\0') {
       log_error("Invalid Puzzle String! %s", str);
@@ -64,9 +64,6 @@ int parse_puzzle_str(char puzzle_str[], Puzzle* puzzle) {
 }
 
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]) {
-  if(cells[idx] != 0) {
-    return false;
-  }
   const uint8_t* peers = CELL_PEERS_LOOKUP[idx];
   for(int i = 0; i < 20; ++i) {
     int peer_idx = peers[i];
