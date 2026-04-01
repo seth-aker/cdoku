@@ -50,10 +50,10 @@ int parse_puzzle_str(char puzzle_str[], Puzzle* puzzle);
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]);
 bool is_puzzle_solved(uint8_t cells[]);
 
-static inline bool has_candidate(uint16_t mask, uint8_t num) {
+static inline bool has_candidate(uint16_t mask, uint16_t num) {
   return (mask >> (num - 1)) & 1;
 }
-static inline void add_candidate(uint16_t* mask, uint8_t num) {
+static inline void add_candidate(uint16_t* mask, uint16_t num) {
   *mask |= (1 << (num - 1));
 }
 

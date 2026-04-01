@@ -8,7 +8,7 @@
 int count_active_cols(Matrix* matrix) {
   int count = 0;
   Node* current = matrix->root.right;
-  while (current != &matrix->root) {
+  while(current != &matrix->root) {
     count++;
     current = current->right;
   }
@@ -17,8 +17,8 @@ int count_active_cols(Matrix* matrix) {
 
 bool is_col_active(Matrix* matrix, Node* target_col) {
   Node* current = matrix->root.right;
-  while (current != &matrix->root) {
-    if (current == target_col) {
+  while(current != &matrix->root) {
+    if(current == target_col) {
       return true;
     }
     current = current->right;
@@ -68,12 +68,12 @@ void test_initMatrix_created_doubly_linked_column_list(void) {
   Node* current = &matrix.columns[0];
 
 
-  for (int i = 0; i <= TOTAL_COLUMNS; ++i) {
+  for(int i = 0; i <= TOTAL_COLUMNS; ++i) {
     current = current->right;
   }
   TEST_ASSERT_EQUAL_PTR_MESSAGE(&matrix.columns[0], current, "current and head should be the same after traversing right");
 
-  for (int i = 0; i <= TOTAL_COLUMNS; ++i) {
+  for(int i = 0; i <= TOTAL_COLUMNS; ++i) {
     current = current->left;
   }
   TEST_ASSERT_EQUAL_PTR_MESSAGE(&matrix.columns[0], current, "current and head should be the same after traversing left");
@@ -90,17 +90,17 @@ void test_initMatrix_assigns_nine_rows_to_each_column(void) {
   init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
   Node* current_header = &matrix.columns[0];
 
-  for (int i = 0; i < TOTAL_COLUMNS; ++i) {
+  for(int i = 0; i < TOTAL_COLUMNS; ++i) {
     TEST_ASSERT_EQUAL_INT(expected_header_size, current_header->size);
     Node* current_row = current_header->down;
-    for (int j = 0; j < PUZZLE_WIDTH; ++j) {
+    for(int j = 0; j < PUZZLE_WIDTH; ++j) {
       TEST_ASSERT_EQUAL_PTR_MESSAGE(current_header, current_row->column, "each row node should point to its column header node");
       current_row = current_row->down;
     }
     TEST_ASSERT_EQUAL_PTR_MESSAGE(current_header, current_row, "After tranversing down 9 times, should loop back to the header");
 
     current_row = current_header->up;
-    for (int j = 0; j < PUZZLE_WIDTH; ++j) {
+    for(int j = 0; j < PUZZLE_WIDTH; ++j) {
       current_row = current_row->up;
     }
     TEST_ASSERT_EQUAL_PTR_MESSAGE(current_header, current_row, "After traversing up 9 times, should loop back to the header");
@@ -118,7 +118,7 @@ void test_initMatrix_correctly_assigns_row_lookup_ptrs(void) {
   Node* current_header = &matrix.columns[0];
 
 
-  for (int i = 0; i < TOTAL_ROWS; ++i) {
+  for(int i = 0; i < TOTAL_ROWS; ++i) {
     TEST_ASSERT_NOT_NULL(matrix.row_lookup[i]);
     TEST_ASSERT_EQUAL_INT_MESSAGE(i, matrix.row_lookup[i]->row_id, "Row ids should match location index in row_lookup array");
   }
@@ -131,17 +131,18 @@ void test_initMatrix_correctly_connects_the_row_nodes_horizontally(void) {
 
   init_matrix(&matrix, matrix_node_pool, &matrix_node_counter);
 
-  for (int i = 0; i < TOTAL_ROWS; ++i) {
+  for(int i = 0; i < TOTAL_ROWS; ++i) {
     Node* row_node = matrix.row_lookup[i];
     int row_id = row_node->row_id;
-    for (int r = 0; r < 4; ++r) {
+    for(int r = 0; r < 4; ++r) {
       TEST_ASSERT_EQUAL_INT_MESSAGE(row_id, row_node->row_id, "horizontally connected nodes should have the same row_id");
       row_node = row_node->right;
     }
+    row_node = row_node->right;
     TEST_ASSERT_EQUAL_PTR_MESSAGE(matrix.row_lookup[i], row_node->right, "horizonally linked nodes should loop back to starting node going right");
 
     row_node = matrix.row_lookup[i];
-    for (int r = 0; r < 4; ++r) {
+    for(int r = 0; r < 4; ++r) {
       row_node = row_node->left;
     }
     TEST_ASSERT_EQUAL_PTR_MESSAGE(matrix.row_lookup[i], row_node->left, "horizontally linked nodes should loop back to starting node going left");
@@ -345,6 +346,7 @@ int main(void) {
   RUN_TEST(test_initMatrix_created_doubly_linked_column_list);
   RUN_TEST(test_initMatrix_assigns_nine_rows_to_each_column);
   RUN_TEST(test_initMatrix_correctly_assigns_row_lookup_ptrs);
+  RUN_TEST(test_initMatrix_correctly_connects_the_row_nodes_horizontally);
   RUN_TEST(test_getMinCol_correctly_returns_smallest_col_size);
   RUN_TEST(test_getMinCol_returns_first_of_cols_with_equal_size);
   RUN_TEST(test_getMinCol_returns_root_when_puzzle_solved);

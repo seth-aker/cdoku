@@ -6,6 +6,10 @@
 #include "puzzle.h"
 #include "log.h"
 int main(int argc, const char* argv[]) {
+  if(argc != 3) {
+    log_error("Invalid number of arguments. Expected 2, received: %d", argc - 1);
+    return EXIT_FAILURE;
+  }
   AppConfig config;
   parse_args(argc, argv, &config);
   Puzzle puzzle;

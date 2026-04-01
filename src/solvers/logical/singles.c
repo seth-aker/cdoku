@@ -83,8 +83,8 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
     if(puzzle->cells[i] != 0) {
       continue;
     }
-    uint8_t candidate_mask = puzzle->candidates[i];
-    uint8_t other_cell_masks = 0;
+    uint16_t candidate_mask = puzzle->candidates[i];
+    uint16_t other_cell_masks = 0;
 
     uint8_t row_idx = IDX_TO_ROW[i];
     uint8_t col_idx = IDX_TO_COL[i];
@@ -97,7 +97,7 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
       other_cell_masks |= house.candidates[k];
     }
 
-    uint8_t unique = candidate_mask & ~other_cell_masks;
+    uint16_t unique = candidate_mask & ~other_cell_masks;
     if(unique) {
       if(__builtin_popcount(unique) != 1) {
         log_error("Error: Found multiple unique candiates in cell idx: %d", i);

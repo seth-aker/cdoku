@@ -82,7 +82,7 @@ TechiqueResult find_naked_pair(Puzzle* puzzle, House* house) {
       if(house->cells[i2] > 0 || __builtin_popcount(house->candidates[i2]) > 2) {
         continue;
       }
-      uint8_t union_mask = house->candidates[i1] | house->candidates[i2];
+      uint16_t union_mask = house->candidates[i1] | house->candidates[i2];
       if(__builtin_popcount(union_mask) == 2) {
         bool progress_made = false;
         for(int i = 0; i < PUZZLE_WIDTH; ++i) {
@@ -121,7 +121,7 @@ TechiqueResult find_naked_triple(Puzzle* puzzle, House* house) {
         if(house->cells[i3] != 0 || __builtin_popcount(house->candidates[i3]) > 3) {
           continue;
         }
-        uint8_t union_mask = house->candidates[i1] | house->candidates[i2] | house->candidates[i3];
+        uint16_t union_mask = house->candidates[i1] | house->candidates[i2] | house->candidates[i3];
         if(__builtin_popcount(union_mask) == 3) {
           bool progress_made = false;
           for(int i = 0; i < PUZZLE_WIDTH; ++i) {
@@ -164,7 +164,7 @@ TechiqueResult find_naked_quad(Puzzle* puzzle, House* house) {
           if(house->cells[i4] != 0 || __builtin_popcount(house->candidates[i4]) > 4) {
             continue;
           }
-          uint8_t union_mask = house->candidates[i1] | house->candidates[i2] | house->candidates[i3] | house->candidates[i4];
+          uint16_t union_mask = house->candidates[i1] | house->candidates[i2] | house->candidates[i3] | house->candidates[i4];
           if(__builtin_popcount(union_mask) == 4) {
             bool progress_made = false;
             for(int i = 0; i < PUZZLE_WIDTH; ++i) {
@@ -259,7 +259,7 @@ TechiqueResult search_hidden_quads(Puzzle* puzzle) {
 }
 
 TechiqueResult find_hidden_pair(Puzzle* puzzle, House* house) {
-  uint8_t all_candidate_union = 0;
+  uint16_t all_candidate_union = 0;
   uint8_t empty_cells_idxs[9];
   int empty_cell_count = 0;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
@@ -276,11 +276,11 @@ TechiqueResult find_hidden_pair(Puzzle* puzzle, House* house) {
   }
   for(int c1 = 0; c1 < all_candidate_arr.length - 1; ++c1) {
     for(int c2 = c1 + 1; c2 < all_candidate_arr.length; ++c2) {
-      uint8_t potential_pair = (1 << (all_candidate_arr.candidates[c1] - 1)) | (1 << (all_candidate_arr.candidates[c2] - 1));
+      uint16_t potential_pair = (1 << (all_candidate_arr.candidates[c1] - 1)) | (1 << (all_candidate_arr.candidates[c2] - 1));
       uint8_t cells_with_pair_buffer[9];
       uint8_t cells_with_pair_count = 0;
       for(int i = 0; i < empty_cell_count; ++i) {
-        uint8_t matching_candidates = potential_pair & house->candidates[empty_cells_idxs[i]];
+        uint16_t matching_candidates = potential_pair & house->candidates[empty_cells_idxs[i]];
         if(matching_candidates) {
           cells_with_pair_buffer[cells_with_pair_count] = empty_cells_idxs[i];
           cells_with_pair_count++;
@@ -294,8 +294,8 @@ TechiqueResult find_hidden_pair(Puzzle* puzzle, House* house) {
       }
       uint8_t idx1 = house->idx_lookup[cells_with_pair_buffer[0]];
       uint8_t idx2 = house->idx_lookup[cells_with_pair_buffer[1]];
-      uint8_t removed1 = puzzle->candidates[idx1] & ~potential_pair;
-      uint8_t removed2 = puzzle->candidates[idx2] & ~potential_pair;
+      uint16_t removed1 = puzzle->candidates[idx1] & ~potential_pair;
+      uint16_t removed2 = puzzle->candidates[idx2] & ~potential_pair;
       bool progress_made = false;
 
       if(removed1) {
@@ -327,7 +327,7 @@ TechiqueResult find_hidden_pair(Puzzle* puzzle, House* house) {
 }
 
 TechiqueResult find_hidden_triple(Puzzle* puzzle, House* house) {
-  uint8_t all_candidate_union = 0;
+  uint16_t all_candidate_union = 0;
   uint8_t empty_cells_idxs[9];
   int empty_cell_count = 0;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
@@ -345,13 +345,13 @@ TechiqueResult find_hidden_triple(Puzzle* puzzle, House* house) {
   for(int c1 = 0; c1 < all_candidate_arr.length - 2; ++c1) {
     for(int c2 = c1 + 1; c2 < all_candidate_arr.length - 1; ++c2) {
       for(int c3 = c2 + 1; c3 < all_candidate_arr.length; ++c3) {
-        uint8_t potential_triple = (1 << (all_candidate_arr.candidates[c1] - 1))
+        uint16_t potential_triple = (1 << (all_candidate_arr.candidates[c1] - 1))
           | (1 << (all_candidate_arr.candidates[c2] - 1))
           | (1 << (all_candidate_arr.candidates[c3] - 1));
         uint8_t cells_with_triple_buffer[9];
         uint8_t potential_triple_count = 0;
         for(int i = 0; i < empty_cell_count; ++i) {
-          uint8_t matching_candidates = potential_triple & house->candidates[empty_cells_idxs[i]];
+          uint16_t matching_candidates = potential_triple & house->candidates[empty_cells_idxs[i]];
           if(matching_candidates) {
             cells_with_triple_buffer[potential_triple_count++] = empty_cells_idxs[i];
             if(potential_triple_count > 3) {
@@ -366,9 +366,9 @@ TechiqueResult find_hidden_triple(Puzzle* puzzle, House* house) {
         uint8_t idx2 = house->idx_lookup[cells_with_triple_buffer[1]];
         uint8_t idx3 = house->idx_lookup[cells_with_triple_buffer[2]];
 
-        uint8_t removed1 = puzzle->candidates[idx1] & ~potential_triple;
-        uint8_t removed2 = puzzle->candidates[idx2] & ~potential_triple;
-        uint8_t removed3 = puzzle->candidates[idx3] & ~potential_triple;
+        uint16_t removed1 = puzzle->candidates[idx1] & ~potential_triple;
+        uint16_t removed2 = puzzle->candidates[idx2] & ~potential_triple;
+        uint16_t removed3 = puzzle->candidates[idx3] & ~potential_triple;
 
         bool progress_made = false;
         if(removed1) {
@@ -411,7 +411,7 @@ TechiqueResult find_hidden_triple(Puzzle* puzzle, House* house) {
 }
 
 TechiqueResult find_hidden_quad(Puzzle* puzzle, House* house) {
-  uint8_t all_candidate_union = 0;
+  uint16_t all_candidate_union = 0;
   uint8_t empty_cells_idxs[9];
   int empty_cell_count = 0;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
@@ -431,14 +431,14 @@ TechiqueResult find_hidden_quad(Puzzle* puzzle, House* house) {
     for(int c2 = c1 + 1; c2 < all_candidate_arr.length - 2; ++c2) {
       for(int c3 = c2 + 1; c3 < all_candidate_arr.length - 1; ++c3) {
         for(int c4 = c3 + 1; c4 < all_candidate_arr.length; ++c4) {
-          uint8_t potential_quad = (1 << (all_candidate_arr.candidates[c1] - 1))
+          uint16_t potential_quad = (1 << (all_candidate_arr.candidates[c1] - 1))
             | (1 << (all_candidate_arr.candidates[c2] - 1))
             | (1 << (all_candidate_arr.candidates[c3] - 1))
             | (1 << (all_candidate_arr.candidates[c4] - 1));
           uint8_t cells_with_potential_quads[9];
           uint8_t potential_quads_count = 0;
           for(int i = 0; i < empty_cell_count; ++i) {
-            uint8_t matching_candidate = house->candidates[empty_cells_idxs[i]] & potential_quad;
+            uint16_t matching_candidate = house->candidates[empty_cells_idxs[i]] & potential_quad;
             if(matching_candidate) {
               cells_with_potential_quads[potential_quads_count++] = empty_cells_idxs[i];
               if(potential_quads_count > 4) {
@@ -454,10 +454,10 @@ TechiqueResult find_hidden_quad(Puzzle* puzzle, House* house) {
           uint8_t idx3 = house->idx_lookup[cells_with_potential_quads[2]];
           uint8_t idx4 = house->idx_lookup[cells_with_potential_quads[3]];
 
-          uint8_t removed1 = puzzle->candidates[idx1] & ~potential_quad;
-          uint8_t removed2 = puzzle->candidates[idx2] & ~potential_quad;
-          uint8_t removed3 = puzzle->candidates[idx3] & ~potential_quad;
-          uint8_t removed4 = puzzle->candidates[idx4] & ~potential_quad;
+          uint16_t removed1 = puzzle->candidates[idx1] & ~potential_quad;
+          uint16_t removed2 = puzzle->candidates[idx2] & ~potential_quad;
+          uint16_t removed3 = puzzle->candidates[idx3] & ~potential_quad;
+          uint16_t removed4 = puzzle->candidates[idx4] & ~potential_quad;
           bool progress_made = false;
           if(removed1) {
             Step step = {

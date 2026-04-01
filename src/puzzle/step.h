@@ -36,7 +36,7 @@ typedef enum TechiqueResult {
 } TechiqueResult;
 
 typedef struct Step {
-  uint8_t eliminated_mask;
+  uint16_t eliminated_mask;
   Technique technique;
   uint8_t target_cell;
   uint8_t placed_val;

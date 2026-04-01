@@ -7,7 +7,7 @@ Puzzle p;
 void setUp(void) {
   memset(p.cells, 0, sizeof(uint8_t) * TOTAL_CELLS);
   for(int i = 0; i < TOTAL_CELLS; ++i) {
-    p.candidates[i] = (uint8_t)0x01FF;
+    p.candidates[i] = (uint16_t)0x01FF;
   }
 }
 

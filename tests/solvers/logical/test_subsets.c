@@ -9,7 +9,7 @@ Puzzle p;
 House h;
 
 // Helper to manually set a candidate mask in both the House snapshot and main Puzzle
-void set_candidates(int index, uint8_t mask) {
+void set_candidates(int index, uint16_t mask) {
     p.candidates[index] = mask;
     h.candidates[index] = mask;
 }
@@ -36,7 +36,7 @@ void tearDown(void) {
 
 void test_find_naked_pair_actionable(void) {
     // Set up a Naked Pair of [3, 7] in index 0 and 1
-    uint8_t pair_mask = (1 << 2) | (1 << 6);
+    uint16_t pair_mask = (1 << 2) | (1 << 6);
     set_candidates(0, pair_mask);
     set_candidates(1, pair_mask);
 
@@ -50,7 +50,7 @@ void test_find_naked_pair_actionable(void) {
 }
 
 void test_find_naked_pair_non_actionable_stagnates(void) {
-    uint8_t pair_mask = (1 << 2) | (1 << 6);
+    uint16_t pair_mask = (1 << 2) | (1 << 6);
     set_candidates(0, pair_mask);
     set_candidates(1, pair_mask);
 
@@ -86,7 +86,7 @@ void test_find_naked_triple_non_actionable_stagnates(void) {
 }
 void test_find_naked_quad_actionable(void) {
     // Create a strict Quad of [1, 2, 3, 4] across 4 cells
-    uint8_t quad_mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
+    uint16_t quad_mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
     set_candidates(0, quad_mask);
     set_candidates(1, quad_mask);
     set_candidates(2, quad_mask);
@@ -100,7 +100,7 @@ void test_find_naked_quad_actionable(void) {
 }
 
 void test_find_naked_quad_non_actionable_stagnates(void) {
-    uint8_t quad_mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
+    uint16_t quad_mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
     set_candidates(0, quad_mask);
     set_candidates(1, quad_mask);
     set_candidates(2, quad_mask);
@@ -206,7 +206,7 @@ void test_find_hidden_triple_stagnates(void) {
 
 void test_find_hidden_quad_stagnates(void) {
     // Hidden quad exists, but has absolutely no noise to strip.
-    uint8_t quad_mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
+    uint16_t quad_mask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
     set_candidates(0, quad_mask); // [1, 2, 3, 4]
     set_candidates(1, quad_mask); // [1, 2, 3, 4]
     set_candidates(2, quad_mask); // [1, 2, 3, 4]
