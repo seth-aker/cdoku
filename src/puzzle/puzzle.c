@@ -27,7 +27,22 @@ void set_diff_rating(Puzzle* puzzle) {
     puzzle->difficulty.rating = IMPOSSIBLE;
   }
 }
-int pasre_puzzle_str(char puzzle_str[], Puzzle* puzzle) {
+
+int stringify_puzzle(char dest[], int dest_size, const Puzzle* puzzle) {
+  if(dest_size < TOTAL_CELLS + 20) {// dest need to be: 81 cells + ':' + max score (10) + ':' + max rating(2) + '\0';
+    dest[0] = '\0';
+    return -1;
+  }
+  for (int i = 0; i < TOTAL_CELLS; ++i) {
+    dest[i] = puzzle->cells[i] + '0'; // int to ascii conversion
+  }
+
+  return snprintf(dest + TOTAL_CELLS, dest_size - TOTAL_CELLS, ":%u:%d", 
+          puzzle->difficulty.score, 
+          puzzle->difficulty.rating);
+
+}
+int parse_puzzle_str(char puzzle_str[], Puzzle* puzzle) {
   char* endptr;
   errno = 0;
   for(int i = 0; i < TOTAL_CELLS; ++i) {

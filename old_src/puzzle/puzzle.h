@@ -28,7 +28,7 @@ typedef struct {
 typedef struct {
   int id;
   int cells[81];
-  uint16_t candidates[81];
+  uint8_t candidates[81];
   PuzzleDifficulty difficulty;
 } Puzzle;
 typedef enum {
@@ -39,7 +39,7 @@ typedef enum {
 
 typedef struct {
   int cells[9];
-  uint16_t candidates[9];
+  uint8_t candidates[9];
   HouseType type;
   int index;
 } House;
@@ -53,29 +53,29 @@ void getCol(int colIndex, int* cells, int* col);
 int getCellPosInBlock(int rowIndex, int colIndex);
 
 int getCellIndexFromHousePos(House* house, int cellIndex);
-void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* block);
-void getCandidateRow(int rowIndex, uint16_t* candidates, uint16_t* row);
-void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col);
+void getCandidateBlock(int blockX, int blockY, uint8_t* candidates, uint8_t* block);
+void getCandidateRow(int rowIndex, uint8_t* candidates, uint8_t* row);
+void getCandidateCol(int colIndex, uint8_t* candidates, uint8_t* col);
 
-int getCandidatesInCell(uint16_t cellCandidates, int* candidateArray);
+int getCandidatesInCell(uint8_t cellCandidates, int* candidateArray);
 bool numWorksInCell(int rowIndex, int colIndex, int potentialNum, int* cells);
 int findEmptyCell(int* cells);
 bool isLocationInBlock(int row, int col, int blockIndex);
 
 StepNode* removeCandidateFromBlock(BlockCoord blockCoords, int value, int skipRow, int skipCol, Strategy stratUsed, Puzzle* puzzle, StepNode* head);
 
-static inline bool hasCandidate(uint16_t mask, int num) {
+static inline bool hasCandidate(uint8_t mask, int num) {
   return (mask >> (num - 1)) & 1;
 }
-static inline void addCandidate(uint16_t* mask, int num) {
+static inline void addCandidate(uint8_t* mask, int num) {
   *mask |= (1 << (num - 1));
 }
-static inline bool removeCandidate(uint16_t* mask, int num) {
+static inline bool removeCandidate(uint8_t* mask, int num) {
   bool removed = hasCandidate(*mask, num);
   *mask &= ~(1 << (num - 1));
   return removed;
 }
-static inline int getFirstValueFromMask(uint16_t mask) {
+static inline int getFirstValueFromMask(uint8_t mask) {
   if (mask == 0) return 0;
   return __builtin_ctz(mask) + 1;
 }

@@ -18,7 +18,7 @@ void apply_step(Puzzle* puzzle, Step step) {
       if(puzzle->cells[peer_idx] != 0) {
         continue;
       }
-      uint16_t vals_eliminated = (puzzle->candidates[peer_idx] & step.eliminated_mask);
+      uint8_t vals_eliminated = (puzzle->candidates[peer_idx] & step.eliminated_mask);
       if(vals_eliminated != 0) {
         puzzle->candidates[peer_idx] &= ~step.eliminated_mask;
         Step propagated_step = {

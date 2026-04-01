@@ -11,18 +11,18 @@
 
 typedef struct {
   int* values;
-  uint16_t* candidates;
+  uint8_t* candidates;
   int* subsetIndicies;
   int* foundIndicies;
-  uint16_t subsetCandidates;
+  uint8_t subsetCandidates;
 } NakedComboSearchContext;
 
 typedef struct {
   int* emptyCellIndicies;
   int emptyCellCount;
   int* cells;
-  uint16_t* candidates;
-  uint16_t* candidateSubset;
+  uint8_t* candidates;
+  uint8_t* candidateSubset;
   int* allCandidateArray;
   int allCandidateCount;
   int* hiddenComboCellIndices;
@@ -51,8 +51,8 @@ StepNode* findHiddenSubsetOfSize(Puzzle* puzzle, House* house, int subsetSize, S
 StepNode* removeHiddenSubsetFromHouse(Puzzle* puzzle, House* house, HiddenComboSearchContext* context, int subsetSize, StepNode* head);
 bool findHiddenCombo(HiddenComboSearchContext* context, int startIndex, int subsetSize, int depth);
 
-StepNode* removePointingRow(int rowIndex, int skipBlockCol, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
-StepNode* removePointingCol(int colIndex, int skipBlockRow, uint16_t valuesToRemove, Puzzle* puzzle, StepNode* head);
+StepNode* removePointingRow(int rowIndex, int skipBlockCol, uint8_t valuesToRemove, Puzzle* puzzle, StepNode* head);
+StepNode* removePointingCol(int colIndex, int skipBlockRow, uint8_t valuesToRemove, Puzzle* puzzle, StepNode* head);
 
 bool isFullHouse(int cellIndex, int* cells);
 

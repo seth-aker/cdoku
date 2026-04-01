@@ -6,7 +6,7 @@
 #include "step.h"
 #include "puzzle_globals.h"
 
-typedef enum DiffRating : uint16_t {
+typedef enum DiffRating : uint8_t {
   BEGINNER,
   EASY,
   MEDIUM,
@@ -45,7 +45,8 @@ void get_block(uint8_t idx, Puzzle* puzzle, House* block);
 
 int find_empty_cell(uint8_t cells[]);
 void set_diff_rating(Puzzle* puzzle);
-int pasre_puzzle_str(char puzzle_str[], Puzzle* puzzle);
+int stringify_puzzle(char dest[], int dest_size, const Puzzle* puzzle);
+int parse_puzzle_str(char puzzle_str[], Puzzle* puzzle);
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]);
 bool is_puzzle_solved(uint8_t cells[]);
 

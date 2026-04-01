@@ -72,7 +72,7 @@ int getCellIndexFromHousePos(House* house, int cellIndex) {
   }
 }
 
-void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* block) {
+void getCandidateBlock(int blockX, int blockY, uint8_t* candidates, uint8_t* block) {
   int blockXOffset = blockX * BLOCK_WIDTH;
   int blockYOffset = blockY * BLOCK_WIDTH * PUZZLE_WIDTH;
   int startIndex = blockXOffset + blockYOffset;
@@ -85,20 +85,20 @@ void getCandidateBlock(int blockX, int blockY, uint16_t* candidates, uint16_t* b
   }
 }
 
-void getCandidateRow(int rowIndex, uint16_t* candidates, uint16_t* row) {
+void getCandidateRow(int rowIndex, uint8_t* candidates, uint8_t* row) {
   int offset = rowIndex * PUZZLE_WIDTH;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     row[i] = candidates[i + offset];
   }
 }
-void getCandidateCol(int colIndex, uint16_t* candidates, uint16_t* col) {
+void getCandidateCol(int colIndex, uint8_t* candidates, uint8_t* col) {
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     int offset = i * PUZZLE_WIDTH + colIndex;
     col[i] = candidates[offset];
   }
 }
 
-int getCandidatesInCell(uint16_t cellCandidates, int* candidatesArray) {
+int getCandidatesInCell(uint8_t cellCandidates, int* candidatesArray) {
   int count = 0;
   while(cellCandidates > 0) {
     int candidateIndex = __builtin_ctz(cellCandidates);

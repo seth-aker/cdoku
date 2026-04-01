@@ -6,21 +6,31 @@
 #include "logical_solve.h"
 #include "utils.h"
 
-void generate_puzzle(DiffRating targetDiff, uint8_t cells[], int* diffScore) {
-  bool is_at_diff = false;
-  fill_puzzle_randomly(cells);
-  while(!is_at_diff) {
-    bool is_still_unique = remove_random_val(cells);
+void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
+  fill_puzzle_randomly(puzzle->cells);
+  Puzzle puzzle_cpy;
+  while(true) {
+    bool is_still_unique = remove_random_val(puzzle->cells);
     if(!is_still_unique) {
       // reset and try again
-      reset_puzzle(cells);
+      reset_puzzle(puzzle);
       continue;
     }
+    clone_puzzle(&puzzle_cpy, puzzle);
+    solve_puzzle(&puzzle_cpy);
 
-    // *diffScore = determineDiff(cells);
+    if(puzzle_cpy.difficulty.rating < target_difficulty) {
+      continue;
+    }
+    if(puzzle_cpy.difficulty.rating == target_difficulty) {
+      puzzle->difficulty = puzzle_cpy.difficulty;
+      return;
+    }
+    if(puzzle_cpy.difficulty.rating > target_difficulty) {
+      reset_puzzle(puzzle);
+    }
   }
 }
-
 bool fill_puzzle_randomly(uint8_t cells[]) {
   int empty_idx = find_empty_cell(cells);
   if(empty_idx == -1) {
@@ -67,9 +77,10 @@ bool remove_random_val(uint8_t cells[]) {
       return true;
     }
   }
+  return false;
 }
 
-void reset_puzzle(uint8_t cells[]) {
-  memset(cells, 0, sizeof(uint8_t) * TOTAL_CELLS);
-  fill_puzzle_randomly(cells);
+void reset_puzzle(Puzzle* puzzle) {
+  memset(puzzle, 0, sizeof(Puzzle));
+  fill_puzzle_randomly(puzzle->cells);
 }

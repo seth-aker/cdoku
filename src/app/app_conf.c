@@ -16,7 +16,7 @@ void parse_args(int argc, const char* argv[], AppConfig* conf) {
   }
 
   conf->puzzle_count = puzzle_count;
-  switch(argv[1][1]) {
+  switch(argv[1][0]) {
   case 'B':
     conf->target_difficulty = BEGINNER;
     break;
@@ -61,24 +61,10 @@ bool is_valid_puzzle_str(const char* str) {
   return len == 81;
 }
 bool is_valid_difficulty_target(const char* str) {
-  switch(str[0]) {
-  case 'B':
-    return strcmp(str, difficulty_strs[0]);
-    break;
-  case 'E':
-    return strcmp(str, difficulty_strs[1]);
-    break;
-  case 'M':
-    return strcmp(str, difficulty_strs[2]);
-    break;
-  case 'H':
-    return strcmp(str, difficulty_strs[3]);
-    break;
-  case 'I':
-    return strcmp(str, difficulty_strs[4]);
-    break;
-  default:
-    return false;
-    break;
+  for(int i = 0; i < 5; ++i) {
+    if(strcmp(str, difficulty_strs[i]) == 0) {
+      return true;
+    }
   }
+  return false;
 }

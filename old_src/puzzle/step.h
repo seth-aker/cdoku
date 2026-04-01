@@ -10,7 +10,7 @@ typedef struct Step {
   int rowIndex;
   int colIndex;
   int value;
-  uint16_t candidatesRemoved;
+  uint8_t candidatesRemoved;
   Strategy strategyUsed;
 } Step;
 

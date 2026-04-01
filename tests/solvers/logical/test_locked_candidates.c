@@ -5,7 +5,7 @@
 Puzzle p;
 
 // Helper to easily erase specific candidates during test setup
-void remove_candidate(int index, uint16_t mask) {
+void remove_candidate(int index, uint8_t mask) {
   p.candidates[index] &= ~mask;
 }
 
@@ -146,7 +146,7 @@ void test_find_locked_candidate_claiming_stagnates(void) {
 void test_remove_pointing_row_actionable(void) {
   // Target: Block 4 (Center Block), Local Row 1 (Global Row 4)
   // Global Row 4 indices: 36, 37, 38, [39, 40, 41 - inside block 4], 42, 43, 44
-  uint16_t mask = 0x0001; // Candidate 1
+  uint8_t mask = 0x0001; // Candidate 1
 
   // The function should erase the mask from the cells OUTSIDE the block.
   // Ensure they have the candidate to begin with:
@@ -166,7 +166,7 @@ void test_remove_pointing_row_actionable(void) {
 
 void test_remove_pointing_row_stagnates(void) {
   // Target: Block 4, Local Row 1
-  uint16_t mask = 0x0001;
+  uint8_t mask = 0x0001;
 
   // Simulate a board where the candidate is already missing from the outside cells
   p.candidates[36] &= ~mask;
@@ -188,7 +188,7 @@ void test_remove_pointing_row_stagnates(void) {
 void test_remove_pointing_col_actionable(void) {
   // Target: Block 4 (Center Block), Local Col 2 (Global Col 5)
   // Global Col 5 indices: 5, 14, 23, [32, 41, 50 - inside block 4], 59, 68, 77
-  uint16_t mask = 0x0002; // Candidate 2
+  uint8_t mask = 0x0002; // Candidate 2
 
   // Call helper directly: Block 4, Local Col 2
   bool result = remove_pointing_col(&p, mask, 4, 2);
@@ -202,7 +202,7 @@ void test_remove_pointing_col_actionable(void) {
 }
 
 void test_remove_pointing_col_stagnates(void) {
-  uint16_t mask = 0x0002;
+  uint8_t mask = 0x0002;
   int outside_indices[] = { 5, 14, 23, 59, 68, 77 };
 
   for(int i = 0; i < 6; i++) {
@@ -227,7 +227,7 @@ void test_remove_claiming_row_actionable(void) {
   // Row 1: 9, 10, 11 (These should be skipped/protected)
   // Row 2: 18, 19, 20
 
-  uint16_t mask = 0x0004; // Candidate 3
+  uint8_t mask = 0x0004; // Candidate 3
 
   // Call helper directly: Block 0, skip_row_start = 3
   bool result = remove_claiming_row(&p, mask, 0, 3);
@@ -243,7 +243,7 @@ void test_remove_claiming_row_actionable(void) {
 }
 
 void test_remove_claiming_row_stagnates(void) {
-  uint16_t mask = 0x0004;
+  uint8_t mask = 0x0004;
 
   // Erase candidate from the target elimination zones
   p.candidates[0] &= ~mask; p.candidates[1] &= ~mask; p.candidates[2] &= ~mask;
@@ -267,7 +267,7 @@ void test_remove_claiming_col_actionable(void) {
   // Col 1: 1, 10, 19
   // Col 2: 2, 11, 20
 
-  uint16_t mask = 0x0008; // Candidate 4
+  uint8_t mask = 0x0008; // Candidate 4
 
   // Call helper directly: Block 0, skip_col_idx = 0
   bool result = remove_claiming_col(&p, mask, 0, 0);
@@ -283,7 +283,7 @@ void test_remove_claiming_col_actionable(void) {
 }
 
 void test_remove_claiming_col_stagnates(void) {
-  uint16_t mask = 0x0008;
+  uint8_t mask = 0x0008;
 
   // Erase candidate from the target elimination zones
   p.candidates[1] &= ~mask; p.candidates[10] &= ~mask; p.candidates[19] &= ~mask;
