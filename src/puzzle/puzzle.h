@@ -49,6 +49,7 @@ int stringify_puzzle(char dest[], int dest_size, const Puzzle* puzzle);
 int parse_puzzle_str(const char puzzle_str[], Puzzle* puzzle);
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]);
 bool is_puzzle_solved(uint8_t cells[]);
+void fill_puzzle_candidates(Puzzle* puzzle);
 
 static inline bool has_candidate(uint16_t mask, uint16_t num) {
   return (mask >> (num - 1)) & 1;
@@ -59,10 +60,11 @@ static inline void add_candidate(uint16_t* mask, uint16_t num) {
 
 static inline void log_step(Puzzle* puzzle, Step step) {
   puzzle->solution[puzzle->step_count++] = step;
-  puzzle->difficulty.score += (uint32_t)step.technique;
-  if(puzzle->difficulty.hardest_step < step.technique) {
-    puzzle->difficulty.hardest_step = step.technique;
+}
+static inline void update_score(Puzzle* puzzle, Technique technique_used) {
+  puzzle->difficulty.score += (uint32_t)technique_used;
+  if(puzzle->difficulty.hardest_step < technique_used) {
+    puzzle->difficulty.hardest_step = technique_used;
   }
 }
-
 #endif //SRC_PUZZLE_PUZZLE_H

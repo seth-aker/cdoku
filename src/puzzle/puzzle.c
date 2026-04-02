@@ -66,7 +66,7 @@ int parse_puzzle_str(const char puzzle_str[], Puzzle* puzzle) {
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]) {
   const uint8_t* peers = CELL_PEERS_LOOKUP[idx];
   for(int i = 0; i < 20; ++i) {
-    int peer_idx = peers[i];
+    uint8_t peer_idx = peers[i];
     if(cells[peer_idx] == num) {
       return false;
     }
@@ -105,3 +105,24 @@ bool is_puzzle_solved(uint8_t cells[]) {
   }
   return true;
 }
+void fill_puzzle_candidates(Puzzle* puzzle) {
+  for(uint8_t i = 1; i < 10; ++i) {
+    for(int idx = 0; idx < TOTAL_CELLS; ++idx) {
+      if(puzzle->cells[idx] != 0 || !is_valid_num_in_cell(i, idx, puzzle->cells)) {
+        continue;
+      }
+      puzzle->candidates[idx] |= (uint16_t)(1 << (i - 1));
+    }
+  }
+}
+// void apply_candidate(Puzzle* puzzle, uint8_t removed_val, uint8_t idx) {
+//   const uint8_t* peers = CELL_PEERS_LOOKUP[idx];
+//   uint16_t removed_mask = (1 << (removed_val - 1));
+//   puzzle->candidates[idx] |= removed_mask;
+//   for(int i = 0; i < 20; ++i) {
+//     if(puzzle->cells[peers[i]] != 0 || !is_valid_num_in_cell(removed_val, peers[i], puzzle->cells)) {
+//       continue;
+//     }
+//     puzzle->candidates[peers[i]] |= removed_mask;
+//   }
+// }

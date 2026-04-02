@@ -17,6 +17,7 @@ void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
       continue;
     }
     clone_puzzle(&puzzle_cpy, puzzle);
+    fill_puzzle_candidates(&puzzle_cpy);
     solve_puzzle(&puzzle_cpy);
 
     if(puzzle_cpy.difficulty.rating < target_difficulty) {
@@ -74,7 +75,6 @@ bool remove_random_val(Puzzle* puzzle) {
     if(!algorithm_x_has_unique_sol(puzzle->cells)) {
       puzzle->cells[filled_cells_idx[i]] = backtrack_val;
     } else {
-      puzzle->candidates[filled_cells_idx[i]] |= (1 << backtrack_val - 1);
       return true;
     }
   }

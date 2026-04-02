@@ -4,15 +4,11 @@
 
 void apply_step(Puzzle* puzzle, Step step) {
   const uint8_t* peers = CELL_PEERS_LOOKUP[step.target_cell];
+  log_step(puzzle, step);
+  update_score(puzzle, step.technique);
   if(step.placed_val != 0) {
     puzzle->cells[step.target_cell] = step.placed_val;
     puzzle->candidates[step.target_cell] = 0;
-  } else {
-    puzzle->candidates[step.target_cell] &= ~step.eliminated_mask;
-  }
-
-  log_step(puzzle, step);
-  if(step.placed_val != 0) {
     for(int i = 0; i < 20; ++i) {
       uint8_t peer_idx = peers[i];
       if(puzzle->cells[peer_idx] != 0) {
@@ -30,6 +26,8 @@ void apply_step(Puzzle* puzzle, Step step) {
         log_step(puzzle, propagated_step);
       }
     }
+  } else {
+    puzzle->candidates[step.target_cell] &= ~step.eliminated_mask;
   }
 }
 

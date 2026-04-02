@@ -6,7 +6,6 @@
 #include "step.h"
 
 TechiqueResult find_naked_single(Puzzle* puzzle) {
-  bool progress_made = false;
   for(int i = 0; i < TOTAL_CELLS; ++i) {
     if(puzzle->cells[i] != 0) {
       continue;
@@ -22,9 +21,9 @@ TechiqueResult find_naked_single(Puzzle* puzzle) {
       .technique = is_full_house(puzzle, i) ? FULL_HOUSE : NAKED_SINGLE
     };
     apply_step(puzzle, step);
-    progress_made = true;
+    return PROGRESS_MADE;
   }
-  return progress_made ? PROGRESS_MADE : NO_PROGRESS;
+  return NO_PROGRESS;
 }
 bool is_full_house(Puzzle* puzzle, uint8_t idx) {
   bool is_full_house_row = true;
