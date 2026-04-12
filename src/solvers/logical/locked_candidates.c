@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-TechiqueResult find_locked_candidate_pointing(Puzzle* puzzle) {
+TechniqueResult find_locked_candidate_pointing(Puzzle* puzzle) {
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     const uint8_t* block = BLOCK_TO_IDXS[i];
 
@@ -116,7 +116,7 @@ bool remove_pointing_col(Puzzle* puzzle, uint16_t mask_to_remove, uint8_t block_
   return progress_made;
 }
 
-TechiqueResult find_locked_candidate_claiming(Puzzle* puzzle) {
+TechniqueResult find_locked_candidate_claiming(Puzzle* puzzle) {
   const uint8_t* house;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     house = ROW_TO_IDXS[i];

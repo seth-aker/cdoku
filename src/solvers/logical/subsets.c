@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "puzzle_globals.h"
 
-TechiqueResult search_naked_pairs(Puzzle* puzzle) {
+TechniqueResult search_naked_pairs(Puzzle* puzzle) {
   House house;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     get_row(i, puzzle, &house);
@@ -28,7 +28,7 @@ TechiqueResult search_naked_pairs(Puzzle* puzzle) {
   return NO_PROGRESS;
 }
 
-TechiqueResult search_naked_triples(Puzzle* puzzle) {
+TechniqueResult search_naked_triples(Puzzle* puzzle) {
   House house;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     get_row(i, puzzle, &house);
@@ -50,7 +50,7 @@ TechiqueResult search_naked_triples(Puzzle* puzzle) {
   }
   return NO_PROGRESS;
 }
-TechiqueResult search_naked_quads(Puzzle* puzzle) {
+TechniqueResult search_naked_quads(Puzzle* puzzle) {
   House house;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     get_row(i, puzzle, &house);
@@ -73,7 +73,7 @@ TechiqueResult search_naked_quads(Puzzle* puzzle) {
   return NO_PROGRESS;
 }
 
-TechiqueResult find_naked_pair(Puzzle* puzzle, House* house) {
+TechniqueResult find_naked_pair(Puzzle* puzzle, House* house) {
   for(int i1 = 0; i1 < PUZZLE_WIDTH - 1; ++i1) {
     if(house->cells[i1] > 0 || __builtin_popcount(house->candidates[i1]) > 2) {
       continue;
@@ -108,7 +108,7 @@ TechiqueResult find_naked_pair(Puzzle* puzzle, House* house) {
   return NO_PROGRESS;
 }
 
-TechiqueResult find_naked_triple(Puzzle* puzzle, House* house) {
+TechniqueResult find_naked_triple(Puzzle* puzzle, House* house) {
   for(int i1 = 0; i1 < PUZZLE_WIDTH - 2; ++i1) {
     if(house->cells[i1] != 0 || __builtin_popcount(house->candidates[i1]) > 3) {
       continue;
@@ -147,7 +147,7 @@ TechiqueResult find_naked_triple(Puzzle* puzzle, House* house) {
   return NO_PROGRESS;
 }
 
-TechiqueResult find_naked_quad(Puzzle* puzzle, House* house) {
+TechniqueResult find_naked_quad(Puzzle* puzzle, House* house) {
   for(int i1 = 0; i1 < PUZZLE_WIDTH - 3; ++i1) {
     if(house->cells[i1] != 0 || __builtin_popcount(house->candidates[i1]) > 4) {
       continue;
@@ -191,7 +191,7 @@ TechiqueResult find_naked_quad(Puzzle* puzzle, House* house) {
   return NO_PROGRESS;
 }
 
-TechiqueResult search_hidden_pairs(Puzzle* puzzle) {
+TechniqueResult search_hidden_pairs(Puzzle* puzzle) {
   House house;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     get_row(i, puzzle, &house);
@@ -213,7 +213,7 @@ TechiqueResult search_hidden_pairs(Puzzle* puzzle) {
   }
   return NO_PROGRESS;
 }
-TechiqueResult search_hidden_triples(Puzzle* puzzle) {
+TechniqueResult search_hidden_triples(Puzzle* puzzle) {
   House house;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     get_row(i, puzzle, &house);
@@ -235,7 +235,7 @@ TechiqueResult search_hidden_triples(Puzzle* puzzle) {
   }
   return NO_PROGRESS;
 }
-TechiqueResult search_hidden_quads(Puzzle* puzzle) {
+TechniqueResult search_hidden_quads(Puzzle* puzzle) {
   House house;
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     get_row(i, puzzle, &house);
@@ -258,7 +258,7 @@ TechiqueResult search_hidden_quads(Puzzle* puzzle) {
   return NO_PROGRESS;
 }
 
-TechiqueResult find_hidden_pair(Puzzle* puzzle, House* house) {
+TechniqueResult find_hidden_pair(Puzzle* puzzle, House* house) {
   uint16_t all_candidate_union = 0;
   uint8_t empty_cells_idxs[9];
   int empty_cell_count = 0;
@@ -326,7 +326,7 @@ TechiqueResult find_hidden_pair(Puzzle* puzzle, House* house) {
   return NO_PROGRESS;
 }
 
-TechiqueResult find_hidden_triple(Puzzle* puzzle, House* house) {
+TechniqueResult find_hidden_triple(Puzzle* puzzle, House* house) {
   uint16_t all_candidate_union = 0;
   uint8_t empty_cells_idxs[9];
   int empty_cell_count = 0;
@@ -410,7 +410,7 @@ TechiqueResult find_hidden_triple(Puzzle* puzzle, House* house) {
   return NO_PROGRESS;
 }
 
-TechiqueResult find_hidden_quad(Puzzle* puzzle, House* house) {
+TechniqueResult find_hidden_quad(Puzzle* puzzle, House* house) {
   uint16_t all_candidate_union = 0;
   uint8_t empty_cells_idxs[9];
   int empty_cell_count = 0;

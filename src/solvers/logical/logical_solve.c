@@ -4,15 +4,15 @@
 #include "locked_candidates.h"
 
 void solve_puzzle(Puzzle* puzzle) {
-  TechiqueResult puzzle_progress = NO_PROGRESS;
-  while(!is_puzzle_solved(puzzle->cells)) {
+  TechniqueResult puzzle_progress = NO_PROGRESS;
+  while(!is_puzzle_solved(puzzle->cells) && puzzle_progress != INVALID_STATE) {
     // Beginner solutions
     puzzle_progress = find_naked_single(puzzle);
     CHECK_PROGRESS(puzzle_progress);
     puzzle_progress = find_hidden_single(puzzle);
     CHECK_PROGRESS(puzzle_progress);
 
-    // Intermediate solutions
+    // EASY solutions
     puzzle_progress = search_naked_pairs(puzzle);
     CHECK_PROGRESS(puzzle_progress);
     puzzle_progress = search_naked_triples(puzzle);
@@ -26,8 +26,8 @@ void solve_puzzle(Puzzle* puzzle) {
     puzzle_progress = search_hidden_triples(puzzle);
     CHECK_PROGRESS(puzzle_progress);
 
-    // Advanced solutions
-
+    // MEDIUM solutions
+    puzzle_progress = INVALID_STATE;
   }
   set_diff_rating(puzzle);
 

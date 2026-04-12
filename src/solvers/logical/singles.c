@@ -5,7 +5,7 @@
 #include "log.h"
 #include "step.h"
 
-TechiqueResult find_naked_single(Puzzle* puzzle) {
+TechniqueResult find_naked_single(Puzzle* puzzle) {
   for(int i = 0; i < TOTAL_CELLS; ++i) {
     if(puzzle->cells[i] != 0) {
       continue;
@@ -76,7 +76,7 @@ bool is_full_house(Puzzle* puzzle, uint8_t idx) {
   }
   return is_full_house_block;
 }
-TechiqueResult find_hidden_single(Puzzle* puzzle) {
+TechniqueResult find_hidden_single(Puzzle* puzzle) {
   House house;
   for(int i = 0; i < TOTAL_CELLS; ++i) {
     if(puzzle->cells[i] != 0) {
@@ -105,7 +105,7 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
       int found_single = __builtin_ctz(unique) + 1;
       Step step = {
         .placed_val = found_single,
-        .eliminated_mask = puzzle->candidates[i],
+        .eliminated_mask = unique,
         .target_cell = (uint8_t)i,
         .technique = HIDDEN_SINGLE
       };
@@ -132,7 +132,7 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
       int found_single = __builtin_ctz(unique) + 1;
       Step step = {
         .placed_val = found_single,
-        .eliminated_mask = puzzle->candidates[i],
+        .eliminated_mask = unique,
         .target_cell = (uint8_t)i,
         .technique = HIDDEN_SINGLE
       };
@@ -159,7 +159,7 @@ TechiqueResult find_hidden_single(Puzzle* puzzle) {
       int found_single = __builtin_ctz(unique) + 1;
       Step step = {
         .placed_val = found_single,
-        .eliminated_mask = puzzle->candidates[i],
+        .eliminated_mask = unique,
         .target_cell = (uint8_t)i,
         .technique = HIDDEN_SINGLE
       };

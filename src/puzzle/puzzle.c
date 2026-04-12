@@ -94,9 +94,10 @@ void get_block(uint8_t idx, Puzzle* puzzle, House* block) {
   for(int i = 0; i < PUZZLE_WIDTH; ++i) {
     block->candidates[i] = puzzle->candidates[block_idxs[i]];
     block->cells[i] = puzzle->cells[block_idxs[i]];
-    block->idx_lookup[i] = BLOCK_TO_IDXS[idx][i];
+    block->idx_lookup[i] = block_idxs[i];
   }
 }
+
 bool is_puzzle_solved(uint8_t cells[]) {
   for(int i = 0; i < TOTAL_CELLS; ++i) {
     if(cells[i] == 0 || !is_valid_num_in_cell(cells[i], i, cells)) {

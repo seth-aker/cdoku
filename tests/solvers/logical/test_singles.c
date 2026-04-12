@@ -43,14 +43,14 @@ void test_is_full_house_false(void) {
 void test_find_naked_single_success(void) {
   p.candidates[10] = 0x0010;
 
-  TechiqueResult result = find_naked_single(&p);
+  TechniqueResult result = find_naked_single(&p);
 
   TEST_ASSERT_EQUAL(PROGRESS_MADE, result);
   TEST_ASSERT_EQUAL_UINT8(5, p.cells[10]);
 }
 
 void test_find_naked_single_none_found(void) {
-  TechiqueResult result = find_naked_single(&p);
+  TechniqueResult result = find_naked_single(&p);
 
   TEST_ASSERT_EQUAL(NO_PROGRESS, result);
 }
@@ -62,7 +62,7 @@ void test_find_hidden_single_in_row_success(void) {
     }
   }
 
-  TechiqueResult result = find_hidden_single(&p);
+  TechniqueResult result = find_hidden_single(&p);
 
   TEST_ASSERT_EQUAL(PROGRESS_MADE, result);
 }
@@ -73,7 +73,7 @@ void test_find_hidden_single_in_col_success(void) {
       p.candidates[i * 9] &= ~0x0040;
     }
   }
-  TechiqueResult result = find_hidden_single(&p);
+  TechniqueResult result = find_hidden_single(&p);
 
   TEST_ASSERT_EQUAL(PROGRESS_MADE, result);
 }
@@ -84,7 +84,7 @@ void test_find_hidden_single_in_block_success(void) {
       p.candidates[BLOCK_TO_IDXS[0][i]] &= ~0x0040;
     }
   }
-  TechiqueResult result = find_hidden_single(&p);
+  TechniqueResult result = find_hidden_single(&p);
 
   TEST_ASSERT_EQUAL(PROGRESS_MADE, result);
 }
@@ -93,13 +93,13 @@ void test_find_hidden_single_invalid_state(void) {
     p.candidates[i] &= ~0x00C0; // Remove both bits (0x0040 | 0x0080) from other cells
   }
 
-  TechiqueResult result = find_hidden_single(&p);
+  TechniqueResult result = find_hidden_single(&p);
 
   TEST_ASSERT_EQUAL(INVALID_STATE, result);
 }
 
 void test_find_hidden_single_none_found(void) {
-  TechiqueResult result = find_hidden_single(&p);
+  TechniqueResult result = find_hidden_single(&p);
 
   TEST_ASSERT_EQUAL(NO_PROGRESS, result);
 }

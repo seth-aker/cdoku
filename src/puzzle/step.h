@@ -29,11 +29,11 @@ typedef enum : uint16_t {
   GUESS = 25000
 } Technique;
 
-typedef enum TechiqueResult {
+typedef enum TechniqueResult {
   INVALID_STATE = -1,
   NO_PROGRESS = 0,
   PROGRESS_MADE = 1
-} TechiqueResult;
+} TechniqueResult;
 
 typedef struct Step {
   uint16_t eliminated_mask;
@@ -43,5 +43,5 @@ typedef struct Step {
 } Step;
 
 void apply_step(struct Puzzle* puzzle, Step step);
-
+const char* technique_to_string(Technique techinque);
 #endif // SRC_PUZZLE_STEP_H

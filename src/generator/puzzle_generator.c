@@ -5,26 +5,34 @@
 #include "alg_x_solve.h"
 #include "logical_solve.h"
 #include "utils.h"
+#include "log.h"
 
 void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
   fill_puzzle_randomly(puzzle->cells);
   Puzzle puzzle_cpy;
+  int min_cells_removed = define_min_cells_removed(target_difficulty);
+  int cells_removed = 0;
   while(true) {
     bool is_still_unique = remove_random_val(puzzle);
+    cells_removed++;
     if(!is_still_unique) {
       // reset and try again
       reset_puzzle(puzzle);
+      cells_removed = 0;
       continue;
     }
     clone_puzzle(&puzzle_cpy, puzzle);
     fill_puzzle_candidates(&puzzle_cpy);
     solve_puzzle(&puzzle_cpy);
 
-    if(puzzle_cpy.difficulty.rating < target_difficulty) {
+    if(puzzle_cpy.difficulty.rating < target_difficulty || cells_removed < min_cells_removed) {
       continue;
     }
     if(puzzle_cpy.difficulty.rating == target_difficulty) {
-      puzzle->difficulty = puzzle_cpy.difficulty;
+      puzzle->difficulty.hardest_step = puzzle_cpy.difficulty.hardest_step;
+      puzzle->difficulty.rating = puzzle_cpy.difficulty.rating;
+      puzzle->difficulty.score = puzzle_cpy.difficulty.score;
+      memcpy(puzzle->solution, &puzzle_cpy.solution, sizeof(Step) * 729);
       return;
     }
     if(puzzle_cpy.difficulty.rating > target_difficulty) {
@@ -75,12 +83,27 @@ bool remove_random_val(Puzzle* puzzle) {
     if(!algorithm_x_has_unique_sol(puzzle->cells)) {
       puzzle->cells[filled_cells_idx[i]] = backtrack_val;
     } else {
+      log_debug("Value %d removed from cell index %d", backtrack_val, filled_cells_idx[i]);
       return true;
     }
   }
   return false;
 }
-
+int define_min_cells_removed(DiffRating target_difficulty) {
+  switch(target_difficulty)
+  {
+  case BEGINNER:
+    return 36 + rand() % 8; // remove 36 - 43 clues
+  case EASY:
+    return 44 + rand() % 6; // remove 44 - 49 clues
+  case MEDIUM:
+    return 50 + rand() % 5; // remove between 50 and 54 clues
+  case HARD:
+    return 55 + rand() % 5; // remove between 55 and 59 clues
+  default:
+    return 55 + rand() % 8; // remove between 55 and 62
+  }
+}
 void reset_puzzle(Puzzle* puzzle) {
   memset(puzzle, 0, sizeof(Puzzle));
   fill_puzzle_randomly(puzzle->cells);
