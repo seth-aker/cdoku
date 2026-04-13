@@ -116,6 +116,21 @@ void fill_puzzle_candidates(Puzzle* puzzle) {
     }
   }
 }
+
+int get_candidate_positions(const Puzzle* puzzle, const uint8_t house_idxs[], SearchParams params, int out_pos[]) {
+  int candidate_count = 0;
+  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
+    uint16_t has_candidate = puzzle->candidates[house_idxs[i]] & params.mask;
+    if(has_candidate) {
+      candidate_count++;
+      if(candidate_count > params.max_count) {
+        return candidate_count;
+      }
+      out_pos[candidate_count - 1] = i;
+    }
+  }
+  return candidate_count;
+}
 // void apply_candidate(Puzzle* puzzle, uint8_t removed_val, uint8_t idx) {
 //   const uint8_t* peers = CELL_PEERS_LOOKUP[idx];
 //   uint16_t removed_mask = (1 << (removed_val - 1));

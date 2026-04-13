@@ -18,6 +18,7 @@ add_library(logical_solver STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/logical/subsets.c
   ${CMAKE_CURRENT_SOURCE_DIR}/logical/locked_candidates.c
   ${CMAKE_CURRENT_SOURCE_DIR}/logical/x_wing.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/logical/skyscraper.c
 )
 target_include_directories(logical_solver PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}/logical

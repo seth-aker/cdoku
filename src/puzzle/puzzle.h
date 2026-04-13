@@ -39,6 +39,11 @@ typedef struct House {
   uint8_t idx_lookup[PUZZLE_WIDTH];
 } House;
 
+typedef struct SearchParams {
+  int max_count;
+  uint16_t mask;
+} SearchParams;
+
 void get_row(uint8_t idx, Puzzle* puzzle, House* row);
 void get_col(uint8_t idx, Puzzle* puzzle, House* col);
 void get_block(uint8_t idx, Puzzle* puzzle, House* block);
@@ -50,6 +55,7 @@ int parse_puzzle_str(const char puzzle_str[], Puzzle* puzzle);
 bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]);
 bool is_puzzle_solved(uint8_t cells[]);
 void fill_puzzle_candidates(Puzzle* puzzle);
+int get_candidate_positions(const Puzzle* puzzle, const uint8_t house[], SearchParams params, int out_pos[]);
 
 static inline void log_step(Puzzle* puzzle, Step step) {
   puzzle->solution[puzzle->step_count++] = step;
