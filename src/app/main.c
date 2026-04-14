@@ -11,14 +11,15 @@ int main(int argc, const char* argv[]) {
     return EXIT_FAILURE;
   }
 
-#ifdef DEBUG_MODE
+#ifndef NDEBUG
   srand(123456);
   log_set_level(LOG_TRACE);
+  setup_logger(LOG_TRACE);
 #else
   srand((unsigned)time(NULL));
   log_set_level(LOG_ERROR);
+  setup_logger(LOG_ERROR);
 #endif
-
   AppConfig config;
   parse_args(argc, argv, &config);
   Puzzle puzzle;

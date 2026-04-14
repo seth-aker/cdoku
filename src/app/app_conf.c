@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>
@@ -67,4 +69,18 @@ bool is_valid_difficulty_target(const char* str) {
     }
   }
   return false;
+}
+
+void setup_logger(LogLevel level) {
+  char* log_dir = getenv("LOG_DIR");
+  if(log_dir == NULL) {
+    log_error("LOG_DIR environment variable not set");
+    exit(EXIT_FAILURE);
+  }
+  FILE* log_file = fopen(log_dir, "a");
+  if (log_file == NULL) {
+    log_error("Failed to open file at: %s", log_dir);
+    exit(EXIT_FAILURE);
+  }
+  log_add_fp(log_file, level);
 }

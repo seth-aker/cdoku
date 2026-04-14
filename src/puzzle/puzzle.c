@@ -113,7 +113,7 @@ void fill_puzzle_candidates(Puzzle* puzzle) {
       continue;
     }
     uint16_t new_mask = 0;
-    for(uint8_t i = 1; i < 10; ++i) {
+    for(int i = 1; i < 10; ++i) {
       if(is_valid_num_in_cell(i, idx, puzzle->cells)) {
         new_mask |= (uint16_t)(1 << (i - 1));
       }

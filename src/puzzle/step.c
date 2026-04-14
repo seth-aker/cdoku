@@ -5,10 +5,10 @@
 #include "utils.h"
 
 void apply_step(Puzzle* puzzle, Step step) {
-  const uint8_t* peers = CELL_PEERS_LOOKUP[step.target_cell];
   log_step(puzzle, step);
   update_score(puzzle, step.technique);
   if(step.placed_val != 0) {
+    const uint8_t* peers = CELL_PEERS_LOOKUP[step.target_cell];
     log_debug("Value %d placed at cell index %d using %s", step.placed_val, step.target_cell, technique_to_string(step.technique));
     puzzle->cells[step.target_cell] = step.placed_val;
     puzzle->candidates[step.target_cell] = 0;
