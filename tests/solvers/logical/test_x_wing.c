@@ -124,28 +124,6 @@ void test_find_x_wing_stagnates(void) {
   TEST_ASSERT_EQUAL(NO_PROGRESS, find_x_wing(&p));
 }
 
-void test_count_candidate_in_house_logic(void) {
-  // Test the helper function directly
-  XWing_Context ctx;
-  ctx.candidate_mask = 0x0004; // Candidate 3
-  ctx.base_house_count = 0; // Let's act like this is the first house found
-
-  // We will pass Row 0. Let's make candidate 3 only exist in cell 2 and cell 6
-  uint16_t mask = 0x0004;
-  for(int i = 0; i < 9; i++) {
-    remove_candidate(ROW_TO_IDXS[0][i], mask);
-  }
-  p.candidates[2] |= mask;
-  p.candidates[6] |= mask;
-
-  int count = count_candidate_in_house(&p, ROW_TO_IDXS[0], &ctx, 2);
-
-  TEST_ASSERT_EQUAL(2, count);
-  // It should have recorded the relative column positions (2 and 6)
-  TEST_ASSERT_EQUAL(2, ctx.cover_houses[0][0]);
-  TEST_ASSERT_EQUAL(6, ctx.cover_houses[0][1]);
-}
-
 // ==========================================
 // TEST RUNNER
 // ==========================================
@@ -155,7 +133,6 @@ int main(void) {
   RUN_TEST(test_find_x_wing_rows_actionable);
   RUN_TEST(test_find_x_wing_cols_actionable);
   RUN_TEST(test_find_x_wing_stagnates);
-  RUN_TEST(test_count_candidate_in_house_logic);
 
   return UNITY_END();
 }

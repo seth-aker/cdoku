@@ -56,7 +56,7 @@ bool is_valid_num_in_cell(uint8_t num, int idx, uint8_t cells[]);
 bool is_puzzle_solved(uint8_t cells[]);
 void fill_puzzle_candidates(Puzzle* puzzle);
 int get_candidate_positions(const Puzzle* puzzle, const uint8_t house[], SearchParams params, int out_pos[]);
-
+void print_puzzle_state(Puzzle* puzzle);
 static inline void log_step(Puzzle* puzzle, Step step) {
   puzzle->solution[puzzle->step_count++] = step;
 }

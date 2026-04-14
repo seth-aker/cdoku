@@ -12,14 +12,15 @@ void apply_step(Puzzle* puzzle, Step step) {
     log_debug("Value %d placed at cell index %d using %s", step.placed_val, step.target_cell, technique_to_string(step.technique));
     puzzle->cells[step.target_cell] = step.placed_val;
     puzzle->candidates[step.target_cell] = 0;
+    uint16_t placed_mask = 1 << (step.placed_val - 1);
     for(int i = 0; i < 20; ++i) {
       uint8_t peer_idx = peers[i];
       if(puzzle->cells[peer_idx] != 0) {
         continue;
       }
-      uint16_t vals_eliminated = (puzzle->candidates[peer_idx] & step.eliminated_mask);
-      if(vals_eliminated != 0) {
-        puzzle->candidates[peer_idx] &= ~step.eliminated_mask;
+      uint16_t vals_eliminated = (puzzle->candidates[peer_idx] & placed_mask);
+      if(vals_eliminated) {
+        puzzle->candidates[peer_idx] &= ~placed_mask;
         Step propagated_step = {
           .target_cell = peer_idx,
           .eliminated_mask = vals_eliminated,

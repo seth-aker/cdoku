@@ -107,13 +107,18 @@ bool is_puzzle_solved(uint8_t cells[]) {
   return true;
 }
 void fill_puzzle_candidates(Puzzle* puzzle) {
-  for(uint8_t i = 1; i < 10; ++i) {
-    for(int idx = 0; idx < TOTAL_CELLS; ++idx) {
-      if(puzzle->cells[idx] != 0 || !is_valid_num_in_cell(i, idx, puzzle->cells)) {
-        continue;
-      }
-      puzzle->candidates[idx] |= (uint16_t)(1 << (i - 1));
+  for(int idx = 0; idx < TOTAL_CELLS; ++idx) {
+    if(puzzle->cells[idx] != 0) {
+      puzzle->candidates[idx] = 0;
+      continue;
     }
+    uint16_t new_mask = 0;
+    for(uint8_t i = 1; i < 10; ++i) {
+      if(is_valid_num_in_cell(i, idx, puzzle->cells)) {
+        new_mask |= (uint16_t)(1 << (i - 1));
+      }
+    }
+    puzzle->candidates[idx] = new_mask;
   }
 }
 
@@ -131,14 +136,32 @@ int get_candidate_positions(const Puzzle* puzzle, const uint8_t house_idxs[], Se
   }
   return candidate_count;
 }
-// void apply_candidate(Puzzle* puzzle, uint8_t removed_val, uint8_t idx) {
-//   const uint8_t* peers = CELL_PEERS_LOOKUP[idx];
-//   uint16_t removed_mask = (1 << (removed_val - 1));
-//   puzzle->candidates[idx] |= removed_mask;
-//   for(int i = 0; i < 20; ++i) {
-//     if(puzzle->cells[peers[i]] != 0 || !is_valid_num_in_cell(removed_val, peers[i], puzzle->cells)) {
-//       continue;
-//     }
-//     puzzle->candidates[peers[i]] |= removed_mask;
-//   }
-// }
+
+void print_puzzle_state(Puzzle* puzzle) {
+  char puzzle_str_buff[110];
+  int written = stringify_puzzle(puzzle_str_buff, 110, puzzle);
+  log_debug("Puzzle State: %s", puzzle_str_buff);
+  log_debug("Solution Trace:");
+  for(int i = 0; i < puzzle->step_count; ++i) {
+    Step step = puzzle->solution[i];
+    int row = step.target_cell / PUZZLE_WIDTH;
+    int col = step.target_cell % PUZZLE_WIDTH;
+    if(step.placed_val) {
+      log_debug("STEP %d: r%dc%d: Placed %d", i + 1, row, col, step.placed_val);
+    } else {
+      char candidates_removed_buff[20];
+      int removed_buff_len = 0;
+      uint16_t candidates = step.eliminated_mask;
+      while(candidates != 0) {
+        int candidate = __builtin_ctz(candidates) + 1;
+        candidates_removed_buff[removed_buff_len++] = candidate + '0';
+        candidates &= (candidates - 1);
+        if(candidates != 0) {
+          candidates_removed_buff[removed_buff_len++] = ',';
+        }
+      }
+      candidates_removed_buff[removed_buff_len] = '\0';
+      log_debug("STEP %d: r%dc%d: Removed candiates %s.\n    Technique: %s", i + 1, row, col, candidates_removed_buff, technique_to_string(step.technique));
+    }
+  }
+}

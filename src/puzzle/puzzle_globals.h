@@ -1,7 +1,7 @@
 #ifndef SRC_PUZZLE_PUZZLE_GLOBALS_H
 #define SRC_PUZZLE_PUZZLE_GLOBALS_H
 #include <stdint.h>
-
+#include <stdbool.h>
 #define BLOCK_WIDTH 3
 #define PUZZLE_WIDTH 9
 #define TOTAL_CELLS 81
@@ -21,5 +21,5 @@ extern const uint8_t ROW_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
 extern const uint8_t COL_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
 extern const uint8_t CELL_POS_IN_BLOCK[PUZZLE_WIDTH][PUZZLE_WIDTH];
 extern const MaskArr MASK_TO_ARRAY_LOOKUP[512];
-
+extern const bool IS_PEER_LOOKUP[81][81];
 #endif // SRC_PUZZLE_PUZZLE_GLOBALS_H

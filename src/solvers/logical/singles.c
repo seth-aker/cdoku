@@ -77,7 +77,6 @@ bool is_full_house(Puzzle* puzzle, uint8_t idx) {
   return is_full_house_block;
 }
 TechniqueResult find_hidden_single(Puzzle* puzzle) {
-  House house;
   for(int i = 0; i < TOTAL_CELLS; ++i) {
     if(puzzle->cells[i] != 0) {
       continue;
@@ -86,20 +85,20 @@ TechniqueResult find_hidden_single(Puzzle* puzzle) {
     uint16_t other_cell_masks = 0;
 
     uint8_t row_idx = IDX_TO_ROW[i];
-    uint8_t col_idx = IDX_TO_COL[i];
-    get_row(row_idx, puzzle, &house);
 
     for(int k = 0; k < PUZZLE_WIDTH; ++k) {
-      if(house.cells[k] != 0 || k == col_idx) {
+      uint8_t peer_idx = CELL_PEERS_LOOKUP[row_idx][k];
+      if(puzzle->cells[peer_idx] != 0 || peer_idx == i) {
         continue;
       }
-      other_cell_masks |= house.candidates[k];
+      other_cell_masks |= puzzle->candidates[k];
     }
 
     uint16_t unique = candidate_mask & ~other_cell_masks;
     if(unique) {
       if(__builtin_popcount(unique) != 1) {
         log_error("Error: Found multiple unique candiates in cell idx: %d", i);
+        print_puzzle_state(puzzle);
         return INVALID_STATE;
       }
       int found_single = __builtin_ctz(unique) + 1;
@@ -114,19 +113,21 @@ TechniqueResult find_hidden_single(Puzzle* puzzle) {
     }
 
     // Column search
-    get_col(col_idx, puzzle, &house);
+    uint8_t col_idx = IDX_TO_COL[i];
     other_cell_masks = 0;
 
     for(int k = 0; k < PUZZLE_WIDTH; ++k) {
-      if(house.cells[k] != 0 || k == row_idx) {
+      uint8_t peer_idx = CELL_PEERS_LOOKUP[k][col_idx];
+      if(puzzle->cells[peer_idx] != 0 || peer_idx == i) {
         continue;
       }
-      other_cell_masks |= house.candidates[k];
+      other_cell_masks |= puzzle->candidates[peer_idx];
     }
     unique = candidate_mask & ~other_cell_masks;
     if(unique) {
       if(__builtin_popcount(unique) != 1) {
         log_error("Error: Found multiple unique candiates in cell idx: %d", i);
+        print_puzzle_state(puzzle);
         return INVALID_STATE;
       }
       int found_single = __builtin_ctz(unique) + 1;
@@ -141,19 +142,21 @@ TechniqueResult find_hidden_single(Puzzle* puzzle) {
     }
 
     uint8_t block_idx = IDX_TO_BLOCK[i];
-    get_block(block_idx, puzzle, &house);
+
     other_cell_masks = 0;
 
     for(int k = 0; k < PUZZLE_WIDTH; ++k) {
-      if(house.cells[k] != 0 || k == CELL_POS_IN_BLOCK[row_idx][col_idx]) {
+      uint8_t peer_idx = BLOCK_TO_IDXS[block_idx][k];
+      if(puzzle->cells[k] != 0 || k == CELL_POS_IN_BLOCK[row_idx][col_idx]) {
         continue;
       }
-      other_cell_masks |= house.candidates[k];
+      other_cell_masks |= puzzle->candidates[k];
     }
     unique = candidate_mask & ~other_cell_masks;
     if(unique) {
       if(__builtin_popcount(unique) != 1) {
         log_error("Error: Found multiple unique candiates in cell idx: %d", i);
+        print_puzzle_state(puzzle);
         return INVALID_STATE;
       }
       int found_single = __builtin_ctz(unique) + 1;

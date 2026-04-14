@@ -15,6 +15,10 @@ void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
   while(true) {
     bool is_still_unique = remove_random_val(puzzle);
     cells_removed++;
+
+    // if(cells_removed < min_cells_removed) {
+    //   continue;
+    // }
     if(!is_still_unique) {
       // reset and try again
       reset_puzzle(puzzle);
@@ -23,7 +27,11 @@ void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
     }
     clone_puzzle(&puzzle_cpy, puzzle);
     fill_puzzle_candidates(&puzzle_cpy);
-    solve_puzzle(&puzzle_cpy);
+    if(!solve_puzzle(&puzzle_cpy)) {
+      reset_puzzle(puzzle);
+      cells_removed = 0;
+      continue;
+    }
 
     if(puzzle_cpy.difficulty.rating < target_difficulty || cells_removed < min_cells_removed) {
       continue;
