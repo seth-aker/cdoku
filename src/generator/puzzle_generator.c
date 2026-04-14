@@ -121,8 +121,8 @@ void reset_puzzle(Puzzle* puzzle) {
   memset(puzzle, 0, sizeof(Puzzle));
   fill_puzzle_randomly(puzzle->cells);
   #ifndef NDEBUG 
-  char str_buff[110];
-  stringify_puzzle(str_buff, 110, puzzle);
-  log_debug("INITIAL STATE: %s", str_buff);
+    char str_buff[110];
+    stringify_puzzle(str_buff, 110, puzzle);
+    log_debug("INITIAL STATE: %s", str_buff);
   #endif
 }
