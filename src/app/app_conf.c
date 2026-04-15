@@ -8,6 +8,11 @@
 #include "log.h"
 
 void parse_args(int argc, const char* argv[], AppConfig* conf) {
+  if(argc != 3) {
+    log_error("Invalid number of arguments. Expected 2, received: %d", argc - 1);
+    exit(EXIT_FAILURE);
+  }
+
   if(!is_valid_difficulty_target(argv[1])) {
     log_error("Invalid difficulty string");
     exit(EXIT_FAILURE);

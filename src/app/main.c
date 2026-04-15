@@ -6,11 +6,6 @@
 #include "puzzle.h"
 #include "log.h"
 int main(int argc, const char* argv[]) {
-  if(argc != 3) {
-    log_error("Invalid number of arguments. Expected 2, received: %d", argc - 1);
-    return EXIT_FAILURE;
-  }
-
 #ifndef NDEBUG
   srand(123456);
   log_set_level(LOG_TRACE);
@@ -24,6 +19,12 @@ int main(int argc, const char* argv[]) {
   parse_args(argc, argv, &config);
   Puzzle puzzle;
   char puzzle_str_buff[110];
+
+  if(config.target_difficulty > MEDIUM) {
+    log_fatal("HARD and IMPOSSIBLE difficulties not implemented yet.");
+    exit(EXIT_FAILURE);
+  }
+
   for(int i = 0; i < config.puzzle_count; ++i) {
     memset(&puzzle, 0, sizeof(Puzzle));
     generate_puzzle(&puzzle, config.target_difficulty);
