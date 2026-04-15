@@ -50,6 +50,7 @@ void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
     }
     if(puzzle_cpy.difficulty.rating > target_difficulty) {
       reset_puzzle(puzzle);
+      cells_removed = 0;
     }
   }
 }
