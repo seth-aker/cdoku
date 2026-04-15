@@ -57,6 +57,7 @@ bool is_puzzle_solved(uint8_t cells[]);
 void fill_puzzle_candidates(Puzzle* puzzle);
 int get_candidate_positions(const Puzzle* puzzle, const uint8_t house[], SearchParams params, int out_pos[]);
 void print_puzzle_state(Puzzle* puzzle);
+int get_cells_with_candidates_count(const Puzzle* puzzle, int dest_idxs[], int num_of_cands);
 static inline void log_step(Puzzle* puzzle, Step step) {
   puzzle->solution[puzzle->step_count++] = step;
 }

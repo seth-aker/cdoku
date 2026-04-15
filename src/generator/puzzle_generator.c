@@ -9,11 +9,11 @@
 
 void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
   fill_puzzle_randomly(puzzle->cells);
-  #ifndef NDEBUG 
-    char str_buff[110];
-    stringify_puzzle(str_buff, 110, puzzle);
-    log_debug("INITIAL STATE: %s", str_buff);
-  #endif
+#ifndef NDEBUG 
+  char str_buff[110];
+  stringify_puzzle(str_buff, 110, puzzle);
+  log_debug("INITIAL STATE: %s", str_buff);
+#endif
   Puzzle puzzle_cpy;
   int min_cells_removed = define_min_cells_removed(target_difficulty);
   int cells_removed = 0;
@@ -21,9 +21,9 @@ void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
     bool is_still_unique = remove_random_val(puzzle);
     cells_removed++;
 
-    // if(cells_removed < min_cells_removed) {
-    //   continue;
-    // }
+    if(cells_removed < min_cells_removed) {
+      continue;
+    }
     if(!is_still_unique) {
       // reset and try again
       reset_puzzle(puzzle);
@@ -120,9 +120,9 @@ int define_min_cells_removed(DiffRating target_difficulty) {
 void reset_puzzle(Puzzle* puzzle) {
   memset(puzzle, 0, sizeof(Puzzle));
   fill_puzzle_randomly(puzzle->cells);
-  #ifndef NDEBUG 
-    char str_buff[110];
-    stringify_puzzle(str_buff, 110, puzzle);
-    log_debug("INITIAL STATE: %s", str_buff);
-  #endif
+#ifndef NDEBUG 
+  char str_buff[110];
+  stringify_puzzle(str_buff, 110, puzzle);
+  log_debug("INITIAL STATE: %s", str_buff);
+#endif
 }

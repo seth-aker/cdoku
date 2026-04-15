@@ -6,6 +6,7 @@
 #include "x_wing.c"
 #include "skyscraper.h"
 #include "xy_wing.h"
+#include "guess.h"
 
 bool solve_puzzle(Puzzle* puzzle) {
   TechniqueResult puzzle_progress = NO_PROGRESS;
@@ -37,6 +38,11 @@ bool solve_puzzle(Puzzle* puzzle) {
     CHECK_PROGRESS(puzzle_progress);
     puzzle_progress = find_xy_wings(puzzle);
     CHECK_PROGRESS(puzzle_progress);
+    puzzle_progress = make_guess(puzzle);
+    CHECK_PROGRESS(puzzle_progress);
+    if(puzzle_progress == NO_PROGRESS && is_puzzle_solved(puzzle->cells)) {
+
+    }
     puzzle_progress = INVALID_STATE;
   }
   if(puzzle_progress == INVALID_STATE) {

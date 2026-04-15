@@ -2,9 +2,9 @@
 #include <stdbool.h>
 #include "utils.h"
 
-void shuffle_uint_8_array(uint8_t arr[], int arrLen) {
+void shuffle_uint_8_array(uint8_t arr[], int arrlen) {
   uint8_t temp;
-  for(int i = arrLen - 1; i > 0; --i) {
+  for(int i = arrlen - 1; i > 0; --i) {
     int j = rand() % (i + 1);
     temp = arr[i];
     arr[i] = arr[j];
@@ -12,8 +12,8 @@ void shuffle_uint_8_array(uint8_t arr[], int arrLen) {
   }
 }
 
-bool includes_int(const int array[], int arrLen, int num) {
-  for(int i = 0; i < arrLen; ++i) {
+bool includes_int(const int array[], int arrlen, int num) {
+  for(int i = 0; i < arrlen; ++i) {
     if(array[i] == num) {
       return true;
     }

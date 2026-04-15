@@ -165,3 +165,13 @@ void print_puzzle_state(Puzzle* puzzle) {
     }
   }
 }
+
+int get_cells_with_candidates_count(const Puzzle* puzzle, int dest_idxs[], int num_of_cands) {
+  int count = 0;
+  for(int i = 0; i < TOTAL_CELLS; ++i) {
+    if(__builtin_popcount(puzzle->candidates[i]) == num_of_cands) {
+      dest_idxs[count++] = i;
+    }
+  }
+  return count;
+}

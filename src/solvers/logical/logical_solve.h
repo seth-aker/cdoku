@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "puzzle.h"
 #include "step.h"
-#define CHECK_PROGRESS(progress) if(progress == PROGRESS_MADE) { continue; };
+#define CHECK_PROGRESS(progress) if(progress == PROGRESS_MADE || progress == INVALID_STATE) { continue; };
 
 bool solve_puzzle(Puzzle* puzzle);
 
