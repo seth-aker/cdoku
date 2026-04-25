@@ -7,7 +7,7 @@
 #include "utils.h"
 #include "log.h"
 
-void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
+void generate_puzzle(Puzzle* puzzle, uint8_t solved_cells[], DiffRating target_difficulty) {
   fill_puzzle_randomly(puzzle->cells);
 #ifndef NDEBUG 
   char str_buff[110];
@@ -46,6 +46,7 @@ void generate_puzzle(Puzzle* puzzle, DiffRating target_difficulty) {
       puzzle->difficulty.rating = puzzle_cpy.difficulty.rating;
       puzzle->difficulty.score = puzzle_cpy.difficulty.score;
       memcpy(puzzle->solution, &puzzle_cpy.solution, sizeof(Step) * 729);
+      memcpy(solved_cells, puzzle_cpy.cells, sizeof(uint8_t) * 81);
       return;
     }
     if(puzzle_cpy.difficulty.rating > target_difficulty) {

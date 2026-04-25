@@ -28,16 +28,18 @@ void set_diff_rating(Puzzle* puzzle) {
   }
 }
 
-int stringify_puzzle(char dest[], int dest_size, const Puzzle* puzzle) {
-  if(dest_size < TOTAL_CELLS + 20) {// dest need to be: 81 cells + ':' + max score (10) + ':' + max rating(2) + '\0';
+int stringify_puzzle(char dest[], int dest_size, const Puzzle* puzzle, const uint8_t solved_cells[]) {
+  if(dest_size < 180) {// dest need to be: 81 cells + ':' + 81 solved cells + ':' + max score (10) + ':' + max rating(2) + '\0';
     dest[0] = '\0';
     return -1;
   }
   for(int i = 0; i < TOTAL_CELLS; ++i) {
     dest[i] = puzzle->cells[i] + '0'; // int to ascii conversion
+    dest[i + 82] = solved_cells[i] + '0';
   }
+  dest[81] = ':'; // place colon between puzzle start and puzzle solution
 
-  return snprintf(dest + TOTAL_CELLS, dest_size - TOTAL_CELLS, ":%u:%d",
+  return snprintf(dest + ((TOTAL_CELLS * 2) + 1), dest_size - ((TOTAL_CELLS * 2) + 1), ":%u:%d",
     puzzle->difficulty.score,
     puzzle->difficulty.rating);
 
@@ -138,8 +140,9 @@ int get_candidate_positions(const Puzzle* puzzle, const uint8_t house_idxs[], Se
 }
 
 void print_puzzle_state(Puzzle* puzzle) {
-  char puzzle_str_buff[110];
-  int written = stringify_puzzle(puzzle_str_buff, 110, puzzle);
+  char puzzle_str_buff[200];
+  uint8_t dummy[81] = { 0 };
+  int written = stringify_puzzle(puzzle_str_buff, 200, puzzle, dummy);
   log_debug("Puzzle State: %s", puzzle_str_buff);
   log_debug("Solution Trace:");
   for(int i = 0; i < puzzle->step_count; ++i) {

@@ -18,7 +18,7 @@ int main(int argc, const char* argv[]) {
   AppConfig config;
   parse_args(argc, argv, &config);
   Puzzle puzzle;
-  char puzzle_str_buff[110];
+  char puzzle_str_buff[200];
 
   if(config.target_difficulty > MEDIUM) {
     log_fatal("HARD and IMPOSSIBLE difficulties not implemented yet.");
@@ -27,8 +27,9 @@ int main(int argc, const char* argv[]) {
 
   for(int i = 0; i < config.puzzle_count; ++i) {
     memset(&puzzle, 0, sizeof(Puzzle));
-    generate_puzzle(&puzzle, config.target_difficulty);
-    int written = stringify_puzzle(puzzle_str_buff, 110, &puzzle);
+    uint8_t solved_cells[81];
+    generate_puzzle(&puzzle, solved_cells, config.target_difficulty);
+    int written = stringify_puzzle(puzzle_str_buff, 200, &puzzle, solved_cells);
     if(written < 0 || (size_t)written >= sizeof(puzzle_str_buff)) {
       log_error("An error occured writting generated puzzle to string!");
       exit(EXIT_FAILURE);
