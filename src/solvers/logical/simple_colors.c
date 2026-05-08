@@ -21,10 +21,32 @@ TechniqueResult find_simple_color(Puzzle* puzzle) {
       uint8_t current_cell = context.chain[head++];
       uint8_t current_color = context.colors[current_cell];
       uint8_t next_color = 1 - current_color;
+
+      // in the context of these chains, there are not too many. This search is inefficient, however the smalls size allows for faster lookup in cpu cache
+      for(int i = 0; i < context.pairs_count; ++i) {
+        uint8_t neighbor = 81;
+        if(context.pairs[i].cell_one == current_cell) {
+          neighbor = context.pairs[i].cell_two;
+        }
+        if(context.pairs[i].cell_two == current_cell) {
+          neighbor = context.pairs[i].cell_one;
+        }
+
+        if(neighbor != 81 && context.colors[neighbor] == -1) {
+          context.colors[neighbor] = next_color;
+          context.chain[tail++] = neighbor;
+        }
+      }
     }
+
+
+
   }
 }
 
+void paint_colors(SimpleColorContext* context, uint8_t start_cell) {
+
+}
 
 void collect_chain_pairs(const Puzzle* puzzle, SimpleColorContext* context, int candidate) {
   SearchParams search_params = {
@@ -52,4 +74,7 @@ void collect_chain_pairs(const Puzzle* puzzle, SimpleColorContext* context, int 
       context->pairs[context->pairs_count++].cell_two = (uint8_t)pair_idxs[1];
     }
   }
+}
+void collect_neighbors(const Puzzle* puzzle, SimpleColorContext* context, SearchParams search_params) {
+  
 }

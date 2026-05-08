@@ -7,6 +7,8 @@ typedef struct ChainPair {
 } ChainPair;
 
 typedef struct SimpleColorContext {
+  uint8_t neighbor_count[81];
+  uint8_t neighbor_lookup[81][3];
   ChainPair pairs[40];
   uint8_t chain[40];
   uint8_t colors[81];
