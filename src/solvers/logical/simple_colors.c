@@ -1,7 +1,7 @@
 #include <string.h>
 #include "simple_colors.h"
 #include "puzzle.h"
-
+#include "utils.h"
 TechniqueResult find_simple_color(Puzzle* puzzle) {
   SimpleColorContext context;
   for(int i = 1; i <= 9; ++i) {
@@ -58,23 +58,39 @@ void collect_chain_pairs(const Puzzle* puzzle, SimpleColorContext* context, int 
     const uint8_t* house_idxs = ROW_TO_IDXS[i];
     int cand_count = get_candidate_positions(puzzle, house_idxs, search_params, pair_idxs);
     if(cand_count == 2) {
-      context->pairs[context->pairs_count++].cell_one = (uint8_t)pair_idxs[0];
-      context->pairs[context->pairs_count++].cell_two = (uint8_t)pair_idxs[1];
+      uint8_t cell_one = house_idxs[pair_idxs[0]];
+      uint8_t cell_two = house_idxs[pair_idxs[1]];
+      context->pairs[context->pairs_count].cell_one = cell_one;
+      context->pairs[context->pairs_count++].cell_two = cell_two;
+      if(!includes_uint8(context->neighbor_lookup[cell_one], context->neighbor_count[cell_one], cell_two)) {
+        context->neighbor_lookup[cell_one][context->neighbor_count[cell_one]++] = cell_two;
+        context->neighbor_lookup[cell_two][context->neighbor_count[cell_two]++] = cell_one;
+      }
+
     }
     house_idxs = COL_TO_IDXS[i];
     cand_count = get_candidate_positions(puzzle, house_idxs, search_params, pair_idxs);
     if(cand_count == 2) {
-      context->pairs[context->pairs_count++].cell_one = (uint8_t)pair_idxs[0];
-      context->pairs[context->pairs_count++].cell_two = (uint8_t)pair_idxs[1];
+      uint8_t cell_one = house_idxs[pair_idxs[0]];
+      uint8_t cell_two = house_idxs[pair_idxs[1]];
+      context->pairs[context->pairs_count].cell_one = cell_one;
+      context->pairs[context->pairs_count++].cell_two = cell_two;
+      if(!includes_uint8(context->neighbor_lookup[cell_one], context->neighbor_count[cell_one], cell_two)) {
+        context->neighbor_lookup[cell_one][context->neighbor_count[cell_one]++] = cell_two;
+        context->neighbor_lookup[cell_two][context->neighbor_count[cell_two]++] = cell_one;
+      }
     }
     house_idxs = BLOCK_TO_IDXS[i];
     cand_count = get_candidate_positions(puzzle, house_idxs, search_params, pair_idxs);
     if(cand_count == 2) {
-      context->pairs[context->pairs_count++].cell_one = (uint8_t)pair_idxs[0];
-      context->pairs[context->pairs_count++].cell_two = (uint8_t)pair_idxs[1];
+      uint8_t cell_one = house_idxs[pair_idxs[0]];
+      uint8_t cell_two = house_idxs[pair_idxs[1]];
+      context->pairs[context->pairs_count].cell_one = cell_one;
+      context->pairs[context->pairs_count++].cell_two = cell_two;
+      if(!includes_uint8(context->neighbor_lookup[cell_one], context->neighbor_count[cell_one], cell_two)) {
+        context->neighbor_lookup[cell_one][context->neighbor_count[cell_one]++] = cell_two;
+        context->neighbor_lookup[cell_two][context->neighbor_count[cell_two]++] = cell_one;
+      }
     }
   }
-}
-void collect_neighbors(const Puzzle* puzzle, SimpleColorContext* context, SearchParams search_params) {
-  
 }
