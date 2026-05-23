@@ -82,9 +82,12 @@ void setup_logger(LogLevel level) {
     log_error("LOG_DIR environment variable not set");
     exit(EXIT_FAILURE);
   }
-  FILE* log_file = fopen(log_dir, "a");
-  if (log_file == NULL) {
-    log_error("Failed to open file at: %s", log_dir);
+  char file_name[] = "puzzle_generator_app.log";
+  char full_file_path[FILENAME_MAX];
+  snprintf(full_file_path, FILENAME_MAX, "%s/%s", log_dir, file_name);
+  FILE* log_file = fopen(full_file_path, "a");
+  if(log_file == NULL) {
+    log_error("Failed to open file at: %s", full_file_path);
     exit(EXIT_FAILURE);
   }
   log_add_fp(log_file, level);
