@@ -9,7 +9,7 @@
 void generate_puzzle(Puzzle* puzzle, uint8_t sovled_cells[], DiffRating target_difficulty);
 bool fill_puzzle_randomly(uint8_t cells[]);
 bool remove_random_val(Puzzle* puzzle);
-void reset_puzzle(Puzzle* puzzle);
+void reset_puzzle(Puzzle* puzzle, const uint8_t solved_cells[]);
 int define_min_cells_removed(DiffRating target_difficulty);
 
 inline static void clone_puzzle(Puzzle* dest, const Puzzle* src) {

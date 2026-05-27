@@ -10,8 +10,8 @@
 void generate_puzzle(Puzzle* puzzle, uint8_t solved_cells[], DiffRating target_difficulty) {
   fill_puzzle_randomly(puzzle->cells);
 #ifndef NDEBUG 
-  char str_buff[110];
-  stringify_puzzle(str_buff, 110, puzzle);
+  char str_buff[200];
+  stringify_puzzle(str_buff, 200, puzzle, solved_cells);
   log_debug("INITIAL STATE: %s", str_buff);
 #endif
   Puzzle puzzle_cpy;
@@ -26,14 +26,14 @@ void generate_puzzle(Puzzle* puzzle, uint8_t solved_cells[], DiffRating target_d
     }
     if(!is_still_unique) {
       // reset and try again
-      reset_puzzle(puzzle);
+      reset_puzzle(puzzle, solved_cells);
       cells_removed = 0;
       continue;
     }
     clone_puzzle(&puzzle_cpy, puzzle);
     fill_puzzle_candidates(&puzzle_cpy);
     if(!solve_puzzle(&puzzle_cpy)) {
-      reset_puzzle(puzzle);
+      reset_puzzle(puzzle, solved_cells);
       cells_removed = 0;
       continue;
     }
@@ -50,7 +50,7 @@ void generate_puzzle(Puzzle* puzzle, uint8_t solved_cells[], DiffRating target_d
       return;
     }
     if(puzzle_cpy.difficulty.rating > target_difficulty) {
-      reset_puzzle(puzzle);
+      reset_puzzle(puzzle, solved_cells);
       cells_removed = 0;
     }
   }
@@ -119,12 +119,12 @@ int define_min_cells_removed(DiffRating target_difficulty) {
     return 55 + rand() % 8; // remove between 55 and 62
   }
 }
-void reset_puzzle(Puzzle* puzzle) {
+void reset_puzzle(Puzzle* puzzle, const uint8_t solved_cells[]) {
   memset(puzzle, 0, sizeof(Puzzle));
   fill_puzzle_randomly(puzzle->cells);
 #ifndef NDEBUG 
   char str_buff[110];
-  stringify_puzzle(str_buff, 110, puzzle);
+  stringify_puzzle(str_buff, 110, puzzle, solved_cells);
   log_debug("INITIAL STATE: %s", str_buff);
 #endif
 }

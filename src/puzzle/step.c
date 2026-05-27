@@ -55,6 +55,7 @@ const char* technique_to_string(Technique techinque) {
       EP(SKYSCRAPER)
       EP(XY_WING)
       EP(SIMPLE_COLORS)
+      EP(CHUTE_REMOTE_PAIRS)
       EP(FINNED_X_WING)
       EP(XYZ_WING)
       EP(SWORDFISH)

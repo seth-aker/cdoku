@@ -6,6 +6,8 @@
 #include "x_wing.c"
 #include "skyscraper.h"
 #include "xy_wing.h"
+#include "simple_colors.h"
+#include "chute_remote_pairs.h"
 #include "guess.h"
 
 bool solve_puzzle(Puzzle* puzzle) {
@@ -38,8 +40,17 @@ bool solve_puzzle(Puzzle* puzzle) {
     CHECK_PROGRESS(puzzle_progress);
     puzzle_progress = find_xy_wings(puzzle);
     CHECK_PROGRESS(puzzle_progress);
+
+    // HARD solutions
+    puzzle_progress = find_chute_remote_pairs(puzzle);
+    CHECK_PROGRESS(puzzle_progress);
+    puzzle_progress = find_simple_color(puzzle);
+    CHECK_PROGRESS(puzzle_progress);
+
     puzzle_progress = make_guess(puzzle);
     CHECK_PROGRESS(puzzle_progress);
+
+
     puzzle_progress = INVALID_STATE;
   }
   if(puzzle_progress == INVALID_STATE) {

@@ -22,4 +22,6 @@ extern const uint8_t COL_TO_IDXS[PUZZLE_WIDTH][PUZZLE_WIDTH];
 extern const uint8_t CELL_POS_IN_BLOCK[PUZZLE_WIDTH][PUZZLE_WIDTH];
 extern const MaskArr MASK_TO_ARRAY_LOOKUP[512];
 extern const bool IS_PEER_LOOKUP[81][81];
+extern const uint8_t IDX_TO_CHUTE_HOR[81];
+extern const uint8_t IDX_TO_CHUTE_VERT[81];
 #endif // SRC_PUZZLE_PUZZLE_GLOBALS_H
