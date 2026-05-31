@@ -59,6 +59,7 @@ const char* technique_to_string(Technique techinque) {
       EP(FINNED_X_WING)
       EP(XYZ_WING)
       EP(SWORDFISH)
+      EP(W_WING)
       EP(FINNED_SWORDFISH)
       EP(JELLYFISH)
       EP(FORCING_CHAIN)

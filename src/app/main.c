@@ -20,8 +20,8 @@ int main(int argc, const char* argv[]) {
   Puzzle puzzle;
   char puzzle_str_buff[200];
 
-  if(config.target_difficulty > MEDIUM) {
-    log_fatal("HARD and IMPOSSIBLE difficulties not implemented yet.");
+  if(config.target_difficulty > HARD) {
+    log_fatal("IMPOSSIBLE difficulty not implemented yet.");
     exit(EXIT_FAILURE);
   }
 

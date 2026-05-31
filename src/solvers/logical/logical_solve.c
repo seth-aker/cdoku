@@ -6,6 +6,9 @@
 #include "x_wing.c"
 #include "skyscraper.h"
 #include "xy_wing.h"
+#include "xyz_wing.h"
+#include "swordfish.h"
+#include "w_wing.h"
 #include "simple_colors.h"
 #include "chute_remote_pairs.h"
 #include "guess.h"
@@ -40,11 +43,17 @@ bool solve_puzzle(Puzzle* puzzle) {
     CHECK_PROGRESS(puzzle_progress);
     puzzle_progress = find_xy_wings(puzzle);
     CHECK_PROGRESS(puzzle_progress);
-
-    // HARD solutions
     puzzle_progress = find_chute_remote_pairs(puzzle);
     CHECK_PROGRESS(puzzle_progress);
+
+    // HARD solutions
     puzzle_progress = find_simple_color(puzzle);
+    CHECK_PROGRESS(puzzle_progress);
+    puzzle_progress = find_xyz_wing(puzzle);
+    CHECK_PROGRESS(puzzle_progress);
+    puzzle_progress = find_w_wings(puzzle);
+    CHECK_PROGRESS(puzzle_progress);
+    puzzle_progress = find_swordfish(puzzle);
     CHECK_PROGRESS(puzzle_progress);
 
     puzzle_progress = make_guess(puzzle);

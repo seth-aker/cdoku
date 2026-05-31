@@ -11,6 +11,8 @@ add_library(logical_solver STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/guess.c
   ${CMAKE_CURRENT_SOURCE_DIR}/chain_utils.c
   ${CMAKE_CURRENT_SOURCE_DIR}/w_wing.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/swordfish.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/xyz_wing.c
 )
 target_include_directories(logical_solver PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}
