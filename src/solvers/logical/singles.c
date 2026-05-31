@@ -128,8 +128,10 @@ TechniqueResult find_hidden_single(Puzzle* puzzle) {
     unique = candidate_mask & ~other_cell_masks;
     if(unique) {
       if(__builtin_popcount(unique) != 1) {
-        log_error("Error: Found multiple unique candiates in cell idx: %d", i);
+        log_debug("Error: Found multiple unique candiates in cell idx: %d", i);
+#ifndef NDEBUG
         print_puzzle_state(puzzle);
+#endif
         return INVALID_STATE;
       }
       int found_single = __builtin_ctz(unique) + 1;
@@ -157,8 +159,10 @@ TechniqueResult find_hidden_single(Puzzle* puzzle) {
     unique = candidate_mask & ~other_cell_masks;
     if(unique) {
       if(__builtin_popcount(unique) != 1) {
-        log_error("Error: Found multiple unique candiates in cell idx: %d", i);
+        log_debug("Error: Found multiple unique candiates in cell idx: %d", i);
+#ifndef NDEBUG
         print_puzzle_state(puzzle);
+#endif
         return INVALID_STATE;
       }
       int found_single = __builtin_ctz(unique) + 1;
