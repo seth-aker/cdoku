@@ -9,6 +9,8 @@ add_library(logical_solver STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/simple_colors.c
   ${CMAKE_CURRENT_SOURCE_DIR}/chute_remote_pairs.c
   ${CMAKE_CURRENT_SOURCE_DIR}/guess.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/chain_utils.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/w_wing.c
 )
 target_include_directories(logical_solver PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}

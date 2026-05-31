@@ -1,25 +1,20 @@
 #include "chute_remote_pairs.h"
 #include "puzzle.h"
 #include "utils.h"
+#include "chain_utils.h"
 // This runs with the assumption that all potential naked pairs have been found. 
 TechniqueResult find_chute_remote_pairs(Puzzle* puzzle) {
-  uint8_t bivalue_bins[512][18];
+  uint8_t bi_value_bins[512][18];
   uint8_t bin_count[512] = { 0 };
-  for(int i = 0; i < 81; ++i) {
-    if(puzzle->cells[i] != 0 || __builtin_popcount(puzzle->candidates[i]) != 2) {
-      continue;
-    }
-    uint16_t mask = puzzle->candidates[i];
-    bivalue_bins[mask][bin_count[mask]++] = i;
-  }
+  collect_bi_value_pairs(puzzle, bi_value_bins, bin_count);
 
   for(int bi = 0; bi < 512; ++bi) {
     if(bin_count[bi] < 2) continue;
 
     for(int i = 0; i < bin_count[bi] - 1; ++i) {
       for(int j = i + 1; j < bin_count[bi]; j++) {
-        uint8_t idx_one = bivalue_bins[bi][i];
-        uint8_t idx_two = bivalue_bins[bi][j];
+        uint8_t idx_one = bi_value_bins[bi][i];
+        uint8_t idx_two = bi_value_bins[bi][j];
         uint8_t h1 = IDX_TO_CHUTE_HOR[idx_one];
         uint8_t h2 = IDX_TO_CHUTE_HOR[idx_two];
         uint8_t v1 = IDX_TO_CHUTE_VERT[idx_one];
@@ -90,22 +85,3 @@ TechniqueResult find_chute_remote_pairs(Puzzle* puzzle) {
   return NO_PROGRESS;
 }
 
-bool eliminate_from_intersections(Puzzle* puzzle, uint16_t eliminate_mask, uint8_t idx_one, uint8_t idx_two) {
-  uint8_t intersections[20];
-  int intersection_count = get_uint8_intersection(CELL_PEERS_LOOKUP[idx_one], CELL_PEERS_LOOKUP[idx_two], 20, 20, intersections);
-  bool step_applied = false;
-  for(int c = 0; c < intersection_count; ++c) {
-    uint8_t idx = intersections[c];
-    if(puzzle->candidates[idx] & eliminate_mask) {
-      Step step = {
-        .eliminated_mask = eliminate_mask,
-        .placed_val = 0,
-        .target_cell = idx,
-        .technique = CHUTE_REMOTE_PAIRS
-      };
-      apply_step(puzzle, step);
-      step_applied = true;
-    }
-  }
-  return step_applied;
-}

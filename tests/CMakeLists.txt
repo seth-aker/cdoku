@@ -11,6 +11,7 @@ add_executable(test_x_wings ${CMAKE_CURRENT_SOURCE_DIR}/solvers/logical/test_x_w
 add_executable(test_skyscrapers ${CMAKE_CURRENT_SOURCE_DIR}/solvers/logical/test_skyscraper.c)
 add_executable(test_chute_remote_pairs ${CMAKE_CURRENT_SOURCE_DIR}/solvers/logical/test_chute_remote_pairs.c)
 add_executable(test_simple_colors ${CMAKE_CURRENT_SOURCE_DIR}/solvers/logical/test_simple_colors.c)
+add_executable(test_w_wings ${CMAKE_CURRENT_SOURCE_DIR}/solvers/logical/test_w_wings.c)
 
 target_link_libraries(test_matrix unity algorithm_x_solver)
 target_link_libraries(test_node unity algorithm_x_solver)
@@ -22,6 +23,8 @@ target_link_libraries(test_x_wings unity puzzle logical_solver)
 target_link_libraries(test_skyscrapers unity puzzle logical_solver)
 target_link_libraries(test_simple_colors unity puzzle logical_solver)
 target_link_libraries(test_chute_remote_pairs unity puzzle logical_solver)
+target_link_libraries(test_w_wings unity puzzle logical_solver)
+
 
 add_test(matrix_tests test_matrix)
 add_test(node_tests test_node)
@@ -33,3 +36,4 @@ add_test(x_wings test_x_wings)
 add_test(skyscrapers test_skyscrapers)
 add_test(simple_colors test_simple_colors)
 add_test(chute_remote_pairs test_chute_remote_pairs)
+add_test(w_wings test_w_wings)

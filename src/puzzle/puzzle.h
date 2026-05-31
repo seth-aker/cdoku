@@ -58,6 +58,10 @@ void fill_puzzle_candidates(Puzzle* puzzle);
 int get_candidate_positions(const Puzzle* puzzle, const uint8_t house[], SearchParams params, int out_pos[]);
 void print_puzzle_state(Puzzle* puzzle);
 int get_cells_with_candidates_count(const Puzzle* puzzle, int dest_idxs[], int num_of_cands);
+void collect_bi_value_pairs(const Puzzle* puzzle, uint8_t bi_value_bins[][18], uint8_t bin_count[]);
+bool eliminate_from_intersections(Puzzle* puzzle, uint16_t eliminate_mask, uint8_t idx_one, uint8_t idx_two);
+bool eliminate_fish(Puzzle* puzzle, uint16_t eliminate_mask, uint16_t cover_houses, uint16_t base_houses, bool is_verical);
+
 static inline void log_step(Puzzle* puzzle, Step step) {
   puzzle->solution[puzzle->step_count++] = step;
 }

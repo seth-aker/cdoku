@@ -2,7 +2,10 @@
 #define SRC_UTILS_UTILS_H
 #include <stdint.h>
 #include <stdbool.h>
-
+typedef struct Array_UInt8 {
+  uint8_t* arr;
+  int count;
+} Array_UInt8;
 void shuffle_uint_8_array(uint8_t arr[], int arrlen);
 bool includes_int(const int array[], int arrlen, int num);
 bool includes_uint8(const uint8_t array[], int arrlen, uint8_t num);

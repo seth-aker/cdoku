@@ -4,7 +4,7 @@
 #include "log.h"
 #include "puzzle.h"
 #include "puzzle_globals.h"
-
+#include "utils.h"
 int find_empty_cell(uint8_t cells[]) {
   for(int i = 0; i < TOTAL_CELLS; ++i) {
     if(cells[i] == 0) {
@@ -177,4 +177,63 @@ int get_cells_with_candidates_count(const Puzzle* puzzle, int dest_idxs[], int n
     }
   }
   return count;
+}
+
+void collect_bi_value_pairs(const Puzzle* puzzle, uint8_t bi_value_bins[][18], uint8_t bin_count[]) {
+  for(int i = 0; i < 81; ++i) {
+    if(puzzle->cells[i] != 0 || __builtin_popcount(puzzle->candidates[i]) != 2) {
+      continue;
+    }
+    uint16_t mask = puzzle->candidates[i];
+    bi_value_bins[mask][bin_count[mask]++] = i;
+  }
+}
+
+bool eliminate_from_intersections(Puzzle* puzzle, uint16_t eliminate_mask, uint8_t idx_one, uint8_t idx_two) {
+  uint8_t intersections[20];
+  int intersection_count = get_uint8_intersection(CELL_PEERS_LOOKUP[idx_one], CELL_PEERS_LOOKUP[idx_two], 20, 20, intersections);
+  bool step_applied = false;
+  for(int c = 0; c < intersection_count; ++c) {
+    uint8_t idx = intersections[c];
+    if(puzzle->candidates[idx] & eliminate_mask) {
+      Step step = {
+        .eliminated_mask = eliminate_mask,
+        .placed_val = 0,
+        .target_cell = idx,
+        .technique = CHUTE_REMOTE_PAIRS
+      };
+      apply_step(puzzle, step);
+      step_applied = true;
+    }
+  }
+  return step_applied;
+}
+
+bool eliminate_fish(Puzzle* puzzle, uint16_t eliminate_mask, uint16_t cover_houses, uint16_t base_houses, bool is_vertical) {
+  bool progress_made = false;
+  int cover_count = __builtin_popcount(cover_houses);
+  for(int i = 0; i < cover_count; ++i) {
+    int cover_idx = __builtin_ctz(cover_houses);
+    cover_houses &= cover_houses - 1;
+
+    for(int cross_idx = 0; cross_idx < 9; cross_idx++) {
+      if((1 << cross_idx) & base_houses) continue;
+
+      int idx = is_vertical ?
+        (cover_idx * 9) + cross_idx :
+        (cross_idx * 9) + cover_idx;
+
+      if(puzzle->candidates[idx] & eliminate_mask) {
+        Step step = {
+          .eliminated_mask = eliminate_mask,
+          .placed_val = 0,
+          .target_cell = idx,
+          .technique = cover_count == 2 ? X_WING : SWORDFISH
+        };
+        apply_step(puzzle, step);
+        progress_made = true;
+      }
+    }
+  }
+  return progress_made;
 }

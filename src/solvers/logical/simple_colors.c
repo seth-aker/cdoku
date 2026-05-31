@@ -2,8 +2,9 @@
 #include "simple_colors.h"
 #include "puzzle.h"
 #include "utils.h"
+#include "chain_utils.h"
 TechniqueResult find_simple_color(Puzzle* puzzle) {
-  SimpleColorContext context;
+  ChainSearchContext context;
   for(int i = 1; i <= 9; ++i) {
     uint16_t candidate_mask = 1 << (i - 1);
     memset(context.neighbor_count, 0, sizeof(context.neighbor_count));
@@ -67,7 +68,7 @@ TechniqueResult find_simple_color(Puzzle* puzzle) {
   return NO_PROGRESS;
 }
 
-int paint_colors(SimpleColorContext* context, uint8_t start_cell) {
+int paint_colors(ChainSearchContext* context, uint8_t start_cell) {
   int head = 0, tail = 0;
   memset(context->colors, -1, sizeof(int8_t) * 81);
   context->chain[tail++] = start_cell;
@@ -89,54 +90,7 @@ int paint_colors(SimpleColorContext* context, uint8_t start_cell) {
   return tail;
 }
 
-void collect_chain_pairs(const Puzzle* puzzle, SimpleColorContext* context, int candidate) {
-  SearchParams search_params = {
-    .mask = 1 << (candidate - 1),
-    .max_count = 2
-  };
-  int pair_idxs[2];
-  for(int i = 0; i < PUZZLE_WIDTH; ++i) {
-    const uint8_t* house_idxs = ROW_TO_IDXS[i];
-    int cand_count = get_candidate_positions(puzzle, house_idxs, search_params, pair_idxs);
-    if(cand_count == 2) {
-      uint8_t cell_one = house_idxs[pair_idxs[0]];
-      uint8_t cell_two = house_idxs[pair_idxs[1]];
-      context->pairs[context->pairs_count].cell_one = cell_one;
-      context->pairs[context->pairs_count++].cell_two = cell_two;
-      if(!includes_uint8(context->neighbor_lookup[cell_one], context->neighbor_count[cell_one], cell_two)) {
-        context->neighbor_lookup[cell_one][context->neighbor_count[cell_one]++] = cell_two;
-        context->neighbor_lookup[cell_two][context->neighbor_count[cell_two]++] = cell_one;
-      }
-
-    }
-    house_idxs = COL_TO_IDXS[i];
-    cand_count = get_candidate_positions(puzzle, house_idxs, search_params, pair_idxs);
-    if(cand_count == 2) {
-      uint8_t cell_one = house_idxs[pair_idxs[0]];
-      uint8_t cell_two = house_idxs[pair_idxs[1]];
-      context->pairs[context->pairs_count].cell_one = cell_one;
-      context->pairs[context->pairs_count++].cell_two = cell_two;
-      if(!includes_uint8(context->neighbor_lookup[cell_one], context->neighbor_count[cell_one], cell_two)) {
-        context->neighbor_lookup[cell_one][context->neighbor_count[cell_one]++] = cell_two;
-        context->neighbor_lookup[cell_two][context->neighbor_count[cell_two]++] = cell_one;
-      }
-    }
-    house_idxs = BLOCK_TO_IDXS[i];
-    cand_count = get_candidate_positions(puzzle, house_idxs, search_params, pair_idxs);
-    if(cand_count == 2) {
-      uint8_t cell_one = house_idxs[pair_idxs[0]];
-      uint8_t cell_two = house_idxs[pair_idxs[1]];
-      context->pairs[context->pairs_count].cell_one = cell_one;
-      context->pairs[context->pairs_count++].cell_two = cell_two;
-      if(!includes_uint8(context->neighbor_lookup[cell_one], context->neighbor_count[cell_one], cell_two)) {
-        context->neighbor_lookup[cell_one][context->neighbor_count[cell_one]++] = cell_two;
-        context->neighbor_lookup[cell_two][context->neighbor_count[cell_two]++] = cell_one;
-      }
-    }
-  }
-}
-
-void apply_val_to_chain_color(Puzzle* puzzle, SimpleColorContext* context, uint8_t color, uint8_t value) {
+void apply_val_to_chain_color(Puzzle* puzzle, ChainSearchContext* context, uint8_t color, uint8_t value) {
   for(int i = 0; i < context->chain_len; ++i) {
     uint8_t cell_color = context->colors[context->chain[i]];
     if(cell_color == color) {
